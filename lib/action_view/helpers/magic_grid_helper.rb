@@ -3,16 +3,24 @@ module ActionView
     module MagicGridHelper
       class MagicGrid
         attr_accessor :columns, :collection, :magic_id, :options
+        DEFAULTS = {
+          :wide => false,
+          :prefix => '',
+          :top_pager => true,
+          :bottom_pager => false,
+          :ajax => false,
+        }
         def initialize(cols_or_opts, collection = nil, params = {}, opts = {})
+          @options = Hash.new DEFAULTS
           if cols_or_opts.is_a? Hash
-            @options = cols_or_opts.reject {|k| k == :cols}
+            @options.update(cols_or_opts.reject {|k| k == :cols})
             @columns = cols_or_opts.fetch(:cols, [])
           elsif cols_or_opts.is_a? Array
-            @options = {}
             @columns = cols_or_opts
           else
             raise "I have no idea what that is, but it's not a Hash or an Array"
           end
+          @options.update opts
           @collection = collection.page(params.fetch(:page, 1))
           table_columns = @collection.table.columns.map {|c| c.name}
           i = 0
@@ -63,6 +71,10 @@ module ActionView
 
       def magic_grid(collection = nil, cols = nil, opts = {}, &block)
         grid = normalize_magic(collection, cols, opts)
+        classes = []
+        classes << 'zebra' if grid.options[:striped]
+        classes << 'wide' if grid.options[:wide]
+        classes << 'ajaxed_pager' if grid.options[:ajax]
         content_tag 'table', :class => 'zebra wide thin-border ajaxed_pager', :id => "magic_#{grid.magic_id}" do
           table = content_tag 'thead' do
             thead = content_tag 'tr', :class => 'pagination' do
