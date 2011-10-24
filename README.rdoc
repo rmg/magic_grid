@@ -1,0 +1,3 @@
+= MagicGrid
+
+Takes a collection and creates a paginated table of using a supplied column definition.
