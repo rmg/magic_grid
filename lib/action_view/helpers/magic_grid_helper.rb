@@ -43,25 +43,26 @@ module ActionView
           Rails.logger.info("MagicGrid created!")
         end
 
-        def self.normalize(collection, columns = [], options = {})
-          if collection.is_a? MagicGrid
-            collection
-          elsif columns.is_a? MagicGrid
-            columns
-          elsif options.is_a? MagicGrid
-            options
-          else
-            self.new(columns, collection, params, options)
-          end
+      end
+
+      def normalize_magic(collection, columns = [], options = {})
+        if collection.is_a? MagicGrid
+          collection
+        elsif columns.is_a? MagicGrid
+          columns
+        elsif options.is_a? MagicGrid
+          options
+        else
+          MagicGrid.new(columns, collection, params, options)
         end
       end
 
       def magic_collection(collection, cols, opts = {})
-        MagicGrid.normalize(collection, cols, opts).collection
+        normalize_magic(collection, cols, opts).collection
       end
 
       def magic_grid(collection = nil, cols = nil, opts = {}, &block)
-        grid = MagicGrid.normalize(collection, cols, opts)
+        grid = normalize_magic(collection, cols, opts)
         content_tag 'table', :class => 'zebra wide thin-border ajaxed_pager', :id => "magic_#{grid.magic_id}" do
           table = content_tag 'thead' do
             thead = content_tag 'tr', :class => 'pagination' do
@@ -78,7 +79,7 @@ module ActionView
       end
 
       def magic_headers(cols, collection = nil, opts = {})
-        grid = MagicGrid.normalize(collection, cols, opts)
+        grid = normalize_magic(collection, cols, opts)
         headers = grid.columns.each_index.map do |i|
           if grid.columns[i].is_a? String
             "<th>#{grid.columns[i]}</th>"
@@ -92,7 +93,7 @@ module ActionView
       end
 
       def magic_rows(cols, collection = nil)
-        grid = MagicGrid.normalize(collection, cols)
+        grid = normalize_magic(collection, cols)
         grid.collection.map do |row|
           if block_given?
             yield row
@@ -104,7 +105,7 @@ module ActionView
 
       def magic_row(record, cols, collection = nil)
         cells = []
-        grid = MagicGrid.normalize(collection, cols)
+        grid = normalize_magic(collection, cols)
         grid.columns.each do |c|
           method = c[:to_s] || c[:col]
           cells << (record.respond_to?(method) ? record.send(method).to_s : '')
