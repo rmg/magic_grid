@@ -1,5 +1,6 @@
 module MagicGrid
 end
 
-require 'magic_grid/magic_grid_helpers'
-ActionView::Helpers.send :include, MagicGrid
+if defined? Rails::Railtie
+  require 'magic_grid/railtie'
+end

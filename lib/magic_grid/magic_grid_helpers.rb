@@ -169,5 +169,7 @@ module MagicGrid
       Rails.logger.info "#{col.inspect}, #{classes.inspect}, #{my_params.inspect}, #{params.inspect}"
       content_tag 'th', link_to(label.html_safe, my_params), :class => classes.join(' ')
     end
+
+    ::ActionView::Base.send :include, self
   end
 end
