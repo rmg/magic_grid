@@ -47,7 +47,7 @@ module MagicGrid
           sort_dir = ['ASC', 'DESC'][sort_dir_i == 0 ? 0 : 1]
           @collection = @collection.order("#{sort_col} #{sort_dir}")
         end
-        Rails.logger.info("MagicGrid created!")
+        Rails.logger.debug "MagicGrid created!"
       end
     end
 
@@ -125,7 +125,7 @@ module MagicGrid
 
     def reverse_order(order)
       opp = order.to_i == 0 ? 1 : 0
-      Rails.logger.info("CALL reverse_order( #{order} ) => #{opp}")
+      Rails.logger.debug "CALL reverse_order( #{order} ) => #{opp}"
       opp
     end
 
@@ -166,7 +166,7 @@ module MagicGrid
         label += order_icon()
       end
       my_params.delete(:order) if my_params[:order].to_i == default_sort_order.to_i
-      Rails.logger.info "#{col.inspect}, #{classes.inspect}, #{my_params.inspect}, #{params.inspect}"
+      Rails.logger.debug "#{col.inspect}, #{classes.inspect}, #{my_params.inspect}, #{params.inspect}"
       content_tag 'th', link_to(label.html_safe, my_params), :class => classes.join(' ')
     end
 
