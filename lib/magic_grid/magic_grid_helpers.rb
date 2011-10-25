@@ -1,6 +1,9 @@
+require 'will_paginate/view_helpers/action_view'
+
 module MagicGrid
   module MagicGridHelpers
     class MagicGrid
+      include WillPaginate::ActionView
       attr_accessor :columns, :collection, :magic_id, :options
       DEFAULTS = {
         :wide => false,
@@ -19,8 +22,12 @@ module MagicGrid
         else
           raise "I have no idea what that is, but it's not a Hash or an Array"
         end
-        @collection = collection.page(params.fetch(:page, 1))
-        table_columns = @collection.table.columns.map {|c| c.name}
+        @collection = collection.paginate(:page => params.fetch(:page, 1))
+        if @collection.is_a? ActiveRecord
+          table_columns = @collection.table.columns.map {|c| c.name}
+        else
+          table_columns = @columns.each_index.to_a
+        end
         i = 0
         hash = []
         @columns.map! do |c|
@@ -38,9 +45,10 @@ module MagicGrid
           hash << c[:label]
           c
         end
-        @magic_id = hash.join.hash.abs.to_s(36) + @collection.to_sql.hash.abs.to_s(36)
+        @magic_id = hash.join.hash.abs.to_s(36)
+        @magic_id += @collection.to_sql.hash.abs.to_s(36) if @collection.respond_to? :to_sql
         sort_col_i = params.fetch(:col, opts.fetch(:default_col, 0)).to_i
-        if @columns[sort_col_i] and @columns[sort_col_i][:sql]
+        if @collection.respond_to? :order and @columns.has_key? sort_col_i and @columns[sort_col_i].has_key? :sql
           sort_col = @columns[sort_col_i][:sql]
           sort_dir_i = params.fetch(:order, opts.fetch(:default_order, 0)).to_i
           sort_dir = ['ASC', 'DESC'][sort_dir_i == 0 ? 0 : 1]
@@ -101,11 +109,11 @@ module MagicGrid
       content_tag 'tr', headers.join.html_safe
     end
 
-    def magic_rows(cols, collection = nil)
+    def magic_rows(cols, collection = nil, &block)
       grid = normalize_magic(collection, cols)
       grid.collection.map do |row|
         if block_given?
-          yield row
+          "<!-- block given! -->" + capture(row, &block)
         else
           magic_row(row, grid)
         end

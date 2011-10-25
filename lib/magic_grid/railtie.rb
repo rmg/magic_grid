@@ -1,4 +1,5 @@
 require 'magic_grid'
+require 'will_paginate/array'
 
 module MagicGrid
   class Railtie < Rails::Railtie
