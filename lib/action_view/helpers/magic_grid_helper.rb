@@ -75,7 +75,7 @@ module ActionView
         classes << 'zebra' if grid.options[:striped]
         classes << 'wide' if grid.options[:wide]
         classes << 'ajaxed_pager' if grid.options[:ajax]
-        content_tag 'table', :class => 'zebra wide thin-border ajaxed_pager', :id => "magic_#{grid.magic_id}" do
+        content_tag 'table', :class => classes.join(' '), :id => "magic_#{grid.magic_id}" do
           table = content_tag 'thead' do
             thead = content_tag 'tr', :class => 'pagination' do
               content_tag 'td', {:colspan => grid.columns.count} do
