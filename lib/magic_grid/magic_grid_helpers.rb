@@ -10,16 +10,15 @@ module MagicGrid
         :ajax => false,
       }
       def initialize(cols_or_opts, collection = nil, params = {}, opts = {})
-        @options = Hash.new DEFAULTS
         if cols_or_opts.is_a? Hash
-          @options.update(cols_or_opts.reject {|k| k == :cols})
+          @options = DEFAULTS.merge(cols_or_opts.reject {|k| k == :cols})
           @columns = cols_or_opts.fetch(:cols, [])
         elsif cols_or_opts.is_a? Array
+          @options = DEFAULTS.merge opts
           @columns = cols_or_opts
         else
           raise "I have no idea what that is, but it's not a Hash or an Array"
         end
-        @options.update opts
         @collection = collection.page(params.fetch(:page, 1))
         table_columns = @collection.table.columns.map {|c| c.name}
         i = 0
