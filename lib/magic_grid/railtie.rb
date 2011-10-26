@@ -3,10 +3,10 @@ require 'will_paginate/array'
 
 class MagicGrid
   class Railtie < Rails::Railtie
-    initializer "magic_grid" do |app|
-      ActiveSupport.on_load :action_view do
-        require 'magic_grid/helpers'
-      end
+    # Once in production, on every page view in development
+    config.to_prepare do
+      # no caching based on path like require does
+      load 'magic_grid/helpers.rb'
     end
   end
 end
