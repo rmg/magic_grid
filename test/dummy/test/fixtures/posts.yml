@@ -4,10 +4,20 @@ one:
   title: MyString
   body: MyText
   published: false
-  user: 
+  user: one
 
 two:
   title: MyString
   body: MyText
   published: false
-  user: 
+  user: two
+
+<% title = "The Best Title Ever, Really" %>
+<% story = 'It was a dark and stormy night and the Captain said, "Tell me a story, son". So I began. ' * 100 %>
+<% 500.times do |i| %>
+post_<%= i %>:
+  title: <%= title.split.rotate(i).join " " %>
+  body: <%= story %>
+  published: <%= i.even? %>
+  user: user_<%= i % 100 %>
+<% end %>

@@ -7,3 +7,9 @@ one:
 two:
   name: MyString
   email: MyString
+
+<% 100.times do |i| %>
+user_<%= i %>:
+  name: user <%= i %>
+  email: user_<%= i %>@company.com
+<% end %>
