@@ -1,7 +1,4 @@
-require 'magic_grid'
-require 'will_paginate/array'
-
-class MagicGrid
+module MagicGrid
   class Railtie < Rails::Railtie
     # Once in production, on every page view in development
     config.to_prepare do

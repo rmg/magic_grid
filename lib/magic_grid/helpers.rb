@@ -1,14 +1,17 @@
-class MagicGrid
+require 'magic_grid/definition'
+require 'will_paginate/array'
+
+module MagicGrid
   module Helpers
     def normalize_magic(collection, columns = [], options = {})
-      if collection.is_a? MagicGrid
+      if collection.is_a? MagicGrid::Definition
         collection
-      elsif columns.is_a? MagicGrid
+      elsif columns.is_a? MagicGrid::Definition
         columns
-      elsif options.is_a? MagicGrid
+      elsif options.is_a? MagicGrid::Definition
         options
       else
-        MagicGrid.new(columns, collection, params, options)
+        MagicGrid::Definition.new(columns, collection, params, options)
       end
     end
 
