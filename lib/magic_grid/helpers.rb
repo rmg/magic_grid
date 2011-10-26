@@ -18,7 +18,7 @@ class MagicGrid
 
     def magic_grid(collection = nil, cols = nil, opts = {}, &block)
       grid = normalize_magic(collection, cols, opts)
-      classes = []
+      classes = ['magic_grid']
       classes << 'zebra' if grid.options[:striped]
       classes << 'wide' if grid.options[:wide]
       classes << 'ajaxed_pager' if grid.options[:ajax]
@@ -55,9 +55,9 @@ class MagicGrid
       grid = normalize_magic(collection, cols)
       grid.collection.map do |row|
         if block_given?
-          "<!-- block given! -->" + capture(row, &block)
+          "<!-- block: -->" + capture(row, &block)
         else
-          magic_row(row, grid)
+          "<!-- magic row: -->" + magic_row(row, grid)
         end
       end.join.html_safe
     end
