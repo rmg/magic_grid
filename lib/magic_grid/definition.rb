@@ -14,6 +14,7 @@ module MagicGrid
     }
 
     def initialize(cols_or_opts, collection = nil, params = {}, opts = {})
+      Rails.logger.debug "#{self.class}( #{collection.class} )"
       if cols_or_opts.is_a? Hash
         @options = DEFAULTS.merge(cols_or_opts.reject {|k| k == :cols})
         @columns = cols_or_opts.fetch(:cols, [])
@@ -23,10 +24,12 @@ module MagicGrid
       else
         raise "I have no idea what that is, but it's not a Hash or an Array"
       end
-      @collection = collection.paginate(:page => params.fetch(:page, 1))
-      if @collection.is_a? ActiveRecord
+      @collection = collection
+      if @collection.respond_to? :table
+        table_name = @collection.quoted_table_name
         table_columns = @collection.table.columns.map {|c| c.name}
       else
+        table_name = nil
         table_columns = @columns.each_index.to_a
       end
       i = 0
@@ -36,7 +39,7 @@ module MagicGrid
         c[:id] = i
         i += 1
         if c[:col].is_a? Symbol and table_columns.include? c[:col]
-          c[:sql] = "#{@collection.quoted_table_name}.#{c[:col].to_s}"
+          c[:sql] = "#{table_name}.#{c[:col].to_s}"
         end
         c[:label] = c[:col].to_s.titleize if not c.key? :label
         hash << c[:label]
@@ -51,7 +54,7 @@ module MagicGrid
         sort_dir = ['ASC', 'DESC'][sort_dir_i == 0 ? 0 : 1]
         @collection = @collection.order("#{sort_col} #{sort_dir}")
       end
-      Rails.logger.debug "MagicGrid created!"
+      @collection = @collection.paginate(:page => params.fetch(:page, 1))
     end
   end
 end
