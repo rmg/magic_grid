@@ -4,6 +4,11 @@ class PostsController < ApplicationController
   def index
     @posts = Post.includes(:user)
 
+    if params.key? :user_id
+      @title = "Posts by: #{User.find(params[:user_id]).name}"
+      @posts = @posts.where(:user_id => params[:user_id])
+    end
+
     respond_to do |format|
       format.html # index.html.erb
       format.json { render json: @posts }
