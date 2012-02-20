@@ -11,6 +11,7 @@ module MagicGrid
       :top_pager => true,
       :bottom_pager => false,
       :ajax => false,
+      :per_page => 30,
     }
 
     def initialize(cols_or_opts, collection = nil, params = {}, opts = {})
@@ -54,7 +55,8 @@ module MagicGrid
         sort_dir = ['ASC', 'DESC'][sort_dir_i == 0 ? 0 : 1]
         @collection = @collection.order("#{sort_col} #{sort_dir}")
       end
-      @collection = @collection.paginate(:page => params.fetch(:page, 1))
+      @collection = @collection.paginate(:page => params.fetch(:page, 1),
+                                         :per_page => params.fetch(:per_page, @options[:per_page]))
     end
   end
 end

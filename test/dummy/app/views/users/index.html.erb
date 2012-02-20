@@ -1,6 +1,6 @@
 <h1>Listing users</h1>
 
-<%= magic_grid @users, [:name, :email, :posts, 'Actions'] do |user| %>
+<%= magic_grid @users, [:name, :email, :posts, 'Actions'], :per_page => 10 do |user| %>
   <tr>
     <td><%= user.name %></td>
     <td><%= mail_to user.email %></td>
