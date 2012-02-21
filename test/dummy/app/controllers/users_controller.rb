@@ -2,7 +2,8 @@ class UsersController < ApplicationController
   # GET /users
   # GET /users.json
   def index
-    @users = User.all
+    @basic_users = User.includes(:posts)
+    @optimized_users = User.joins(:posts).select("users.*, count(*) as post_count").group('posts.user_id')
 
     respond_to do |format|
       format.html # index.html.erb
