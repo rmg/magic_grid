@@ -1,6 +1,7 @@
 <h1><%= @title || "Listing posts" %></h1>
 
-<%= magic_grid @posts, [:title, :body, :published, :user, 'Actions'] do |post| %>
+<%= magic_grid @posts, [:title, :body, :published, :user, 'Actions'],
+  :id => 1 do |post| %>
   <tr>
     <td><%= post.title %></td>
     <td><%= post.body.truncate(30) %></td>

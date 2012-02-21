@@ -12,6 +12,7 @@ module MagicGrid
       :bottom_pager => false,
       :ajax => false,
       :per_page => 30,
+      :id => false
     }
 
     def initialize(cols_or_opts, collection = nil, params = {}, opts = {})
@@ -47,8 +48,12 @@ module MagicGrid
         hash << c[:label]
         c
       end
-      @magic_id = hash.join.hash.abs.to_s(36)
-      @magic_id += @collection.to_sql.hash.abs.to_s(36) if @collection.respond_to? :to_sql
+      if @options[:id]
+        @magic_id = @options[:id]
+      else
+        @magic_id = hash.join.hash.abs.to_s(36)
+        @magic_id += @collection.to_sql.hash.abs.to_s(36) if @collection.respond_to? :to_sql
+      end
       sort_col_i = param(:col, opts.fetch(:default_col, 0)).to_i
       if @collection.respond_to? :order and @columns.count > sort_col_i and @columns[sort_col_i].has_key? :sql
         sort_col = @columns[sort_col_i][:sql]
