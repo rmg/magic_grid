@@ -8,7 +8,8 @@ class UsersControllerTest < ActionController::TestCase
   test "should get index" do
     get :index
     assert_response :success
-    assert_not_nil assigns(:users)
+    assert_not_nil assigns(:basic_users)
+    assert_not_nil assigns(:optimized_users)
   end
 
   test "should get new" do
