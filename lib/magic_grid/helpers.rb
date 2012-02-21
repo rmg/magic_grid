@@ -29,7 +29,10 @@ module MagicGrid
         table = content_tag 'thead' do
           thead = content_tag 'tr', :class => 'pagination' do
             content_tag 'td', {:colspan => grid.columns.count} do
-              will_paginate grid.collection, :class => "pagination apple_pagination"
+              will_paginate(grid.collection,
+                            :class => "pagination apple_pagination",
+                            :param_name => grid.param_key(:page)
+                           )
             end
           end
           thead += magic_headers(grid)
@@ -48,7 +51,7 @@ module MagicGrid
         elsif not grid.columns[i].key? :sql
           "<th>#{grid.columns[i][:label]}</th>"
         else
-          sortable_header(i, grid.columns[i][:label], opts)
+          sortable_header(grid, i, grid.columns[i][:label], opts)
         end
       end
       content_tag 'tr', headers.join.html_safe
@@ -101,23 +104,25 @@ module MagicGrid
       end
     end
 
-    def sortable_header(col, label = nil, opts = {})
+    def sortable_header(grid, col, label = nil, opts = {})
       label ||= col.titleize
       default_sort_order = opts.fetch(:default_order, 0)
-      my_params = HashWithIndifferentAccess.new(params.select {|k,v| [:action, :controller, :page].include? k.to_sym }.merge({:col => col}))
+      my_params = params.select { |k,v| [:action, :controller, grid.param_key(:page)].include? k.to_sym }
+      my_params = my_params.merge({grid.param_key(:col) => col})
+      my_params = HashWithIndifferentAccess.new(my_params)
       order = nil
       classes = []
-      current = params[:col].to_s == my_params[:col].to_s
+      current = grid.param(:col).to_s == my_params[grid.param_key(:col)].to_s
       if current
-        order = params.fetch(:order, default_sort_order)
+        order = grid.param(:order, default_sort_order)
         classes << "sort-current" << order_class(order)
-        my_params[:order] = reverse_order(order)
+        my_params[grid.param_key(:order)] = reverse_order(order)
         label += order_icon(order)
       else
-        my_params.delete :order if my_params[:order]
+        my_params.delete grid.param_key(:order) if my_params[grid.param_key(:order)]
         label += order_icon()
       end
-      my_params.delete(:order) if my_params[:order].to_i == default_sort_order.to_i
+      my_params.delete(grid.param_key(:order)) if my_params[grid.param_key(:order)].to_i == default_sort_order.to_i
       Rails.logger.debug "#{col.inspect}, #{classes.inspect}, #{my_params.inspect}, #{params.inspect}"
       content_tag 'th', link_to(label.html_safe, my_params), :class => classes.join(' ')
     end

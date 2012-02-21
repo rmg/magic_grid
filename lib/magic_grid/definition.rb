@@ -3,7 +3,7 @@ require 'will_paginate/view_helpers/action_view'
 module MagicGrid
   class Definition
     include WillPaginate::ActionView
-    attr_accessor :columns, :collection, :magic_id, :options
+    attr_accessor :columns, :collection, :magic_id, :options, :params
 
     DEFAULTS = {
       :wide => false,
@@ -25,6 +25,7 @@ module MagicGrid
       else
         raise "I have no idea what that is, but it's not a Hash or an Array"
       end
+      @params = params
       @collection = collection
       if @collection.respond_to? :table
         table_name = @collection.quoted_table_name
@@ -48,15 +49,23 @@ module MagicGrid
       end
       @magic_id = hash.join.hash.abs.to_s(36)
       @magic_id += @collection.to_sql.hash.abs.to_s(36) if @collection.respond_to? :to_sql
-      sort_col_i = params.fetch(:col, opts.fetch(:default_col, 0)).to_i
+      sort_col_i = param(:col, opts.fetch(:default_col, 0)).to_i
       if @collection.respond_to? :order and @columns.count > sort_col_i and @columns[sort_col_i].has_key? :sql
         sort_col = @columns[sort_col_i][:sql]
-        sort_dir_i = params.fetch(:order, opts.fetch(:default_order, 0)).to_i
+        sort_dir_i = param(:order, opts.fetch(:default_order, 0)).to_i
         sort_dir = ['ASC', 'DESC'][sort_dir_i == 0 ? 0 : 1]
         @collection = @collection.order("#{sort_col} #{sort_dir}")
       end
-      @collection = @collection.paginate(:page => params.fetch(:page, 1),
-                                         :per_page => params.fetch(:per_page, @options[:per_page]))
+      @collection = @collection.paginate(:page => param(:page, 1),
+                                         :per_page => @options[:per_page])
+    end
+
+    def param_key(key)
+      "#{@magic_id}_#{key}".to_sym
+    end
+
+    def param(key, default=nil)
+      @params.fetch(param_key(key), default)
     end
   end
 end
