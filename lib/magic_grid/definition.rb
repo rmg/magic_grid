@@ -39,7 +39,7 @@ module MagicGrid
         c = {:col => c} if c.is_a? String or c.is_a? Symbol
         c[:id] = i
         i += 1
-        if c[:col].is_a? Symbol and table_columns.include? c[:col]
+        if c.key?(:col) and c[:col].is_a? Symbol and table_columns.include? c[:col]
           c[:sql] = "#{table_name}.#{c[:col].to_s}"
         end
         c[:label] = c[:col].to_s.titleize if not c.key? :label
