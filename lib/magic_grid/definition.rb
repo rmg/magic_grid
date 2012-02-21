@@ -12,6 +12,7 @@ module MagicGrid
       :bottom_pager => false,
       :ajax => false,
       :per_page => 30,
+      :searchable => [],
       :id => false
     }
 
@@ -60,6 +61,29 @@ module MagicGrid
         sort_dir_i = param(:order, opts.fetch(:default_order, 0)).to_i
         sort_dir = ['ASC', 'DESC'][sort_dir_i == 0 ? 0 : 1]
         @collection = @collection.order("#{sort_col} #{sort_dir}")
+      end
+      if @collection.respond_to? :where and param(:q) and not @options[:searchable].empty?
+        search_cols = @options[:searchable].map  do |searchable|
+          case searchable
+          when Symbol
+            known = @columns.find {|col| col[:col] == searchable}
+            if known
+              known[:sql]
+            else
+              "#{table_name}.#{col[:col].to_s}"
+            end
+          when Integer
+            @columns[searchable][:sql]
+          when String
+            searchable
+          else
+            raise "Searchable must be identifiable"
+          end
+        end
+        unless search_cols.empty?
+          clauses = search_cols.map {|c| c + " LIKE :search" }.join(" OR ")
+          @collection = @collection.where(clauses, {:search => "%#{param(:q)}%"})
+        end
       end
       @collection = @collection.paginate(:page => param(:page, 1),
                                          :per_page => @options[:per_page])
