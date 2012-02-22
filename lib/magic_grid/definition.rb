@@ -38,10 +38,6 @@ module MagicGrid
         table_name = nil
         table_columns = @columns.each_index.to_a
       end
-      if not @options[:searcher] and not @options[:searchable].empty?
-        @options[:needs_searcher] = true
-        @options[:searcher] = param_key(:searcher)
-      end
       i = 0
       hash = []
       @columns.map! do |c|
@@ -60,6 +56,10 @@ module MagicGrid
       else
         @magic_id = hash.join.hash.abs.to_s(36)
         @magic_id += @collection.to_sql.hash.abs.to_s(36) if @collection.respond_to? :to_sql
+      end
+      if not @options[:searcher] and not @options[:searchable].empty?
+        @options[:needs_searcher] = true
+        @options[:searcher] = param_key(:searcher)
       end
       sort_col_i = param(:col, opts.fetch(:default_col, 0)).to_i
       if @collection.respond_to? :order and @columns.count > sort_col_i and @columns[sort_col_i].has_key? :sql
