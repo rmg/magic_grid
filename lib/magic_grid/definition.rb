@@ -7,8 +7,8 @@ module MagicGrid
 
     DEFAULTS = {
       :classes => [],
-      :top_pager => true,
-      :bottom_pager => false,
+      :top_pager => false,
+      :bottom_pager => true,
       :ajax => false,
       :per_page => 30,
       :searchable => [],
