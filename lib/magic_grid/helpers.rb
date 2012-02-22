@@ -92,13 +92,19 @@ module MagicGrid
     end
 
     def magic_row(record, cols, collection = nil)
-      cells = []
       grid = normalize_magic(collection, cols)
-      grid.columns.each do |c|
-        method = c[:to_s] || c[:col]
-        cells << (record.respond_to?(method) ? record.send(method).to_s : '')
+      content_tag 'tr', :class => cycle('odd', 'even') do
+        grid.columns.map do |c|
+          content_tag 'td' do
+            method = c[:to_s] || c[:col]
+            if method.respond_to? :call
+              method.call(record)
+            elsif record.respond_to? method
+              record.send(method)
+            end.to_s
+          end
+        end.join.html_safe
       end
-      content_tag('tr', cells.map {|c| content_tag('td', c)}.join.html_safe)
     end
 
     def reverse_order(order)
