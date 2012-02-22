@@ -35,18 +35,17 @@ module MagicGrid
         table = content_tag 'thead' do
           thead = ''.html_safe
           if grid.options[:needs_searcher]
-            thead += content_tag 'tr', :class => 'searcher' do
-              content_tag 'th', {:colspan => grid.columns.count} do
+            thead += content_tag 'tr' do
+              content_tag 'th', :class => 'searcher', :colspan => grid.columns.count do
                 label_tag(grid.options[:searcher].to_sym, 'Search: ') +
                   search_field_tag(grid.options[:searcher].to_sym, grid.param(:q))
               end
             end
           end
           if grid.options[:top_pager]
-            thead += content_tag 'tr', :class => 'pagination' do
+            thead += content_tag 'tr' do
               content_tag 'td', {:colspan => grid.columns.count} do
                 will_paginate(grid.collection,
-                              :class => "pagination apple_pagination",
                               :param_name => grid.param_key(:page)
                              )
               end
@@ -59,10 +58,9 @@ module MagicGrid
         end
         if grid.options[:bottom_pager]
           table += content_tag 'tfoot' do
-            content_tag 'tr', :class => 'pagination' do
+            content_tag 'tr' do
               content_tag 'td', {:colspan => grid.columns.count} do
                 will_paginate(grid.collection,
-                              :class => "pagination apple_pagination",
                               :param_name => grid.param_key(:page)
                              )
               end
