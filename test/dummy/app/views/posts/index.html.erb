@@ -1,6 +1,5 @@
 <h1><%= @title || "Listing posts" %></h1>
 
-<%= search_field_tag :short_posts_search %>
 <%= magic_grid(@posts,
                [ :title,
                  {:col => :body, :to_s => Proc.new {|r| r.body.truncate(30)} },
@@ -15,7 +14,6 @@
                  }
                ],
                :searchable => [:body, 'users.name'],
-               :searcher => :short_posts_search,
                :per_page => 5,
                :id => 1, :ajax => true) %>
 

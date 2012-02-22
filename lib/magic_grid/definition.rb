@@ -14,6 +14,8 @@ module MagicGrid
       :searchable => [],
       :id => false,
       :searcher => false,
+      :needs_searcher => false,
+      :live_search => true,
     }
 
     def initialize(cols_or_opts, collection = nil, params = {}, opts = {})
@@ -35,6 +37,10 @@ module MagicGrid
       else
         table_name = nil
         table_columns = @columns.each_index.to_a
+      end
+      if not @options[:searcher] and not @options[:searchable].empty?
+        @options[:needs_searcher] = true
+        @options[:searcher] = param_key(:searcher)
       end
       i = 0
       hash = []

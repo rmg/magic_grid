@@ -29,11 +29,21 @@ module MagicGrid
                   :id => grid.magic_id,
                   :data => {
                     :searcher => grid.options[:searcher],
-                    :current => url_for
+                    :current => url_for,
+                    :live_search => grid.options[:live_search]
                   }) do
         table = content_tag 'thead' do
+          thead = ''.html_safe
+          if grid.options[:needs_searcher]
+            thead += content_tag 'tr', :class => 'searcher' do
+              content_tag 'th', {:colspan => grid.columns.count} do
+                label_tag(grid.options[:searcher].to_sym, 'Search: ') +
+                  search_field_tag(grid.options[:searcher].to_sym, grid.param(:q))
+              end
+            end
+          end
           if grid.options[:top_pager]
-            thead = content_tag 'tr', :class => 'pagination' do
+            thead += content_tag 'tr', :class => 'pagination' do
               content_tag 'td', {:colspan => grid.columns.count} do
                 will_paginate(grid.collection,
                               :class => "pagination apple_pagination",
@@ -41,8 +51,6 @@ module MagicGrid
                              )
               end
             end
-          else
-            thead = ''.html_safe
           end
           thead += magic_headers(grid)
         end
