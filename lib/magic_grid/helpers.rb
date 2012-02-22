@@ -108,9 +108,7 @@ module MagicGrid
     end
 
     def reverse_order(order)
-      opp = order.to_i == 0 ? 1 : 0
-      Rails.logger.debug "CALL reverse_order( #{order} ) => #{opp}"
-      opp
+      order.to_i == 0 ? 1 : 0
     end
 
     def order_icon(order = -1)
@@ -152,7 +150,6 @@ module MagicGrid
         label += order_icon()
       end
       my_params.delete(grid.param_key(:order)) if my_params[grid.param_key(:order)].to_i == default_sort_order.to_i
-      Rails.logger.debug "#{col.inspect}, #{classes.inspect}, #{my_params.inspect}, #{params.inspect}"
       content_tag 'th', link_to(label.html_safe, my_params), :class => classes.join(' ')
     end
 
