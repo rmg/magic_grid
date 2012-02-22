@@ -3,7 +3,7 @@ require 'will_paginate/view_helpers/action_view'
 module MagicGrid
   class Definition
     include WillPaginate::ActionView
-    attr_accessor :columns, :collection, :magic_id, :options, :params
+    attr_accessor :columns, :collection, :magic_id, :options, :params, :accepted
 
     DEFAULTS = {
       :classes => [],
@@ -16,10 +16,10 @@ module MagicGrid
       :searcher => false,
       :needs_searcher => false,
       :live_search => true,
+      :listeners => {},
     }
 
     def initialize(cols_or_opts, collection = nil, params = {}, opts = {})
-      Rails.logger.debug "#{self.class}( #{collection.class} )"
       if cols_or_opts.is_a? Hash
         @options = DEFAULTS.merge(cols_or_opts.reject {|k| k == :cols})
         @columns = cols_or_opts.fetch(:cols, [])
@@ -68,27 +68,37 @@ module MagicGrid
         sort_dir = ['ASC', 'DESC'][sort_dir_i == 0 ? 0 : 1]
         @collection = @collection.order("#{sort_col} #{sort_dir}")
       end
-      if @collection.respond_to? :where and param(:q) and not @options[:searchable].empty?
-        search_cols = @options[:searchable].map  do |searchable|
-          case searchable
-          when Symbol
-            known = @columns.find {|col| col[:col] == searchable}
-            if known
-              known[:sql]
-            else
-              "#{table_name}.#{col[:col].to_s}"
-            end
-          when Integer
-            @columns[searchable][:sql]
-          when String
-            searchable
-          else
-            raise "Searchable must be identifiable"
+      @accepted = [:action, :controller, param_key(:page)]
+      @accepted << param_key(:q) unless @options[:searchable].empty?
+      @accepted += @options[:listeners].values #.map {|k| param_key k }
+      if @collection.respond_to? :where
+        @options[:listeners].each_pair do |key, value|
+          if @params[value] and not @params[value].empty?
+            @collection = @collection.where(key => @params[value])
           end
         end
-        unless search_cols.empty?
-          clauses = search_cols.map {|c| c + " LIKE :search" }.join(" OR ")
-          @collection = @collection.where(clauses, {:search => "%#{param(:q)}%"})
+        if param(:q) and not @options[:searchable].empty?
+          search_cols = @options[:searchable].map  do |searchable|
+            case searchable
+            when Symbol
+              known = @columns.find {|col| col[:col] == searchable}
+              if known
+                known[:sql]
+              else
+                "#{table_name}.#{col[:col].to_s}"
+              end
+            when Integer
+              @columns[searchable][:sql]
+            when String
+              searchable
+            else
+              raise "Searchable must be identifiable"
+            end
+          end
+          unless search_cols.empty?
+            clauses = search_cols.map {|c| c + " LIKE :search" }.join(" OR ")
+            @collection = @collection.where(clauses, {:search => "%#{param(:q)}%"})
+          end
         end
       end
       @collection = @collection.paginate(:page => param(:page, 1),
@@ -101,6 +111,9 @@ module MagicGrid
 
     def param(key, default=nil)
       @params.fetch(param_key(key), default)
+    end
+
+    def accepted_params
     end
   end
 end

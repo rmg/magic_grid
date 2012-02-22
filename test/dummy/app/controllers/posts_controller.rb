@@ -4,7 +4,7 @@ class PostsController < ApplicationController
   def index
     @posts = Post.includes(:user)
 
-    if params.key? :user_id
+    if params.key? :user_id and not params[:user_id].empty?
       @title = "Posts by: #{User.find(params[:user_id]).name}"
       @posts = @posts.where(:user_id => params[:user_id])
     end

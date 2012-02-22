@@ -24,13 +24,15 @@ module MagicGrid
       classes = ['magic_grid'] + grid.options[:classes]
       classes << 'ajaxed_pager' if grid.options[:ajax]
       classes << 'has-searcher' if grid.options[:searcher]
+      classes << 'has-listeners' unless grid.options[:listeners].empty?
       content_tag('table',
                   :class => classes.join(' '),
                   :id => grid.magic_id,
                   :data => {
                     :searcher => grid.options[:searcher],
                     :current => url_for,
-                    :live_search => grid.options[:live_search]
+                    :live_search => grid.options[:live_search],
+                    :listeners => grid.options[:listeners]
                   }) do
         table = content_tag 'thead', :class => "ui-widget-header" do
           thead = ''.html_safe
@@ -141,7 +143,7 @@ module MagicGrid
       label ||= col.titleize
       default_sort_order = opts.fetch(:default_order, 0)
       my_params = params.select do |k,v|
-        [:action, :controller, grid.param_key(:page), grid.param_key(:q)].include? k.to_sym
+        grid.accepted.include? k.to_sym
       end
       my_params = my_params.merge({grid.param_key(:col) => col})
       my_params = HashWithIndifferentAccess.new(my_params)
