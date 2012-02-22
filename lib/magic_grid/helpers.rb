@@ -142,11 +142,13 @@ module MagicGrid
     def sortable_header(grid, col, label = nil, opts = {})
       label ||= col.titleize
       default_sort_order = opts.fetch(:default_order, 0)
-      my_params = params.select { |k,v| [:action, :controller, grid.param_key(:page)].include? k.to_sym }
+      my_params = params.select do |k,v|
+        [:action, :controller, grid.param_key(:page), grid.param_key(:q)].include? k.to_sym
+      end
       my_params = my_params.merge({grid.param_key(:col) => col})
       my_params = HashWithIndifferentAccess.new(my_params)
       order = nil
-      classes = []
+      classes = ['sorter']
       current = grid.param(:col).to_s == my_params[grid.param_key(:col)].to_s
       if current
         order = grid.param(:order, default_sort_order)
@@ -158,7 +160,9 @@ module MagicGrid
         label += order_icon()
       end
       my_params.delete(grid.param_key(:order)) if my_params[grid.param_key(:order)].to_i == default_sort_order.to_i
-      content_tag 'th', link_to(label.html_safe, my_params), :class => classes.join(' ')
+      content_tag 'th', :class => classes.join(' ') do
+        link_to label.html_safe, my_params
+      end
     end
 
     ::ActionView::Base.send :include, self
