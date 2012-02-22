@@ -36,16 +36,30 @@ module MagicGrid
         table = content_tag 'thead' do
           thead = content_tag 'tr', :class => 'pagination' do
             content_tag 'td', {:colspan => grid.columns.count} do
-              will_paginate(grid.collection,
-                            :class => "pagination apple_pagination",
-                            :param_name => grid.param_key(:page)
-                           )
+              if grid.options[:top_pager]
+                will_paginate(grid.collection,
+                              :class => "pagination apple_pagination",
+                              :param_name => grid.param_key(:page)
+                             )
+              end
             end
           end
           thead += magic_headers(grid)
         end
         table += content_tag 'tbody' do
           magic_rows(grid, &block)
+        end
+        table += content_tag 'tfoot' do
+          content_tag 'tr', :class => 'pagination' do
+            content_tag 'td', {:colspan => grid.columns.count} do
+              if grid.options[:bottom_pager]
+                will_paginate(grid.collection,
+                              :class => "pagination apple_pagination",
+                              :param_name => grid.param_key(:page)
+                             )
+              end
+            end
+          end
         end
       end
     end
