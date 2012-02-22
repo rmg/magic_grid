@@ -1,7 +1,9 @@
 <h1><%= @title || "Listing posts" %></h1>
 
+<%= search_field_tag :posts_search %>
 <%= magic_grid @posts, [:title, :body, :published, :user, 'Actions'],
-  :searchable => [:body, 'users.name'], :id => 1 do |post| %>
+  :searchable => [:body, 'users.name'], :searcher => :posts_search,
+  :id => 1, :ajax => true do |post| %>
   <tr>
     <td><%= post.title %></td>
     <td><%= post.body.truncate(30) %></td>
