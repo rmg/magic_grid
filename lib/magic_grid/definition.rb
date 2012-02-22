@@ -6,8 +6,7 @@ module MagicGrid
     attr_accessor :columns, :collection, :magic_id, :options, :params
 
     DEFAULTS = {
-      :wide => false,
-      :prefix => '',
+      :classes => [],
       :top_pager => true,
       :bottom_pager => false,
       :ajax => false,

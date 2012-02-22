@@ -21,9 +21,7 @@ module MagicGrid
 
     def magic_grid(collection = nil, cols = nil, opts = {}, &block)
       grid = normalize_magic(collection, cols, opts)
-      classes = ['magic_grid']
-      classes << 'zebra' if grid.options[:striped]
-      classes << 'wide' if grid.options[:wide]
+      classes = ['magic_grid'] + grid.options[:classes]
       classes << 'ajaxed_pager' if grid.options[:ajax]
       classes << 'has-searcher' if grid.options[:searcher]
       content_tag('table',
