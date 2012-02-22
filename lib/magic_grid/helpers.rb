@@ -36,7 +36,7 @@ module MagicGrid
           thead = ''.html_safe
           if grid.options[:needs_searcher]
             thead += content_tag 'tr' do
-              content_tag 'th', :class => 'searcher', :colspan => grid.columns.count do
+              content_tag 'td', :class => 'searcher', :colspan => grid.columns.count do
                 label_tag(grid.options[:searcher].to_sym, 'Search: ') +
                   search_field_tag(grid.options[:searcher].to_sym, grid.param(:q))
               end
