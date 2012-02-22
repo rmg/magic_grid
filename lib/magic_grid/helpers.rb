@@ -32,7 +32,7 @@ module MagicGrid
                     :current => url_for,
                     :live_search => grid.options[:live_search]
                   }) do
-        table = content_tag 'thead' do
+        table = content_tag 'thead', :class => "ui-widget-header" do
           thead = ''.html_safe
           if grid.options[:needs_searcher]
             thead += content_tag 'tr' do
@@ -53,11 +53,11 @@ module MagicGrid
           end
           thead += magic_headers(grid)
         end
-        table += content_tag 'tbody' do
+        table += content_tag 'tbody', :class => "ui-widget-content" do
           magic_rows(grid, &block)
         end
         if grid.options[:bottom_pager]
-          table += content_tag 'tfoot' do
+          table += content_tag 'tfoot', :class => "ui-widget-header" do
             content_tag 'tr' do
               content_tag 'td', {:colspan => grid.columns.count} do
                 will_paginate(grid.collection,
@@ -146,7 +146,7 @@ module MagicGrid
       my_params = my_params.merge({grid.param_key(:col) => col})
       my_params = HashWithIndifferentAccess.new(my_params)
       order = nil
-      classes = ['sorter']
+      classes = ['sorter ui-state-default']
       current = grid.param(:col).to_s == my_params[grid.param_key(:col)].to_s
       if current
         order = grid.param(:order, default_sort_order)
