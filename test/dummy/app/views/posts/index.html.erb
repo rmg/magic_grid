@@ -1,10 +1,23 @@
 <h1><%= @title || "Listing posts" %></h1>
 
 <%= search_field_tag :short_posts_search %>
-<%= magic_grid @posts, [:title, {:col => :body, :to_s => Proc.new {|r| r.body.truncate(30)} }, :published, :user, 'Actions'],
-  :searchable => [:body, 'users.name'], :searcher => :short_posts_search,
-  :per_page => 5,
-  :id => 1, :ajax => true %>
+<%= magic_grid(@posts,
+               [ :title,
+                 {:col => :body, :to_s => Proc.new {|r| r.body.truncate(30)} },
+                 :published,
+                 :user,
+                 { :label => 'Actions',
+                   :to_s => Proc.new { |post| %>
+                     <%= link_to 'Show', post %>
+                     <%= link_to 'Edit', edit_post_path(post) %>
+                     <%= link_to 'Destroy', post, confirm: 'Are you sure?', method: :delete %>
+                   <% }
+                 }
+               ],
+               :searchable => [:body, 'users.name'],
+               :searcher => :short_posts_search,
+               :per_page => 5,
+               :id => 1, :ajax => true) %>
 
 <%= search_field_tag :posts_search %>
 <%= magic_grid @posts, [:title, :body, :published, :user, 'Actions'],
