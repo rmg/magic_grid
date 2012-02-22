@@ -13,7 +13,8 @@ module MagicGrid
       :ajax => false,
       :per_page => 30,
       :searchable => [],
-      :id => false
+      :id => false,
+      :searcher => false,
     }
 
     def initialize(cols_or_opts, collection = nil, params = {}, opts = {})

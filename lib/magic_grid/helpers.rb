@@ -25,7 +25,14 @@ module MagicGrid
       classes << 'zebra' if grid.options[:striped]
       classes << 'wide' if grid.options[:wide]
       classes << 'ajaxed_pager' if grid.options[:ajax]
-      content_tag 'table', :class => classes.join(' '), :id => "magic_#{grid.magic_id}" do
+      classes << 'has-searcher' if grid.options[:searcher]
+      content_tag('table',
+                  :class => classes.join(' '),
+                  :id => grid.magic_id,
+                  :data => {
+                    :searcher => grid.options[:searcher],
+                    :current => url_for
+                  }) do
         table = content_tag 'thead' do
           thead = content_tag 'tr', :class => 'pagination' do
             content_tag 'td', {:colspan => grid.columns.count} do

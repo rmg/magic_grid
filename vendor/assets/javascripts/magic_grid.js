@@ -7,4 +7,19 @@ $(function () {
         $container.load(url + ' #' + $container.attr('id') + " > *");
         return false;
     });
+    $(".has-searcher.ajaxed_pager").each( function () {
+        var $grid = $(this),
+            $input = $("#" + $grid.data("searcher")),
+            minLength = $input.data("minLength") || 3;
+        $input.on("keyup", function () {
+            if (this.value.length >= minLength) {
+                var id = $grid.attr('id'),
+                    params = {},
+                    base_url = $grid.data("current");
+                params[id + "_q"] = this.value;
+                $grid.load(base_url + "?" + $.param(params) +
+                           ' #' + id + ' > *');
+            }
+        });
+    });
 });
