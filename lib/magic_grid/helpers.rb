@@ -68,13 +68,13 @@ module MagicGrid
 
     def magic_headers(cols, collection = nil, opts = {})
       grid = normalize_magic(collection, cols, opts)
-      headers = grid.columns.each_index.map do |i|
-        if grid.columns[i].is_a? String
-          "<th>#{grid.columns[i]}</th>"
-        elsif not grid.columns[i].key? :sql
-          "<th>#{grid.columns[i][:label]}</th>"
+      headers = grid.columns.map do |col|
+        if col.is_a? String
+          "<th>#{col}</th>"
+        elsif not col.key? :sql
+          "<th>#{col[:label]}</th>"
         else
-          sortable_header(grid, i, grid.columns[i][:label], opts)
+          sortable_header(grid, col[:id], col[:label], opts)
         end
       end
       content_tag 'tr', headers.join.html_safe
