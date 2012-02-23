@@ -19,7 +19,7 @@ module MagicGrid
       :live_search => true,
       :listeners => {},
       :default_col => 0,
-      :default_order => 1,
+      :default_order => :asc,
     }
 
     def initialize(cols_or_opts, collection = nil, params = {}, opts = {})
