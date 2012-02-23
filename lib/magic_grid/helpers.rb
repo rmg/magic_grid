@@ -78,9 +78,9 @@ module MagicGrid
       grid = normalize_magic(collection, cols, opts)
       headers = grid.columns.map do |col|
         if col.is_a? String
-          "<th>#{col}</th>"
+          "<th class='ui-state-default'>#{col}</th>"
         elsif not col.key? :sql
-          "<th>#{col[:label]}</th>"
+          "<th class='ui-state-default'>#{col[:label]}</th>"
         else
           sortable_header(grid, col[:id], col[:label], opts)
         end
