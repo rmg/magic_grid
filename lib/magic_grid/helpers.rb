@@ -44,7 +44,7 @@ module MagicGrid
               end
             end
           end
-          if grid.options[:top_pager]
+          if grid.options[:per_page] and grid.options[:top_pager]
             thead += content_tag 'tr' do
               content_tag 'td', {:colspan => grid.columns.count} do
                 will_paginate(grid.collection,
@@ -65,7 +65,7 @@ module MagicGrid
         end
         table += content_tag 'tfoot', :class => "ui-widget-header" do
           tfoot = ''.html_safe
-          if grid.options[:bottom_pager]
+          if grid.options[:per_page] and grid.options[:bottom_pager]
             tfoot += content_tag 'tr' do
               content_tag 'td', {:colspan => grid.columns.count} do
                 will_paginate(grid.collection,

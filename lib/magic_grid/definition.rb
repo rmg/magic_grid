@@ -107,8 +107,10 @@ module MagicGrid
           end
         end
       end
-      @collection = @collection.paginate(:page => param(:page, 1),
-                                         :per_page => @options[:per_page])
+      if @options[:per_page]
+        @collection = @collection.paginate(:page => param(:page, 1),
+                                           :per_page => @options[:per_page])
+      end
     end
 
     def param_key(key)

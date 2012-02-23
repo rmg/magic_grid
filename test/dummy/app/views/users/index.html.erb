@@ -17,7 +17,7 @@
 
 <%= magic_grid(@optimized_users,
                [{:sql => 'users.name', :label => 'Name'}, :email, :posts, 'Actions'],
-               :per_page => 10,
+               :per_page => false,
                :searchable => [0, 1]) do |user| %>
   <tr>
     <td><%= user.name %></td>
