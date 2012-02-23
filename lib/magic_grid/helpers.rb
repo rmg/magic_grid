@@ -141,7 +141,7 @@ module MagicGrid
 
     def sortable_header(grid, col, label = nil, opts = {})
       label ||= col.titleize
-      default_sort_order = opts.fetch(:default_order, 0)
+      default_sort_order = opts.fetch(:default_order, grid.options[:default_order])
       my_params = params.select do |k,v|
         grid.accepted.include? k.to_sym
       end
@@ -149,9 +149,9 @@ module MagicGrid
       my_params = HashWithIndifferentAccess.new(my_params)
       order = nil
       classes = ['sorter ui-state-default']
-      current = grid.param(:col).to_s == my_params[grid.param_key(:col)].to_s
+      current = col.to_s == grid.current_sort_col.to_s
       if current
-        order = grid.param(:order, default_sort_order)
+        order = grid.current_sort_dir
         classes << "sort-current" << order_class(order)
         my_params[grid.param_key(:order)] = reverse_order(order)
         label += order_icon(order)

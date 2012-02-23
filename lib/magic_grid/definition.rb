@@ -3,7 +3,8 @@ require 'will_paginate/view_helpers/action_view'
 module MagicGrid
   class Definition
     include WillPaginate::ActionView
-    attr_accessor :columns, :collection, :magic_id, :options, :params, :accepted
+    attr_accessor :columns, :collection, :magic_id, :options, :params, :accepted,
+      :current_sort_col, :current_sort_dir
 
     DEFAULTS = {
       :classes => [],
@@ -17,6 +18,8 @@ module MagicGrid
       :needs_searcher => false,
       :live_search => true,
       :listeners => {},
+      :default_col => 0,
+      :default_order => 1,
     }
 
     def initialize(cols_or_opts, collection = nil, params = {}, opts = {})
@@ -61,10 +64,10 @@ module MagicGrid
         @options[:needs_searcher] = true
         @options[:searcher] = param_key(:searcher)
       end
-      sort_col_i = param(:col, opts.fetch(:default_col, 0)).to_i
+      @current_sort_col = sort_col_i = param(:col, @options[:default_col]).to_i
       if @collection.respond_to? :order and @columns.count > sort_col_i and @columns[sort_col_i].has_key? :sql
         sort_col = @columns[sort_col_i][:sql]
-        sort_dir_i = param(:order, opts.fetch(:default_order, 0)).to_i
+        @current_sort_dir = sort_dir_i = param(:order, @options[:default_order]).to_i
         sort_dir = ['ASC', 'DESC'][sort_dir_i == 0 ? 0 : 1]
         @collection = @collection.order("#{sort_col} #{sort_dir}")
       end
