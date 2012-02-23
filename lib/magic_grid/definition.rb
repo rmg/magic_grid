@@ -4,7 +4,7 @@ module MagicGrid
   class Definition
     include WillPaginate::ActionView
     attr_accessor :columns, :collection, :magic_id, :options, :params, :accepted,
-      :current_sort_col, :current_sort_dir
+      :current_sort_col, :current_order, :default_order
 
     DEFAULTS = {
       :classes => [],
@@ -32,6 +32,7 @@ module MagicGrid
       else
         raise "I have no idea what that is, but it's not a Hash or an Array"
       end
+      @default_order = @options[:default_order]
       @params = params
       @collection = collection
       if @collection.respond_to? :table
@@ -67,8 +68,8 @@ module MagicGrid
       @current_sort_col = sort_col_i = param(:col, @options[:default_col]).to_i
       if @collection.respond_to? :order and @columns.count > sort_col_i and @columns[sort_col_i].has_key? :sql
         sort_col = @columns[sort_col_i][:sql]
-        @current_sort_dir = sort_dir_i = param(:order, @options[:default_order]).to_i
-        sort_dir = ['ASC', 'DESC'][sort_dir_i == 0 ? 0 : 1]
+        @current_order = order(param(:order, @default_order))
+        sort_dir = order_sql(@current_order)
         @collection = @collection.order("#{sort_col} #{sort_dir}")
       end
       @accepted = [:action, :controller, param_key(:page)]
@@ -116,7 +117,19 @@ module MagicGrid
       @params.fetch(param_key(key), default)
     end
 
-    def accepted_params
+    def order(something)
+      case something
+      when 1, "1", :desc, :DESC, "desc", "DESC"
+        1
+      #when 0, "0", :asc, :ASC, "asc", "ASC"
+      #  0
+      else
+        0
+      end
+    end
+
+    def order_sql(something)
+      ["ASC", "DESC"][order(something)]
     end
   end
 end
