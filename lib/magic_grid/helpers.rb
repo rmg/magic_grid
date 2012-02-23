@@ -53,14 +53,20 @@ module MagicGrid
               end
             end
           end
+          if thead.empty? and not grid.options[:empty_header]
+            thead = content_tag 'tr' do
+              content_tag 'td', nil, :colspan => grid.columns.count, :class => 'full-width'
+            end
+          end
           thead += magic_headers(grid)
         end
         table += content_tag 'tbody', :class => "ui-widget-content" do
           magic_rows(grid, &block)
         end
-        if grid.options[:bottom_pager]
-          table += content_tag 'tfoot', :class => "ui-widget-header" do
-            content_tag 'tr' do
+        table += content_tag 'tfoot', :class => "ui-widget-header" do
+          tfoot = ''.html_safe
+          if grid.options[:bottom_pager]
+            tfoot += content_tag 'tr' do
               content_tag 'td', {:colspan => grid.columns.count} do
                 will_paginate(grid.collection,
                               :param_name => grid.param_key(:page)
@@ -68,8 +74,12 @@ module MagicGrid
               end
             end
           end
-        else
-          table
+          if tfoot.empty? and not grid.options[:empty_footer]
+            tfoot = content_tag 'tr' do
+              content_tag 'td', nil, :colspan => grid.columns.count, :class => 'full-width'
+            end
+          end
+          tfoot
         end
       end
     end

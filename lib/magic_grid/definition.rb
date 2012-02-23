@@ -20,6 +20,8 @@ module MagicGrid
       :listeners => {},
       :default_col => 0,
       :default_order => :asc,
+      :empty_header => false,
+      :empty_footer => false,
     }
 
     def initialize(cols_or_opts, collection = nil, params = {}, opts = {})
