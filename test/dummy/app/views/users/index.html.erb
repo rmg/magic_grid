@@ -15,6 +15,13 @@
   </tr>
 <% end %>
 
+<%= magic_grid( Array(1..1000), ["Number", "Word"], :per_page => 5) do |n| %>
+  <tr>
+    <td><%= n %></td>
+    <td><%= n.ordinalize %></td>
+  </tr>
+<% end %>
+
 <%= magic_grid(@optimized_users,
                [{:sql => 'users.name', :label => 'Name'}, :email, :posts, 'Actions'],
                :per_page => false,
