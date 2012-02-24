@@ -40,7 +40,9 @@ module MagicGrid
             thead += content_tag 'tr' do
               content_tag 'td', :class => 'searcher', :colspan => grid.columns.count do
                 label_tag(grid.options[:searcher].to_sym, 'Search: ') +
-                  search_field_tag(grid.options[:searcher].to_sym, grid.param(:q))
+                  search_field_tag(grid.options[:searcher].to_sym,
+                                   grid.param(:q),
+                                   :data => {:min_length => grid.options[:min_search_length]})
               end
             end
           end

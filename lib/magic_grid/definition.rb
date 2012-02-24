@@ -13,6 +13,7 @@ module MagicGrid
       :ajax => false,
       :per_page => 30,
       :searchable => [],
+      :min_search_length => 3,
       :id => false,
       :searcher => false,
       :needs_searcher => false,
