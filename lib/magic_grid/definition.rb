@@ -10,7 +10,7 @@ module MagicGrid
       :classes => [],
       :top_pager => false,
       :bottom_pager => true,
-      :ajax => false,
+      :remote => false,
       :per_page => 30,
       :searchable => [],
       :min_search_length => 3,

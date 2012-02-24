@@ -22,7 +22,6 @@ module MagicGrid
     def magic_grid(collection = nil, cols = nil, opts = {}, &block)
       grid = normalize_magic(collection, cols, opts)
       classes = ['magic_grid'] << grid.options[:classes]
-      classes << 'ajaxed_pager' if grid.options[:ajax]
       classes << 'has-searcher' if grid.options[:searcher]
       classes << 'has-listeners' unless grid.options[:listeners].empty?
       content_tag('table',
@@ -32,7 +31,8 @@ module MagicGrid
                     :searcher => grid.options[:searcher],
                     :current => url_for,
                     :live_search => grid.options[:live_search],
-                    :listeners => grid.options[:listeners]
+                    :listeners => grid.options[:listeners],
+                    :remote => grid.options[:remote]
                   }) do
         table = content_tag 'thead', :class => "ui-widget-header" do
           thead = ''.html_safe
@@ -196,7 +196,7 @@ module MagicGrid
       end
       my_params.delete(grid.param_key(:order)) if my_params[grid.param_key(:order)].to_i == default_sort_order.to_i
       content_tag 'th', :class => classes.join(' ') do
-        link_to label.html_safe, my_params
+        link_to label.html_safe, my_params, :remote => grid.options[:remote]
       end
     end
 

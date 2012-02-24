@@ -23,7 +23,7 @@
                  :user_id => :user_id
                },
                :id => 1,
-               :ajax => true,
+               :remote => true,
               ) %>
 
 <%= magic_grid(@posts,
@@ -41,12 +41,12 @@
                ],
                :searchable => [:body, 'users.name'],
                :per_page => 5,
-               :id => 2, :ajax => true) %>
+               :id => 2, :remote => true) %>
 
 <%= search_field_tag :posts_search %>
 <%= magic_grid @posts, [:title, :body, :published, :user, 'Actions'],
   :searchable => [:body, 'users.name'], :searcher => :posts_search,
-  :id => 3, :ajax => true do |post| %>
+  :id => 3, :remote => true do |post| %>
   <tr>
     <td><%= post.title %></td>
     <td><%= post.body.truncate(30) %></td>
