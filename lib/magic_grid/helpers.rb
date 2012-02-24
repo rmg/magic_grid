@@ -36,28 +36,49 @@ module MagicGrid
                   }) do
         table = content_tag 'thead', :class => "ui-widget-header" do
           thead = ''.html_safe
+          has_spinner = false
+          spinner = tag('span',
+                        :id => (grid.magic_id.to_s + "_spinner"),
+                        :class => "magic_grid_spinner"
+                       )
           if grid.options[:needs_searcher]
             thead << content_tag('tr') do
               content_tag 'td', :class => 'searcher', :colspan => grid.columns.count do
-                label_tag(grid.options[:searcher].to_sym, 'Search: ') <<
-                  search_field_tag(grid.options[:searcher].to_sym,
-                                   grid.param(:q),
-                                   :data => {:min_length => grid.options[:min_search_length]})
+                searcher = label_tag(grid.options[:searcher].to_sym, 'Search: ')
+                searcher << search_field_tag(grid.options[:searcher].to_sym,
+                                             grid.param(:q),
+                                             :data => {:min_length =>
+                                               grid.options[:min_search_length]})
+                unless has_spinner
+                  has_spinner = true
+                  searcher << spinner
+                end
+                searcher
               end
             end
           end
           if grid.options[:per_page] and grid.options[:top_pager]
             thead << content_tag('tr') do
               content_tag 'td', {:colspan => grid.columns.count} do
-                will_paginate(grid.collection,
-                              :param_name => grid.param_key(:page)
-                             )
+                pager = will_paginate(grid.collection,
+                                      :param_name => grid.param_key(:page)
+                                     )
+                unless has_spinner
+                  has_spinner = true
+                  pager << spinner
+                end
+                pager
               end
             end
           end
           if thead.empty? and not grid.options[:empty_header]
             thead = content_tag 'tr' do
-              content_tag 'td', nil, :colspan => grid.columns.count, :class => 'full-width'
+              content_tag 'td', :colspan => grid.columns.count, :class => 'full-width' do
+                unless has_spinner
+                  has_spnner = true
+                  spinner
+                end
+              end
             end
           end
           thead << magic_headers(grid)
