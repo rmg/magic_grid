@@ -21,19 +21,19 @@ module MagicGrid
 
     def magic_grid(collection = nil, cols = nil, opts = {}, &block)
       grid = normalize_magic(collection, cols, opts)
+      data = {
+        :searcher => grid.options[:searcher],
+        :current => url_for,
+        :live_search => grid.options[:live_search],
+        :listeners => (grid.options[:listeners] unless grid.options[:listeners].empty?),
+        :remote => grid.options[:remote]
+      }
       classes = ['magic_grid'] << grid.options[:classes]
-      classes << 'has-searcher' if grid.options[:searcher]
-      classes << 'has-listeners' unless grid.options[:listeners].empty?
       content_tag('table',
                   :class => classes.join(' '),
                   :id => grid.magic_id,
-                  :data => {
-                    :searcher => grid.options[:searcher],
-                    :current => url_for,
-                    :live_search => grid.options[:live_search],
-                    :listeners => grid.options[:listeners],
-                    :remote => grid.options[:remote]
-                  }) do
+                  :data => data.select {|_,v| v }
+                  ) do
         table = content_tag 'thead', :class => "ui-widget-header" do
           thead = ''.html_safe
           has_spinner = false
