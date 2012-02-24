@@ -109,16 +109,18 @@ module MagicGrid
 
     def magic_headers(cols, collection = nil, opts = {})
       grid = normalize_magic(collection, cols, opts)
-      headers = grid.columns.map do |col|
-        if col.is_a? String
-          "<th class='ui-state-default'>#{col}</th>"
-        elsif not col.key? :sql
-          "<th class='ui-state-default'>#{col[:label]}</th>"
-        else
-          sortable_header(grid, col[:id], col[:label], opts)
+      content_tag 'tr' do
+        grid.columns.reduce(''.html_safe) do |acc, col|
+          acc <<
+          if col.is_a? String
+            "<th class='ui-state-default'>#{col}</th>".html_safe
+          elsif not col.key? :sql
+            "<th class='ui-state-default'>#{col[:label]}</th>".html_safe
+          else
+            sortable_header(grid, col[:id], col[:label], opts)
+          end
         end
       end
-      content_tag 'tr', headers.join.html_safe
     end
 
     def magic_rows(cols, collection = nil, &block)
@@ -135,8 +137,8 @@ module MagicGrid
     def magic_row(record, cols, collection = nil)
       grid = normalize_magic(collection, cols)
       content_tag 'tr', :class => cycle('odd', 'even') do
-        grid.columns.map do |c|
-          content_tag 'td' do
+        grid.columns.reduce(''.html_safe) do |acc, c|
+          acc << content_tag('td') do
             method = c[:to_s] || c[:col]
             if method.respond_to? :call
               method.call(record)
@@ -144,7 +146,7 @@ module MagicGrid
               record.send(method)
             end.to_s
           end
-        end.join.html_safe
+        end
       end
     end
 
