@@ -21,7 +21,7 @@ module MagicGrid
 
     def magic_grid(collection = nil, cols = nil, opts = {}, &block)
       grid = normalize_magic(collection, cols, opts)
-      classes = ['magic_grid'] + grid.options[:classes]
+      classes = ['magic_grid'] << grid.options[:classes]
       classes << 'ajaxed_pager' if grid.options[:ajax]
       classes << 'has-searcher' if grid.options[:searcher]
       classes << 'has-listeners' unless grid.options[:listeners].empty?
@@ -37,9 +37,9 @@ module MagicGrid
         table = content_tag 'thead', :class => "ui-widget-header" do
           thead = ''.html_safe
           if grid.options[:needs_searcher]
-            thead += content_tag 'tr' do
+            thead << content_tag('tr') do
               content_tag 'td', :class => 'searcher', :colspan => grid.columns.count do
-                label_tag(grid.options[:searcher].to_sym, 'Search: ') +
+                label_tag(grid.options[:searcher].to_sym, 'Search: ') <<
                   search_field_tag(grid.options[:searcher].to_sym,
                                    grid.param(:q),
                                    :data => {:min_length => grid.options[:min_search_length]})
@@ -47,7 +47,7 @@ module MagicGrid
             end
           end
           if grid.options[:per_page] and grid.options[:top_pager]
-            thead += content_tag 'tr' do
+            thead << content_tag('tr') do
               content_tag 'td', {:colspan => grid.columns.count} do
                 will_paginate(grid.collection,
                               :param_name => grid.param_key(:page)
@@ -60,15 +60,15 @@ module MagicGrid
               content_tag 'td', nil, :colspan => grid.columns.count, :class => 'full-width'
             end
           end
-          thead += magic_headers(grid)
+          thead << magic_headers(grid)
         end
-        table += content_tag 'tbody', :class => "ui-widget-content" do
+        table << content_tag('tbody', :class => "ui-widget-content") do
           magic_rows(grid, &block)
         end
-        table += content_tag 'tfoot', :class => "ui-widget-header" do
+        table << content_tag('tfoot', :class => "ui-widget-header") do
           tfoot = ''.html_safe
           if grid.options[:per_page] and grid.options[:bottom_pager]
-            tfoot += content_tag 'tr' do
+            tfoot << content_tag('tr') do
               content_tag 'td', {:colspan => grid.columns.count} do
                 will_paginate(grid.collection,
                               :param_name => grid.param_key(:page)
@@ -104,9 +104,9 @@ module MagicGrid
       grid = normalize_magic(collection, cols)
       grid.collection.map do |row|
         if block_given?
-          "<!-- block: -->" + capture(row, &block)
+          "<!-- block: -->" << capture(row, &block)
         else
-          "<!-- magic row: -->" + magic_row(row, grid)
+          "<!-- magic row: -->" << magic_row(row, grid)
         end
       end.join.html_safe
     end
@@ -166,10 +166,10 @@ module MagicGrid
         order = grid.current_order
         classes << "sort-current" << order_class(order)
         my_params[grid.param_key(:order)] = reverse_order(order)
-        label += order_icon(order)
+        label << order_icon(order)
       else
         my_params.delete grid.param_key(:order) if my_params[grid.param_key(:order)]
-        label += order_icon()
+        label << order_icon()
       end
       my_params.delete(grid.param_key(:order)) if my_params[grid.param_key(:order)].to_i == default_sort_order.to_i
       content_tag 'th', :class => classes.join(' ') do

@@ -66,7 +66,7 @@ module MagicGrid
         @magic_id = @options[:id]
       else
         @magic_id = hash.join.hash.abs.to_s(36)
-        @magic_id += @collection.to_sql.hash.abs.to_s(36) if @collection.respond_to? :to_sql
+        @magic_id << @collection.to_sql.hash.abs.to_s(36) if @collection.respond_to? :to_sql
       end
       if not @options[:searcher] and not @options[:searchable].empty?
         @options[:needs_searcher] = true
@@ -81,7 +81,7 @@ module MagicGrid
       end
       @accepted = [:action, :controller, param_key(:page)]
       @accepted << param_key(:q) unless @options[:searchable].empty?
-      @accepted += @options[:listeners].values #.map {|k| param_key k }
+      @accepted << @options[:listeners].values #.map {|k| param_key k }
       if @collection.respond_to? :where
         @options[:listeners].each_pair do |key, value|
           if @params[value] and not @params[value].empty?
@@ -107,7 +107,7 @@ module MagicGrid
             end
           end
           unless search_cols.empty?
-            clauses = search_cols.map {|c| c + " LIKE :search" }.join(" OR ")
+            clauses = search_cols.map {|c| c << " LIKE :search" }.join(" OR ")
             @collection = @collection.where(clauses, {:search => "%#{param(:q)}%"})
           end
         end
