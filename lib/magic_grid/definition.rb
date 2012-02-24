@@ -47,7 +47,11 @@ module MagicGrid
       i = 0
       hash = []
       @columns.map! do |c|
-        c = {:col => c} if c.is_a? String or c.is_a? Symbol
+        if c.is_a? Symbol
+          c = {:col => c}
+        elsif c.is_a? String
+          c = {:label => c}
+        end
         c[:id] = i
         i += 1
         if c.key?(:col) and c[:col].is_a? Symbol and table_columns.include? c[:col]
