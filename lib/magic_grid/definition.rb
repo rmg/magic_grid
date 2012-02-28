@@ -69,16 +69,14 @@ module MagicGrid
         @magic_id = hash.join.hash.abs.to_s(36)
         @magic_id << @collection.to_sql.hash.abs.to_s(36) if @collection.respond_to? :to_sql
       end
-      if not @options[:searcher] and not @options[:searchable].empty?
-        @options[:needs_searcher] = true
-        @options[:searcher] = param_key(:searcher)
-      end
       @current_sort_col = sort_col_i = param(:col, @options[:default_col]).to_i
       if @collection.respond_to? :order and @columns.count > sort_col_i and @columns[sort_col_i].has_key? :sql
         sort_col = @columns[sort_col_i][:sql]
         @current_order = order(param(:order, @default_order))
         sort_dir = order_sql(@current_order)
         @collection = @collection.order("#{sort_col} #{sort_dir}")
+      else
+        Rails.logger.debug "#{self.class.name}: Ignoring sorting on non-AR collection"
       end
       @accepted = [:action, :controller, param_key(:page)]
       @accepted << param_key(:q) unless @options[:searchable].empty?
@@ -112,6 +110,19 @@ module MagicGrid
             @collection = @collection.where(clauses, {:search => "%#{param(:q)}%"})
           end
         end
+      else
+        unless @options[:listeners].empty?
+          Rails.logger.warn "#{self.class.name}: Ignoring listener on non-AR collection"
+        end
+        unless @options[:searchable].empty? and not param(:q)
+          Rails.logger.warn "#{self.calss.name}: Ignoring searchable fields on non-AR collection"
+        end
+        @options[:listeners] = {}
+        @options[:searchable] = []
+      end
+      if not @options[:searcher] and not @options[:searchable].empty?
+        @options[:needs_searcher] = true
+        @options[:searcher] = param_key(:searcher)
       end
       if @options[:per_page]
         @collection = @collection.paginate(:page => param(:page, 1),
