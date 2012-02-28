@@ -97,7 +97,7 @@ module MagicGrid
               if known
                 known[:sql]
               else
-                "#{table_name}.#{col[:col].to_s}"
+                "#{table_name}.#{searchable.to_s}"
               end
             when Integer
               @columns[searchable][:sql]
