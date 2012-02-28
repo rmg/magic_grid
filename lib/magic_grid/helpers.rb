@@ -125,13 +125,28 @@ module MagicGrid
 
     def magic_rows(cols, collection = nil, &block)
       grid = normalize_magic(collection, cols)
-      grid.collection.map do |row|
+      if_empty = grid.options[:if_empty]
+      rows = grid.collection.map do |row|
         if block_given?
           "<!-- block: -->" << capture(row, &block)
         else
           "<!-- magic row: -->" << magic_row(row, grid)
         end
-      end.join.html_safe
+      end
+      if rows.empty? and if_empty
+        content_tag 'tr' do
+          content_tag('td', :colspan => grid.columns.count,
+                      :class => 'if-empty') do
+            if if_empty.respond_to? :call
+              if_empty.call(grid).to_s
+            else
+              if_empty
+            end
+          end
+        end
+      else
+        rows.join.html_safe
+      end
     end
 
     def magic_row(record, cols, collection = nil)

@@ -23,6 +23,7 @@ module MagicGrid
       :default_order => :asc,
       :empty_header => false,
       :empty_footer => false,
+      :if_empty => "No results found.",
     }
 
     def initialize(cols_or_opts, collection = nil, params = {}, opts = {})

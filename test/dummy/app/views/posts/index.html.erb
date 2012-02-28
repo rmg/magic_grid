@@ -1,5 +1,9 @@
 <h1><%= @title || "Listing posts" %></h1>
 
+<h3>Empty Collection</h3>
+<%= magic_grid([], ["Name", "E-mail Address", "Website"]) %>
+
+
 <%= select nil, :user_id,
   options_from_collection_for_select(User.all, :id, :name, params[:user_id]),
   {:prompt => true}, :id => :user_id %>
