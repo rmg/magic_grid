@@ -83,7 +83,7 @@ module MagicGrid
       @accepted << @options[:listeners].values #.map {|k| param_key k }
       if @collection.respond_to? :where
         @options[:listeners].each_pair do |key, value|
-          if @params[value] and not @params[value].empty?
+          if @params[value] and not @params[value].to_s.empty?
             @collection = @collection.where(key => @params[value])
           end
         end
