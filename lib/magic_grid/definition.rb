@@ -19,6 +19,7 @@ module MagicGrid
       :needs_searcher => false,
       :live_search => true,
       :listeners => {},
+      :listener_handler => nil,
       :default_col => 0,
       :default_order => :asc,
       :empty_header => false,
@@ -80,11 +81,15 @@ module MagicGrid
       end
       @accepted = [:action, :controller, param_key(:page)]
       @accepted << param_key(:q) unless @options[:searchable].empty?
-      @accepted << @options[:listeners].values #.map {|k| param_key k }
+      @accepted << @options[:listeners].values
       if @collection.respond_to? :where
-        @options[:listeners].each_pair do |key, value|
-          if @params[value] and not @params[value].to_s.empty?
-            @collection = @collection.where(key => @params[value])
+        if @options[:listener_handler].respond_to? :call
+          @collection = @options[:listener_handler].call(@collection)
+        else
+          @options[:listeners].each_pair do |key, value|
+            if @params[value] and not @params[value].to_s.empty?
+              @collection = @collection.where(key => @params[value])
+            end
           end
         end
         if param(:q) and not @options[:searchable].empty?
