@@ -120,7 +120,7 @@ module MagicGrid
           Rails.logger.warn "#{self.class.name}: Ignoring listener on non-AR collection"
         end
         unless @options[:searchable].empty? and not param(:q)
-          Rails.logger.warn "#{self.calss.name}: Ignoring searchable fields on non-AR collection"
+          Rails.logger.warn "#{self.class.name}: Ignoring searchable fields on non-AR collection"
         end
         @options[:listeners] = {}
         @options[:searchable] = []
