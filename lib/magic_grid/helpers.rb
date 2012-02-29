@@ -196,6 +196,9 @@ module MagicGrid
         grid.accepted.include? k.to_sym
       end
       my_params = my_params.merge({grid.param_key(:col) => col})
+      if grid.options[:remote]
+        my_params[:magic_grid_id] = grid.magic_id
+      end
       my_params = HashWithIndifferentAccess.new(my_params)
       order = nil
       classes = ['sorter ui-state-default']
