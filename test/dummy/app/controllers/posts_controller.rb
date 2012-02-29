@@ -3,6 +3,11 @@ class PostsController < ApplicationController
   # GET /posts.json
   def index
     @posts = Post.includes(:user)
+    @some_array = []
+    def @some_array.search(q)
+      Rails.logger.debug "Searching for #{q}, really!"
+      self
+    end
 
     if params.key? :user_id and not params[:user_id].empty?
       @title = "Posts by: #{User.find(params[:user_id]).name}"

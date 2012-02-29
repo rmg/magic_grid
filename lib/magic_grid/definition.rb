@@ -13,6 +13,7 @@ module MagicGrid
       :remote => false,
       :per_page => 30,
       :searchable => [],
+      :use_search_method => true,
       :min_search_length => 3,
       :id => false,
       :searcher => false,
@@ -82,7 +83,7 @@ module MagicGrid
       @accepted = [:action, :controller, param_key(:page)]
       @accepted << param_key(:q) unless @options[:searchable].empty?
       @accepted << @options[:listeners].values
-      if @collection.respond_to? :where
+      if @collection.respond_to? :where or @options[:listener_handler].respond_to? :call
         if @options[:listener_handler].respond_to? :call
           @collection = @options[:listener_handler].call(@collection)
         else
@@ -92,37 +93,44 @@ module MagicGrid
             end
           end
         end
+      else
+        unless @options[:listeners].empty?
+          Rails.logger.warn "#{self.class.name}: Ignoring listener on dumb collection"
+          @options[:listeners] = {}
+        end
+      end
+      if @collection.respond_to? :where or @options[:use_search_method] and @collection.respond_to? :search
         if param(:q) and not @options[:searchable].empty?
-          search_cols = @options[:searchable].map  do |searchable|
-            case searchable
-            when Symbol
-              known = @columns.find {|col| col[:col] == searchable}
-              if known
-                known[:sql]
+          if @options[:use_search_method] and @collection.respond_to? :search
+            @collection = @collection.search(param(:q))
+          else
+            search_cols = @options[:searchable].map  do |searchable|
+              case searchable
+              when Symbol
+                known = @columns.find {|col| col[:col] == searchable}
+                if known
+                  known[:sql]
+                else
+                  "#{table_name}.#{searchable.to_s}"
+                end
+              when Integer
+                @columns[searchable][:sql]
+              when String
+                searchable
               else
-                "#{table_name}.#{searchable.to_s}"
+                raise "Searchable must be identifiable"
               end
-            when Integer
-              @columns[searchable][:sql]
-            when String
-              searchable
-            else
-              raise "Searchable must be identifiable"
             end
-          end
-          unless search_cols.empty?
-            clauses = search_cols.map {|c| c << " LIKE :search" }.join(" OR ")
-            @collection = @collection.where(clauses, {:search => "%#{param(:q)}%"})
+            unless search_cols.empty?
+              clauses = search_cols.map {|c| c << " LIKE :search" }.join(" OR ")
+              @collection = @collection.where(clauses, {:search => "%#{param(:q)}%"})
+            end
           end
         end
       else
-        unless @options[:listeners].empty?
-          Rails.logger.warn "#{self.class.name}: Ignoring listener on non-AR collection"
-        end
         unless @options[:searchable].empty? and not param(:q)
           Rails.logger.warn "#{self.class.name}: Ignoring searchable fields on non-AR collection"
         end
-        @options[:listeners] = {}
         @options[:searchable] = []
       end
       if not @options[:searcher] and not @options[:searchable].empty?
