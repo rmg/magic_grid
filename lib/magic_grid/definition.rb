@@ -58,7 +58,7 @@ module MagicGrid
         end
         c[:id] = i
         i += 1
-        if c.key?(:col) and c[:col].is_a? Symbol and table_columns.include? c[:col]
+        if c.key?(:col) and c[:col].is_a?(Symbol) and table_columns.include?(c[:col])
           c[:sql] = "#{table_name}.#{c[:col].to_s}"
         end
         c[:label] = c[:col].to_s.titleize if not c.key? :label
@@ -72,7 +72,7 @@ module MagicGrid
         @magic_id << @collection.to_sql.hash.abs.to_s(36) if @collection.respond_to? :to_sql
       end
       @current_sort_col = sort_col_i = param(:col, @options[:default_col]).to_i
-      if @collection.respond_to? :order and @columns.count > sort_col_i and @columns[sort_col_i].has_key? :sql
+      if @collection.respond_to?(:order) and @columns.count > sort_col_i and @columns[sort_col_i].has_key?(:sql)
         sort_col = @columns[sort_col_i][:sql]
         @current_order = order(param(:order, @default_order))
         sort_dir = order_sql(@current_order)
@@ -83,7 +83,7 @@ module MagicGrid
       @accepted = [:action, :controller, param_key(:page)]
       @accepted << param_key(:q) unless @options[:searchable].empty?
       @accepted << @options[:listeners].values
-      if @collection.respond_to? :where or @options[:listener_handler].respond_to? :call
+      if @collection.respond_to?(:where) or @options[:listener_handler].respond_to?(:call)
         if @options[:listener_handler].respond_to? :call
           @collection = @options[:listener_handler].call(@collection)
         else
@@ -99,9 +99,10 @@ module MagicGrid
           @options[:listeners] = {}
         end
       end
-      if @collection.respond_to? :where or @options[:use_search_method] and @collection.respond_to? :search
+      if (@collection.respond_to?(:where) or
+          (@options[:use_search_method] and @collection.respond_to?(:search)))
         if param(:q) and not @options[:searchable].empty?
-          if @options[:use_search_method] and @collection.respond_to? :search
+          if @options[:use_search_method] and @collection.respond_to?(:search)
             @collection = @collection.search(param(:q))
           else
             search_cols = @options[:searchable].map  do |searchable|
