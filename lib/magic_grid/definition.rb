@@ -26,6 +26,8 @@ module MagicGrid
       :empty_header => false,
       :empty_footer => false,
       :if_empty => "No results found.",
+      :post_filter => false,
+      :collection_post_filter? => true,
     }
 
     def initialize(cols_or_opts, collection = nil, params = {}, opts = {})
@@ -138,6 +140,14 @@ module MagicGrid
         @options[:needs_searcher] = true
         @options[:searcher] = param_key(:searcher)
       end
+      # Do collection filter first, may convert from AR to Array
+      if @options[:collection_post_filter?] and @collection.respond_to?(:post_filter)
+        @collection = @collection.post_filter
+      end
+      if @options[:post_filter] and @options[:post_filter].respond_to?(:call)
+        @collection = @options[:post_filter].call(@collection)
+      end
+      # Paginate at the very end, after all sorting, filtering, etc..
       if @options[:per_page]
         @collection = @collection.paginate(:page => param(:page, 1),
                                            :per_page => @options[:per_page])
