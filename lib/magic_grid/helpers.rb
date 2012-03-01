@@ -11,7 +11,7 @@ module MagicGrid
       elsif options.is_a? MagicGrid::Definition
         options
       else
-        MagicGrid::Definition.new(columns, collection, params, options)
+        MagicGrid::Definition.new(columns, collection, controller, options)
       end
     end
 

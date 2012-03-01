@@ -30,7 +30,7 @@ module MagicGrid
       :collection_post_filter? => true,
     }
 
-    def initialize(cols_or_opts, collection = nil, params = {}, opts = {})
+    def initialize(cols_or_opts, collection = nil, controller = nil, opts = {})
       if cols_or_opts.is_a? Hash
         @options = DEFAULTS.merge(cols_or_opts.reject {|k| k == :cols})
         @columns = cols_or_opts.fetch(:cols, [])
@@ -41,7 +41,7 @@ module MagicGrid
         raise "I have no idea what that is, but it's not a Hash or an Array"
       end
       @default_order = @options[:default_order]
-      @params = params
+      @params = controller.try(:params) || {}
       @collection = collection
       if @collection.respond_to? :table
         table_name = @collection.quoted_table_name
@@ -142,7 +142,7 @@ module MagicGrid
       end
       # Do collection filter first, may convert from AR to Array
       if @options[:collection_post_filter?] and @collection.respond_to?(:post_filter)
-        @collection = @collection.post_filter
+        @collection = @collection.post_filter(controller)
       end
       if @options[:post_filter] and @options[:post_filter].respond_to?(:call)
         @collection = @options[:post_filter].call(@collection)
