@@ -111,13 +111,14 @@ module MagicGrid
       grid = normalize_magic(collection, cols, opts)
       content_tag 'tr' do
         grid.columns.reduce(''.html_safe) do |acc, col|
+          classes = ['ui-state-default'] << col[:class]
           acc <<
           if col.is_a? String
-            "<th class='ui-state-default'>#{col}</th>".html_safe
+            content_tag 'th', col.html_safe, :class => classes.join(' ')
           elsif not col.key? :sql
-            "<th class='ui-state-default'>#{col[:label]}</th>".html_safe
+            content_tag 'th', col[:label].html_safe, :class => classes.join(' ')
           else
-            sortable_header(grid, col[:id], col[:label], opts)
+            sortable_header(grid, col, opts)
           end
         end
       end
@@ -153,7 +154,7 @@ module MagicGrid
       grid = normalize_magic(collection, cols)
       content_tag 'tr', :class => cycle('odd', 'even') do
         grid.columns.reduce(''.html_safe) do |acc, c|
-          acc << content_tag('td') do
+          acc << content_tag('td', :class => c[:class].try(:join, ' ')) do
             method = c[:to_s] || c[:col]
             if method.respond_to? :call
               method.call(record)
@@ -189,20 +190,21 @@ module MagicGrid
       end
     end
 
-    def sortable_header(grid, col, label = nil, opts = {})
-      label ||= col.titleize
+    def sortable_header(grid, col, opts = {})
+      id = col[:id]
+      label = col[:label] || id.titleize
       default_sort_order = opts.fetch(:default_order, grid.order(grid.default_order))
       my_params = params.select do |k,v|
         grid.accepted.include? k.to_sym
       end
-      my_params = my_params.merge({grid.param_key(:col) => col})
+      my_params = my_params.merge({grid.param_key(:col) => id})
       if grid.options[:remote]
         my_params[:magic_grid_id] = grid.magic_id
       end
       my_params = HashWithIndifferentAccess.new(my_params)
       order = nil
-      classes = ['sorter ui-state-default']
-      current = col.to_s == grid.current_sort_col.to_s
+      classes = ['sorter ui-state-default'] << col[:class]
+      current = id.to_s == grid.current_sort_col.to_s
       if current
         order = grid.current_order
         classes << "sort-current" << order_class(order)
