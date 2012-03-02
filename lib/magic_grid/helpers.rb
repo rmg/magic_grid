@@ -26,7 +26,8 @@ module MagicGrid
         :current => url_for,
         :live_search => grid.options[:live_search],
         :listeners => (grid.options[:listeners] unless grid.options[:listeners].empty?),
-        :remote => grid.options[:remote]
+        :remote => grid.options[:remote],
+        :default_ajax_handler => grid.options[:default_ajax_handler],
       }
       classes = ['magic_grid'] << grid.options[:class]
       content_tag('table',

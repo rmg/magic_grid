@@ -28,6 +28,7 @@ module MagicGrid
       :if_empty => "No results found.",
       :post_filter => false,
       :collection_post_filter? => true,
+      :default_ajax_handler => true,
     }
 
     def initialize(cols_or_opts, collection = nil, controller = nil, opts = {})
