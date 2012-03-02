@@ -7,7 +7,7 @@ module MagicGrid
       :current_sort_col, :current_order, :default_order
 
     DEFAULTS = {
-      :classes => [],
+      :class => [],
       :top_pager => false,
       :bottom_pager => true,
       :remote => false,

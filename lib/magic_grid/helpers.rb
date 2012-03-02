@@ -28,7 +28,7 @@ module MagicGrid
         :listeners => (grid.options[:listeners] unless grid.options[:listeners].empty?),
         :remote => grid.options[:remote]
       }
-      classes = ['magic_grid'] << grid.options[:classes]
+      classes = ['magic_grid'] << grid.options[:class]
       content_tag('table',
                   :class => classes.join(' '),
                   :id => grid.magic_id,
