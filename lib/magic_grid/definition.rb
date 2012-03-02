@@ -61,7 +61,7 @@ module MagicGrid
         c[:id] = i
         i += 1
         if c.key?(:col) and c[:col].is_a?(Symbol) and table_columns.include?(c[:col])
-          c[:sql] = "#{table_name}.#{c[:col].to_s}"
+          c[:sql] = "#{table_name}.#{c[:col].to_s}" unless c.key?(:sql)
         end
         c[:label] = c[:col].to_s.titleize if not c.key? :label
         hash << c[:label]
