@@ -45,11 +45,14 @@ module MagicGrid
           if grid.options[:needs_searcher]
             thead << content_tag('tr') do
               content_tag 'td', :class => 'searcher', :colspan => grid.columns.count do
+                searcher_data = {
+                  :min_length => grid.options[:min_search_length],
+                  :current => grid.options[:current_search] || "",
+                }
                 searcher = label_tag(grid.options[:searcher].to_sym, 'Search: ')
                 searcher << search_field_tag(grid.options[:searcher].to_sym,
                                              grid.param(:q),
-                                             :data => {:min_length =>
-                                               grid.options[:min_search_length]})
+                                             :data => searcher_data)
                 unless has_spinner
                   has_spinner = true
                   searcher << spinner

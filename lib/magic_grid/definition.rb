@@ -19,6 +19,7 @@ module MagicGrid
       :searcher => false,
       :needs_searcher => false,
       :live_search => true,
+      :current_search => nil,
       :listeners => {},
       :listener_handler => nil,
       :default_col => 0,
@@ -107,6 +108,7 @@ module MagicGrid
           @options[:listeners] = {}
         end
       end
+      @options[:current_search] ||= param(:q)
       if (@collection.respond_to?(:where) or
           (@options[:use_search_method] and @collection.respond_to?(:search)))
         if param(:q) and @options[:searchable]
