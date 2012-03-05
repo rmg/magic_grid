@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    magic_grid (0.5.2)
+    magic_grid (0.6.0)
       jquery-rails (~> 1.0.18)
       rails (~> 3.1.1)
       will_paginate (~> 3.0.0)
