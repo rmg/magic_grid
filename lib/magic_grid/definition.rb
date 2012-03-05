@@ -85,7 +85,6 @@ module MagicGrid
         Rails.logger.debug "#{self.class.name}: Ignoring sorting on non-AR collection"
       end
 
-      @options[:searchable] = false if @options[:searchable] == []
       @options[:searchable] = [] if @options[:searchable] and not @options[:searchable].kind_of? Array
 
       @accepted = [:action, :controller, param_key(:page)]
@@ -139,7 +138,7 @@ module MagicGrid
           end
         end
       else
-        if @options[:searchable] and param(:q)
+        if @options[:searchable] or param(:q)
           Rails.logger.warn "#{self.class.name}: Ignoring searchable fields on non-AR collection"
         end
         @options[:searchable] = false
