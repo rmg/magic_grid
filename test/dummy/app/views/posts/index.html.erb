@@ -2,7 +2,7 @@
 
 <h3>Empty Collection</h3>
 <%= magic_grid(@some_array, ["Name", "E-mail Address", "Website"],
-               :searchable => [nil],
+               :searchable => true,
                :post_filter => Proc.new {|c| Rails.logger.debug "Final filter!"; c}) %>
 
 

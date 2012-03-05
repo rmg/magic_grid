@@ -12,7 +12,7 @@ module MagicGrid
       :bottom_pager => true,
       :remote => false,
       :per_page => 30,
-      :searchable => [],
+      :searchable => false,
       :use_search_method => true,
       :min_search_length => 3,
       :id => false,
@@ -82,9 +82,14 @@ module MagicGrid
       else
         Rails.logger.debug "#{self.class.name}: Ignoring sorting on non-AR collection"
       end
+
+      @options[:searchable] = false if @options[:searchable] == []
+      @options[:searchable] = [] if @options[:searchable] and not @options[:searchable].kind_of? Array
+
       @accepted = [:action, :controller, param_key(:page)]
-      @accepted << param_key(:q) unless @options[:searchable].empty?
+      @accepted << param_key(:q) if @options[:searchable]
       @accepted << @options[:listeners].values
+
       if @collection.respond_to?(:where) or @options[:listener_handler].respond_to?(:call)
         if @options[:listener_handler].respond_to? :call
           @collection = @options[:listener_handler].call(@collection)
@@ -103,7 +108,7 @@ module MagicGrid
       end
       if (@collection.respond_to?(:where) or
           (@options[:use_search_method] and @collection.respond_to?(:search)))
-        if param(:q) and not @options[:searchable].empty?
+        if param(:q) and @options[:searchable]
           if @options[:use_search_method] and @collection.respond_to?(:search)
             @collection = @collection.search(param(:q))
           else
@@ -131,12 +136,12 @@ module MagicGrid
           end
         end
       else
-        unless @options[:searchable].empty? and not param(:q)
+        if @options[:searchable] and param(:q)
           Rails.logger.warn "#{self.class.name}: Ignoring searchable fields on non-AR collection"
         end
-        @options[:searchable] = []
+        @options[:searchable] = false
       end
-      if not @options[:searcher] and not @options[:searchable].empty?
+      if not @options[:searcher] and @options[:searchable]
         @options[:needs_searcher] = true
         @options[:searcher] = param_key(:searcher)
       end
