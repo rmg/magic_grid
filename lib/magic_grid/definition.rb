@@ -80,7 +80,7 @@ module MagicGrid
         sort_col = @columns[sort_col_i][:sql]
         @current_order = order(param(:order, @default_order))
         sort_dir = order_sql(@current_order)
-        @collection = @collection.order("#{sort_col} #{sort_dir}")
+        @collection = @collection.reorder("#{sort_col} #{sort_dir}")
       else
         Rails.logger.debug "#{self.class.name}: Ignoring sorting on non-AR collection"
       end
@@ -114,14 +114,14 @@ module MagicGrid
           if @options[:use_search_method] and @collection.respond_to?(:search)
             @collection = @collection.search(param(:q))
           else
-            search_cols = @options[:searchable].map  do |searchable|
+            search_cols = @options[:searchable].map do |searchable|
               case searchable
               when Symbol
                 known = @columns.find {|col| col[:col] == searchable}
                 if known and known.key?(:sql)
                   known[:sql]
                 else
-                  "#{table_name}.#{searchable.to_s}"
+                  "#{table_name}.#{searchable}"
                 end
               when Integer
                 @columns[searchable][:sql]
