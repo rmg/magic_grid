@@ -53,6 +53,7 @@
 <%= search_field_tag :posts_search %>
 <%= magic_grid @posts, [:title, :body, :published, :user, 'Actions'],
   :searchable => [:body, 'users.name'], :searcher => :posts_search,
+  :searcher => :posts_search,
   :id => 3, :remote => true do |post| %>
   <tr>
     <td><%= post.title %></td>
