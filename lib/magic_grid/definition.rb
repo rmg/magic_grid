@@ -89,7 +89,7 @@ module MagicGrid
 
       @accepted = [:action, :controller, param_key(:page)]
       @accepted << param_key(:q) if @options[:searchable]
-      @accepted << @options[:listeners].values
+      @accepted += @options[:listeners].values
 
       if @collection.respond_to?(:where) or @options[:listener_handler].respond_to?(:call)
         if @options[:listener_handler].respond_to? :call
