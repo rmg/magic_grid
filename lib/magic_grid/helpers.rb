@@ -21,6 +21,7 @@ module MagicGrid
 
     def magic_grid(collection = nil, cols = nil, opts = {}, &block)
       grid = normalize_magic(collection, cols, opts)
+      passed_params = params.select { |k,_| grid.accepted.include? k.to_sym }
       data = {
         :searcher => grid.options[:searcher],
         :current => url_for,
@@ -28,6 +29,7 @@ module MagicGrid
         :listeners => (grid.options[:listeners] unless grid.options[:listeners].empty?),
         :remote => grid.options[:remote],
         :default_ajax_handler => grid.options[:default_ajax_handler],
+        :params => passed_params,
       }
       classes = ['magic_grid'] << grid.options[:class]
       content_tag('table',
@@ -35,7 +37,9 @@ module MagicGrid
                   :id => grid.magic_id,
                   :data => data.select {|_,v| v }
                   ) do
-        table = content_tag 'thead', :class => "ui-widget-header" do
+        table = content_tag('thead', :class => "ui-widget-header",
+                            :data => {:params => passed_params}
+                           ) do
           thead = ''.html_safe
           has_spinner = false
           spinner = tag('span',
