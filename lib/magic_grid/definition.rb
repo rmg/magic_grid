@@ -80,7 +80,7 @@ module MagicGrid
         sort_col = @columns[sort_col_i][:sql]
         @current_order = order(param(:order, @default_order))
         sort_dir = order_sql(@current_order)
-        @collection = @collection.reorder("#{sort_col} #{sort_dir}")
+        @collection = @collection.order("#{sort_col} #{sort_dir}")
       else
         Rails.logger.debug "#{self.class.name}: Ignoring sorting on non-AR collection"
       end
