@@ -53,7 +53,8 @@ module MagicGrid
                   :min_length => grid.options[:min_search_length],
                   :current => grid.options[:current_search] || "",
                 }
-                searcher = label_tag(grid.options[:searcher].to_sym, 'Search: ')
+                searcher = label_tag(grid.options[:searcher].to_sym,
+                                     grid.options[:searcher_label])
                 searcher << search_field_tag(grid.options[:searcher].to_sym,
                                              grid.param(:q),
                                              :data => searcher_data)

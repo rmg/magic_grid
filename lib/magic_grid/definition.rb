@@ -26,18 +26,27 @@ module MagicGrid
       :default_order => :asc,
       :empty_header => false,
       :empty_footer => false,
-      :if_empty => "No results found.",
+      :if_empty => I18n.t("magic_grid.no_results").capitalize, # "No results found."
       :post_filter => false,
       :collection_post_filter? => true,
       :default_ajax_handler => true,
+      :searcher_label => I18n.t("magic_grid.search").capitalize + ': ', # "Search: "
     }
+
+    def self.runtime_defaults
+      # Re-run these lazily to catch any late I18n path changes
+      DEFAULTS.merge(
+        :if_empty => I18n.t("magic_grid.no_results").capitalize, # "No results found."
+        :searcher_label => I18n.t("magic_grid.search").capitalize + ': ', # "Search: "
+      )
+    end
 
     def initialize(cols_or_opts, collection = nil, controller = nil, opts = {})
       if cols_or_opts.is_a? Hash
-        @options = DEFAULTS.merge(cols_or_opts.reject {|k| k == :cols})
+        @options = self.class.runtime_defaults.merge(cols_or_opts.reject {|k| k == :cols})
         @columns = cols_or_opts.fetch(:cols, [])
       elsif cols_or_opts.is_a? Array
-        @options = DEFAULTS.merge opts
+        @options = self.class.runtime_defaults.merge opts
         @columns = cols_or_opts
       else
         raise "I have no idea what that is, but it's not a Hash or an Array"
