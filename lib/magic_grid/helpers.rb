@@ -37,8 +37,7 @@ module MagicGrid
                   :id => grid.magic_id,
                   :data => data.select {|_,v| v }
                   ) do
-        table = content_tag('thead', :class => "ui-widget-header",
-                            :data => {:params => passed_params}
+        table = content_tag('thead', :data => {:params => passed_params}
                            ) do
           thead = ''.html_safe
           has_spinner = false
@@ -48,7 +47,8 @@ module MagicGrid
                        )
           if grid.options[:needs_searcher]
             thead << content_tag('tr') do
-              content_tag 'td', :class => 'searcher', :colspan => grid.columns.count do
+              content_tag('td', :class => 'searcher full-width ui-widget-header',
+                          :colspan => grid.columns.count) do
                 searcher_data = {
                   :min_length => grid.options[:min_search_length],
                   :current => grid.options[:current_search] || "",
@@ -68,7 +68,8 @@ module MagicGrid
           end
           if grid.options[:per_page] and grid.options[:top_pager]
             thead << content_tag('tr') do
-              content_tag 'td', {:colspan => grid.columns.count} do
+              content_tag('td', :class => 'full-width ui-widget-header',
+                          :colspan => grid.columns.count) do
                 pager = will_paginate(grid.collection,
                                       :param_name => grid.param_key(:page)
                                      )
@@ -82,7 +83,8 @@ module MagicGrid
           end
           if thead.empty? and not grid.options[:empty_header]
             thead = content_tag 'tr' do
-              content_tag 'td', :colspan => grid.columns.count, :class => 'full-width' do
+              content_tag('td', :class => 'full-width ui-widget-header',
+                          :colspan => grid.columns.count) do
                 unless has_spinner
                   has_spnner = true
                   spinner
@@ -95,11 +97,12 @@ module MagicGrid
         table << content_tag('tbody', :class => "ui-widget-content") do
           magic_rows(grid, &block)
         end
-        table << content_tag('tfoot', :class => "ui-widget-header") do
+        table << content_tag('tfoot') do
           tfoot = ''.html_safe
           if grid.options[:per_page] and grid.options[:bottom_pager]
             tfoot << content_tag('tr') do
-              content_tag 'td', {:colspan => grid.columns.count} do
+              content_tag('td', :class => 'full-width ui-widget-header',
+                          :colspan => grid.columns.count) do
                 will_paginate(grid.collection,
                               :param_name => grid.param_key(:page)
                              )
@@ -108,7 +111,8 @@ module MagicGrid
           end
           if tfoot.empty? and not grid.options[:empty_footer]
             tfoot = content_tag 'tr' do
-              content_tag 'td', nil, :colspan => grid.columns.count, :class => 'full-width'
+              content_tag('td', nil, :class => 'full-width ui-widget-header',
+                          :colspan => grid.columns.count)
             end
           end
           tfoot
