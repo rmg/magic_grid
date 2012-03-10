@@ -4,15 +4,15 @@ Takes a collection and creates a paginated table of using a supplied column defi
 
 == Basic Usage
 
-```ruby
-# Gemfile
-gem 'magic_grid', :git => 'git://github.com/rmg/magic_grid.git'
-```
+In your `Gemfile`:
 
-```ruby
-# app/view/index.html.erb
-<%= magic_grid(@posts, [:title, :author]) %>
-```
+    # Gemfile
+    gem 'magic_grid', :git => 'git://github.com/rmg/magic_grid.git'
+
+In your view:
+
+    # app/view/index.html.erb
+    <%= magic_grid(@posts, [:title, :author]) %>
 
 
 == Development
