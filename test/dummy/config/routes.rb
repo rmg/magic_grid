@@ -1,6 +1,11 @@
 Dummy::Application.routes.draw do
-  resources :posts, :users
-#  match '/posts/by-user/:user_id' => 'posts#index'
+  resources :users
+
+  resources :posts do
+    collection do
+      get 'by-user/:user_id' => 'posts#by_user'
+    end
+  end
 
   root :to => "posts#index"
 

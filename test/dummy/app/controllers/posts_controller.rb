@@ -20,6 +20,17 @@ class PostsController < ApplicationController
     end
   end
 
+  # GET /posts/by-user/1
+  # GET /posts/by-user/1.json
+  def by_user
+    @title = "Posts by: #{User.find(params[:user_id]).name}"
+    @posts = Post.includes(:user).where(:user_id => params[:user_id])
+    respond_to do |format|
+      format.html # by_user.html.erb
+      format.json { render json: @posts }
+    end
+  end
+
   # GET /posts/1
   # GET /posts/1.json
   def show
