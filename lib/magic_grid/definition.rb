@@ -178,6 +178,10 @@ module MagicGrid
       @params.fetch(param_key(key), default)
     end
 
+    def base_params
+      @params.select { |k,_| accepted.include? k.to_sym }.merge :magic_grid_id => @magic_id
+    end
+
     def order(something)
       case something
       when 1, "1", :desc, :DESC, "desc", "DESC"

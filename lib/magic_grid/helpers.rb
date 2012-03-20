@@ -21,7 +21,7 @@ module MagicGrid
 
     def magic_grid(collection = nil, cols = nil, opts = {}, &block)
       grid = normalize_magic(collection, cols, opts)
-      passed_params = params.select { |k,_| grid.accepted.include? k.to_sym }
+      base_params = grid.base_params
       data = {
         :searcher => grid.options[:searcher],
         :current => url_for,
@@ -29,7 +29,7 @@ module MagicGrid
         :listeners => (grid.options[:listeners] unless grid.options[:listeners].empty?),
         :remote => grid.options[:remote],
         :default_ajax_handler => grid.options[:default_ajax_handler],
-        :params => passed_params,
+        :params => base_params,
       }
       classes = ['magic_grid'] << grid.options[:class]
       content_tag('table',
@@ -37,7 +37,7 @@ module MagicGrid
                   :id => grid.magic_id,
                   :data => data.select {|_,v| v }
                   ) do
-        table = content_tag('thead', :data => {:params => passed_params}
+        table = content_tag('thead', :data => {:params => base_params}
                            ) do
           thead = ''.html_safe
           has_spinner = false
@@ -71,7 +71,8 @@ module MagicGrid
               content_tag('td', :class => 'full-width ui-widget-header',
                           :colspan => grid.columns.count) do
                 pager = will_paginate(grid.collection,
-                                      :param_name => grid.param_key(:page)
+                                      :param_name => grid.param_key(:page),
+                                      :params => base_params
                                      )
                 unless has_spinner
                   has_spinner = true
@@ -104,7 +105,8 @@ module MagicGrid
               content_tag('td', :class => 'full-width ui-widget-header',
                           :colspan => grid.columns.count) do
                 will_paginate(grid.collection,
-                              :param_name => grid.param_key(:page)
+                              :param_name => grid.param_key(:page),
+                              :params => base_params
                              )
               end
             end
@@ -207,13 +209,9 @@ module MagicGrid
       id = col[:id]
       label = col[:label] || id.titleize
       default_sort_order = opts.fetch(:default_order, grid.order(grid.default_order))
-      my_params = params.select do |k,v|
-        grid.accepted.include? k.to_sym
-      end
-      my_params = my_params.merge({grid.param_key(:col) => id})
-      if grid.options[:remote]
-        my_params[:magic_grid_id] = grid.magic_id
-      end
+      my_params = grid.base_params.merge({
+        grid.param_key(:col) => id,
+      })
       my_params = HashWithIndifferentAccess.new(my_params)
       order = nil
       classes = ['sorter ui-state-default'] << col[:class]
