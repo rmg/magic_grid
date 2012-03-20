@@ -13,7 +13,7 @@ module MagicGrid
       :remote => false,
       :per_page => 30,
       :searchable => false,
-      :use_search_method => true,
+      :search_method => :search,
       :min_search_length => 3,
       :id => false,
       :searcher => false,
@@ -118,10 +118,10 @@ module MagicGrid
       end
       @options[:current_search] ||= param(:q)
       if (@collection.respond_to?(:where) or
-          (@options[:use_search_method] and @collection.respond_to?(:search)))
+          (@options[:search_method] and @collection.respond_to?(@options[:search_method])))
         if param(:q) and not param(:q).empty? and @options[:searchable]
-          if @options[:use_search_method] and @collection.respond_to?(:search)
-            @collection = @collection.search(param(:q))
+          if @options[:search_method] and @collection.respond_to?(@options[:search_method])
+            @collection = @collection.__send__(@options[:search_method], param(:q))
           else
             search_cols = @options[:searchable].map do |searchable|
               case searchable
