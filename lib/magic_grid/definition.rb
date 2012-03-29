@@ -54,10 +54,12 @@ module MagicGrid
       @default_order = @options[:default_order]
       @params = controller.try(:params) || {}
       @collection = collection
-      if @collection.respond_to? :table
+      begin
+        #if @collection.respond_to? :table
         table_name = @collection.quoted_table_name
         table_columns = @collection.table.columns.map {|c| c.name}
-      else
+      rescue
+        Rails.logger.debug "Given collection doesn't respond to :table well"
         table_name = nil
         table_columns = @columns.each_index.to_a
       end
@@ -120,9 +122,12 @@ module MagicGrid
       if (@collection.respond_to?(:where) or
           (@options[:search_method] and @collection.respond_to?(@options[:search_method])))
         if param(:q) and not param(:q).empty? and @options[:searchable]
-          if @options[:search_method] and @collection.respond_to?(@options[:search_method])
+          orig_collection = @collection
+          begin
             @collection = @collection.__send__(@options[:search_method], param(:q))
-          else
+          rescue
+            Rails.logger.debug "Given collection doesn't respond to #{@options[:search_method]} well"
+            @collection = orig_collection
             search_cols = @options[:searchable].map do |searchable|
               case searchable
               when Symbol
@@ -141,8 +146,13 @@ module MagicGrid
               end
             end
             unless search_cols.empty?
-              clauses = search_cols.map {|c| c << " LIKE :search" }.join(" OR ")
-              @collection = @collection.where(clauses, {:search => "%#{param(:q)}%"})
+              begin
+                clauses = search_cols.map {|c| c << " LIKE :search" }.join(" OR ")
+                @collection = @collection.where(clauses, {:search => "%#{param(:q)}%"})
+              rescue
+                Rails.logger.debug "Given collection doesn't respond to :where well"
+                @collection = orig_collection
+              end
             end
           end
         end
