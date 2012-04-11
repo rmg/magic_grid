@@ -5,7 +5,7 @@
                :searchable => true,
                :post_filter => Proc.new {|c| Rails.logger.debug "Final filter!"; c}) %>
 
-
+<h3>External listener</h3>
 <%= select nil, :user_id,
   options_from_collection_for_select(User.all, :id, :name, params[:user_id]),
   {:prompt => true}, :id => :user_id %>
@@ -34,6 +34,7 @@
                :remote => true,
               ) %>
 
+<h3>Basic grid with built-in search</h3>
 <%= magic_grid(@posts,
                [ :title,
                  {:col => :body, :to_s => Proc.new {|r| r.body.truncate(30)} },
@@ -51,10 +52,12 @@
                :per_page => 5,
                :id => 2, :remote => true) %>
 
+<h3>External search field</h3>
 <%= search_field_tag :posts_search %>
 <%= magic_grid @posts, [:title, :body, :published, :user, 'Actions'],
-  :searchable => [:body, 'users.name'], :searcher => :posts_search,
-  :searcher => :posts_search,
+  :searchable => [:body, 'users.name'],
+  :searcher => :posts_search, :live_search => true,
+  :search_method => false,
   :id => 3, :remote => true do |post| %>
   <tr>
     <td><%= post.title %></td>
