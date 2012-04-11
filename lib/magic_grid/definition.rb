@@ -26,18 +26,19 @@ module MagicGrid
       :default_order => :asc,
       :empty_header => false,
       :empty_footer => false,
-      :if_empty => I18n.t("magic_grid.no_results").capitalize, # "No results found."
       :post_filter => false,
       :collection_post_filter? => true,
       :default_ajax_handler => true,
-      :searcher_label => I18n.t("magic_grid.search").capitalize + ': ', # "Search: "
+      :search_button => false,
     }
 
     def self.runtime_defaults
-      # Re-run these lazily to catch any late I18n path changes
+      # run these lazily to catch any late I18n path changes
       DEFAULTS.merge(
         :if_empty => I18n.t("magic_grid.no_results").capitalize, # "No results found."
-        :searcher_label => I18n.t("magic_grid.search").capitalize + ': ', # "Search: "
+        :searcher_label => I18n.t("magic_grid.search.label").capitalize + ': ', # "Search: "
+        :searcher_tooltip =>I18n.t("magic_grid.search.tooltip"), # "type.. + <return>"
+        :searcher_button =>I18n.t("magic_grid.search.button").capitalize, # "Search"
       )
     end
 

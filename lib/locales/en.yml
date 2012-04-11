@@ -1,4 +1,7 @@
 en:
   magic_grid:
-    search: search
     no_results: no results found
+    search:
+      label: search
+      tooltip: search... <enter>
+      button: Search
