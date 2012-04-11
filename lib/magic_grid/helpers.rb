@@ -57,7 +57,12 @@ module MagicGrid
                                      grid.options[:searcher_label])
                 searcher << search_field_tag(grid.options[:searcher].to_sym,
                                              grid.param(:q),
+                                             :placeholder => grid.options[:searcher_tooltip],
                                              :data => searcher_data)
+                if grid.options[:search_button]
+                  searcher << button_tag(grid.options[:searcher_button],
+                                         :class => 'magic-grid-search-button')
+                end
                 unless has_spinner
                   has_spinner = true
                   searcher << spinner
