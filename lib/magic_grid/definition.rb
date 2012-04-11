@@ -18,7 +18,7 @@ module MagicGrid
       :id => false,
       :searcher => false,
       :needs_searcher => false,
-      :live_search => true,
+      :live_search => false,
       :current_search => nil,
       :listeners => {},
       :listener_handler => nil,
