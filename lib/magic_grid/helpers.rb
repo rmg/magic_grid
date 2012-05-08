@@ -58,6 +58,7 @@ module MagicGrid
                 searcher << search_field_tag(grid.options[:searcher].to_sym,
                                              grid.param(:q),
                                              :placeholder => grid.options[:searcher_tooltip],
+                                             :size => grid.options[:searcher_size],
                                              :data => searcher_data,
                                              :form => "a form that doesn't exist")
                 if grid.options[:search_button]

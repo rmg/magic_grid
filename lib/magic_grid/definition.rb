@@ -30,6 +30,7 @@ module MagicGrid
       :collection_post_filter? => true,
       :default_ajax_handler => true,
       :search_button => false,
+      :searcher_size => nil,
     }
 
     def self.runtime_defaults
