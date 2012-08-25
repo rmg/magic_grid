@@ -38,7 +38,7 @@ describe MagicGrid::Definition do
 		end
 	end
 
-	ascendings = [0, "0", :asc, :ASC, "dasc", "ASC"]
+	ascendings = [0, "0", :asc, :ASC, "asc", "ASC"]
 	ascendings.each do |up|
 		it "should normalize #{up} to 0" do
 			expect(subject.order(up)).to eq(0)
