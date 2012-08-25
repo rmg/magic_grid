@@ -2,9 +2,11 @@ require 'action_view'
 require 'rails'
 require 'will_paginate/array'
 
+Rails.backtrace_cleaner.remove_silencers!
+
+# I has a sad :-(
 module Rails
-	def logger.debug(*ignore)
-	end
+  def logger.debug(*ignore) end
 end
 
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration

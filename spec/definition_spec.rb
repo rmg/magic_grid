@@ -2,6 +2,8 @@ require 'spec_helper'
 require 'magic_grid/definition'
 
 describe MagicGrid::Definition do
+	pending "embarasses me with how tightly it is coupled with.. EVERYTHING"
+
 	let (:empty_collection) { [] }
 	let (:column_list) { [:name, :description] }
 	let (:column_hash) { {} }
@@ -42,6 +44,4 @@ describe MagicGrid::Definition do
 			expect(subject.order(up)).to eq(0)
 		end
 	end
-
-
 end
