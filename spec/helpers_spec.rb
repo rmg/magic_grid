@@ -39,9 +39,36 @@ describe MagicGrid::Helpers do
       expect { magic_grid }.to raise_error
     end
 
+    let(:emtpy_grid) { magic_grid empty_collection, column_list }
+
     it "should render a table" do
-      expect( magic_grid empty_collection, column_list ).not_to be_empty
-      expect( magic_grid empty_collection, column_list ).to match(/<\/table>/)
+      expect( emtpy_grid ).not_to be_empty
+      expect( emtpy_grid ).to match(/<\/table>/)
+    end
+
+    context "when given an empty collection" do
+      let(:empty_grid) { magic_grid(empty_collection, column_list) }
+      it "should indicate there is no data" do
+        expect(empty_grid).to match(/"if-empty"/)
+      end
+    end
+
+    context "when given a non-empty collection" do
+      subject { magic_grid( [1, 2], [:to_s] ) }
+      it "should not indicate there is no data" do
+        should_not match(/if-empty/)
+      end
+      it { should  =~ /<td>1<\/td>/ }
+      it { should  =~ /<td>2<\/td>/ }
+    end
+
+    context "when given a block" do
+      subject {
+        magic_grid( [1, 2], [:to_s] ) do |row|
+          "HOKY_POKY_ALAMO: #{row}"
+        end
+      }
+      it { should =~ /HOKY_POKY_ALAMO: 1/ }
     end
   end
 
