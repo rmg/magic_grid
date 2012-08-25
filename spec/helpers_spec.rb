@@ -37,4 +37,13 @@ describe MagicGrid::Helpers do
 		end
 
 	end
+
+	describe "#magic_grid" do
+		pending "DOES WAY TOO MUCH!!"
+
+		it "should barf without any arguments" do
+			expect { magic_grid }.to raise_error
+		end
+	end
+
 end
