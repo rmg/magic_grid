@@ -10,12 +10,6 @@ describe MagicGrid::Helpers do
 	let(:empty_collection) { [] }
 	let(:column_list) { [:name, :description] }
 
-	let(:controller) {
-		stub_controller = ActionController::Base.new
-		def stub_controller.params(*ignored) {} end
-		stub_controller
-	}
-
 	describe "#normalize_magic" do
 
 		it "should turn an array into a MagicGrid::Definition" do
