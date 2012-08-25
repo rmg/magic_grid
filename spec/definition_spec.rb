@@ -25,7 +25,7 @@ describe MagicGrid::Definition do
 	end
 
 	subject { MagicGrid::Definition.new(column_list, empty_collection) }
-	its(:base_params) { should_not be_nil }
+	its(:base_params) { should include(:magic_grid_id) }
 	its(:collection) { should == empty_collection }
 	its(:columns) { should == column_list }
 	its(:options) { should == MagicGrid::Definition.runtime_defaults }
