@@ -39,6 +39,10 @@ describe MagicGrid::Helpers do
       expect { magic_grid }.to raise_error
     end
 
+    it "should render a table" do
+      expect( magic_grid empty_collection, column_list ).not_to be_empty
+      expect( magic_grid empty_collection, column_list ).to match(/<\/table>/)
+    end
   end
 
 end
