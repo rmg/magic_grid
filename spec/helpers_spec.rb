@@ -17,6 +17,7 @@ describe MagicGrid::Helpers do
 	}
 
 	describe "#normalize_magic" do
+
 		it "should turn an array into a MagicGrid::Definition" do
 			expect(normalize_magic([])).to be_a(MagicGrid::Definition)
 		end
@@ -28,10 +29,12 @@ describe MagicGrid::Helpers do
 	end
 
 	describe "#magic_collection" do
+		pending "should probably be removed, it's not really used"
+
 		it "should give back a collection like the one given" do
 			my_empty_collection = empty_collection
 			expect(magic_collection(my_empty_collection, column_list)).to eq(my_empty_collection)
 		end
-		pending "should probably be removed, it's not really used"
+
 	end
 end
