@@ -7,6 +7,9 @@ describe MagicGrid::Helpers do
 	# Let's use the helpers the way they're meant to be used!
 	include MagicGrid::Helpers
 
+	let(:empty_collection) { [] }
+	let(:column_list) { [:name, :description] }
+
 	let(:controller) {
 		stub_controller = ActionController::Base.new
 		def stub_controller.params(*ignored) {} end
@@ -22,5 +25,13 @@ describe MagicGrid::Helpers do
 			definition = normalize_magic([])
 			expect(normalize_magic(definition)).to be(definition)
 		end
+	end
+
+	describe "#magic_collection" do
+		it "should give back a collection like the one given" do
+			my_empty_collection = empty_collection
+			expect(magic_collection(my_empty_collection, column_list)).to eq(my_empty_collection)
+		end
+		pending "should probably be removed, it's not really used"
 	end
 end
