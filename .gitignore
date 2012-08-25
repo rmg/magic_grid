@@ -8,3 +8,4 @@ test/dummy/tmp/
 *~
 Gemfile.lock
 test/dummy/db/schema.rb
+.rspec
