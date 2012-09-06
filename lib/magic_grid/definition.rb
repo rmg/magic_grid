@@ -3,7 +3,7 @@ require 'will_paginate/view_helpers/action_view'
 module MagicGrid
   class Definition
     include WillPaginate::ActionView
-    attr_accessor :columns, :collection, :magic_id, :options, :params, :accepted,
+    attr_accessor :columns, :collection, :magic_id, :options, :params,
       :current_sort_col, :current_order, :default_order
 
     DEFAULTS = {
@@ -100,10 +100,6 @@ module MagicGrid
 
       @options[:searchable] = [] if @options[:searchable] and not @options[:searchable].kind_of? Array
 
-      @accepted = [:action, :controller, param_key(:page)]
-      @accepted << param_key(:q) if @options[:searchable]
-      @accepted += @options[:listeners].values
-
       if @collection.respond_to?(:where) or @options[:listener_handler].respond_to?(:call)
         if @options[:listener_handler].respond_to? :call
           @collection = @options[:listener_handler].call(@collection)
@@ -191,7 +187,7 @@ module MagicGrid
     end
 
     def base_params
-      @params.select { |k,_| accepted.include? k.to_sym }.merge :magic_grid_id => @magic_id
+      @params.merge :magic_grid_id => @magic_id
     end
 
     def order(something)
