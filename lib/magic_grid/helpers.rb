@@ -49,22 +49,7 @@ module MagicGrid
             thead << content_tag('tr') do
               content_tag('td', :class => 'searcher full-width ui-widget-header',
                           :colspan => grid.columns.count) do
-                searcher_data = {
-                  :min_length => grid.options[:min_search_length],
-                  :current => grid.options[:current_search] || "",
-                }
-                searcher = label_tag(grid.options[:searcher].to_sym,
-                                     grid.options[:searcher_label])
-                searcher << search_field_tag(grid.options[:searcher].to_sym,
-                                             grid.param(:q),
-                                             :placeholder => grid.options[:searcher_tooltip],
-                                             :size => grid.options[:searcher_size],
-                                             :data => searcher_data,
-                                             :form => "a form that doesn't exist")
-                if grid.options[:search_button]
-                  searcher << button_tag(grid.options[:searcher_button],
-                                         :class => 'magic-grid-search-button')
-                end
+                searcher = search_bar(grid)
                 unless has_spinner
                   has_spinner = true
                   searcher << spinner
@@ -236,6 +221,26 @@ module MagicGrid
       content_tag 'th', :class => classes.join(' ') do
         link_to label.html_safe, my_params, :remote => grid.options[:remote]
       end
+    end
+
+    def search_bar(grid)
+      searcher_data = {
+        :min_length => grid.options[:min_search_length],
+        :current => grid.options[:current_search] || "",
+      }
+      searcher = label_tag(grid.options[:searcher].to_sym,
+        grid.options[:searcher_label])
+      searcher << search_field_tag(grid.options[:searcher].to_sym,
+        grid.param(:q),
+        :placeholder => grid.options[:searcher_tooltip],
+        :size => grid.options[:searcher_size],
+        :data => searcher_data,
+        :form => "a form that doesn't exist")
+      if grid.options[:search_button]
+        searcher << button_tag(grid.options[:searcher_button],
+          :class => 'magic-grid-search-button')
+      end
+      searcher
     end
 
     ::ActionView::Base.send :include, self
