@@ -5,7 +5,8 @@ require File.expand_path("../dummy/config/environment.rb",  __FILE__)
 require "rails/test_help"
 
 #Run any available migration
-ActiveRecord::Migrator.migrate 'up'
+#ActiveRecord::Migrator.migrate 'up'
+load 'dummy/db/schema.rb'
 
 # Set fixtures root
 ActiveSupport::TestCase.fixture_path=(File.expand_path("../dummy/test/fixtures",  __FILE__))
