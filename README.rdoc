@@ -16,13 +16,14 @@ In your view:
 
 Or a more realistic example:
 
-    <%= magic_grid(@posts, [:title, :author, :actions]) do |post| %>
+    <%= magic_grid(@posts, [:title, :author, "Actions"]) do |post| %>
       <tr>
-        <td><%= link_to(post.title, post_path(post)) %></td>
-        <td><%= link_to(post.author, user_path(post.author)) %></td>
+        <td><%= link_to(post.title, post) %></td>
+        <td><%= link_to(post.author, post.author) %></td>
         <td>
           <%= link_to("Edit", edit_post_path(post)) %> |
-          <%= link_to("Delete", post_path(post, method: :delete)) %>
+          <%= link_to("Delete", post, method: :delete,
+                      data: {confirm: "Are you sure?"}) %>
         </td>
       </tr>
     <% end %>
