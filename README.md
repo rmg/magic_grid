@@ -38,5 +38,5 @@ Development
 Testing was originally done UnitTest style, with some tarantula to force a
 bunch of random page renderings. I've since added some RSpec goodness.
 
-To run all the tests, just run +rake+.
+To run all the tests, just run `rake`.
 
