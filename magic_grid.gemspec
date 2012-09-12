@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/rmg/magic_grid"
   s.summary     = "Simple collection displaying with pagination using will_paginate"
   s.description = "Simple collection displaying with pagination using will_paginate"
-#  s.has_rdoc    = 'yard'
+  s.has_rdoc    = 'yard'
 
   s.files = Dir["lib/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
   s.test_files = Dir["{spec,test}/**/*"] - Dir["test/dummy/tmp/**/*", "test/dummy/db/*.sqlite3", "test/dummy/log/*.log"]
@@ -25,4 +25,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rake"
   s.add_development_dependency "tarantula"
   s.add_development_dependency "rspec"
+  s.add_development_dependency "yard"
+  s.add_development_dependency "redcarpet"
 end
