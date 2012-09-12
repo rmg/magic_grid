@@ -18,7 +18,7 @@ In your view:
 
 Or a more realistic example:
 
-```ruby
+```rhtml
 <%= magic_grid(@posts, [:title, :author, "Actions"]) do |post| %>
   <tr>
     <td><%= link_to(post.title, post) %></td>
