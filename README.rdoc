@@ -1,19 +1,36 @@
 = MagicGrid
 
-Takes a collection and creates a paginated table of using a supplied column definition.
+Takes a collection (ActiveRecord or Array) and creates a paginated table of
+it using a supplied column definition. It can generate the rows for you, or
+you can supply a block to do it yourself.
 
 == Basic Usage
 
 In your +Gemfile+:
 
-    gem 'magic_grid', :git => 'git://github.com/rmg/magic_grid.git'
+    gem 'magic_grid'
 
 In your view:
 
     <%= magic_grid(@posts, [:title, :author]) %>
 
+Or a more realistic example:
+
+    <%= magic_grid(@posts, [:title, :author, :actions]) do |post| %>
+      <tr>
+        <td><%= link_to(post.title, post_path(post)) %></td>
+        <td><%= link_to(post.author, user_path(post.author)) %></td>
+        <td>
+          <%= link_to("Edit", edit_post_path(post)) %> |
+          <%= link_to("Delete", post_path(post, method: :delete)) %>
+        </td>
+      </tr>
+    <% end %>
 
 == Development
 
-To test, <code>(cd test/dummy && rake RAILS_ENV=test db:create db:migrate) && rake test</code>
+Testing was originally done UnitTest style, with some tarantula to force a
+bunch of random page renderings. I've since added some RSpec goodness.
+
+To run all the tests, just run +rake+.
 
