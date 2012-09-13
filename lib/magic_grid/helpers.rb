@@ -1,5 +1,8 @@
 require 'magic_grid/definition'
-require 'will_paginate/array'
+
+if Module.const_defined? :WillPaginate
+  require 'will_paginate/array'
+end
 
 module MagicGrid
   module Helpers
@@ -62,7 +65,7 @@ module MagicGrid
             thead << content_tag('tr') do
               content_tag('td', :class => 'full-width ui-widget-header',
                           :colspan => grid.columns.count) do
-                pager = will_paginate(grid.collection,
+                pager = magic_paginate(grid.collection,
                                       :param_name => grid.param_key(:page),
                                       :params => base_params
                                      )
@@ -96,7 +99,7 @@ module MagicGrid
             tfoot << content_tag('tr') do
               content_tag('td', :class => 'full-width ui-widget-header',
                           :colspan => grid.columns.count) do
-                will_paginate(grid.collection,
+                magic_paginate(grid.collection,
                               :param_name => grid.param_key(:page),
                               :params => base_params
                              )
@@ -241,6 +244,16 @@ module MagicGrid
           :class => 'magic-grid-search-button')
       end
       searcher
+    end
+
+    def magic_paginate(collection, opts={})
+      if respond_to? :will_paginate
+        will_paginate collection, opts
+        #alias_method :magic_paginate, :will_paginate
+      else #Kaminari, or something else..
+        paginate collection, opts
+        #alias_method :magic_paginate, :paginate
+      end
     end
 
     ::ActionView::Base.send :include, self

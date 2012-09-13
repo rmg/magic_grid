@@ -1,8 +1,8 @@
-require 'will_paginate/view_helpers/action_view'
+#require 'will_paginate/view_helpers/action_view'
 
 module MagicGrid
   class Definition
-    include WillPaginate::ActionView
+    #include WillPaginate::ActionView
     attr_accessor :columns, :collection, :magic_id, :options, :params,
       :current_sort_col, :current_order, :default_order
 
@@ -173,8 +173,14 @@ module MagicGrid
       end
       # Paginate at the very end, after all sorting, filtering, etc..
       if @options[:per_page]
-        @collection = @collection.paginate(:page => param(:page, 1),
-                                           :per_page => @options[:per_page])
+        if @collection.respond_to? :paginate
+          @collection = @collection.paginate(:page => param(:page, 1),
+                                             :per_page => @options[:per_page])
+        elsif @collection.respond_to? :page
+          @collection = @collection.page(param(:page, 1)).per(@options[:per_page])
+        else
+          @collection = Kaminari.paginate_array(@collection).page(param(:page, 1)).per(@options[:per_page])
+        end
       end
     end
 
