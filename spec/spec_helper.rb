@@ -1,8 +1,25 @@
+require 'bundler'
+Bundler.setup
+
 require 'action_view'
 require 'rails'
-require 'will_paginate'
-require 'will_paginate/array'
-require 'will_paginate/view_helpers'
+
+begin
+  require 'will_paginate'
+  require 'will_paginate/array'
+  require 'will_paginate/view_helpers'
+  puts "Testing with WillPaginate"
+rescue LoadError
+  puts "skipping WillPaginate"
+end
+
+begin
+  require 'kaminari'
+  require 'kaminari/models/array_extension'
+  puts "Testing with Kaminari"
+rescue LoadError
+  puts "skipping Kaminari"
+end
 
 Rails.backtrace_cleaner.remove_silencers!
 
@@ -35,7 +52,8 @@ RSpec.configure do |config|
   config.filter_run :focus
 
   config.include ActionView::Helpers
-  config.include WillPaginate::ViewHelpers
+  config.include WillPaginate::ViewHelpers if Module.const_defined? :WillPaginate
+  config.include Kaminari::ActionViewExtension if Module.const_defined? :Kaminari
   config.include ActionFaker
 
   # Run specs in random order to surface order dependencies. If you find an

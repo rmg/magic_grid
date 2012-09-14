@@ -248,11 +248,15 @@ module MagicGrid
 
     def magic_paginate(collection, opts={})
       if respond_to? :will_paginate
+        # WillPaginate
         will_paginate collection, opts
         #alias_method :magic_paginate, :will_paginate
-      else #Kaminari, or something else..
+      elsif respond_to? :paginate
+        #Kaminari, or something else..
         paginate collection, opts
         #alias_method :magic_paginate, :paginate
+      else
+        '<!-- INSTALL WillPaginate or Kaminari for a pager! -->'.html_safe
       end
     end
 

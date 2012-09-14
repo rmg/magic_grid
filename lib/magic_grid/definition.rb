@@ -178,8 +178,10 @@ module MagicGrid
                                              :per_page => @options[:per_page])
         elsif @collection.respond_to? :page
           @collection = @collection.page(param(:page, 1)).per(@options[:per_page])
-        else
+        elsif Module.const_defined? :Kaminari
           @collection = Kaminari.paginate_array(@collection).page(param(:page, 1)).per(@options[:per_page])
+        else
+          @collection = @collection.each_slice(@options[:per_page]).drop([param(:page, 1) - 1, 0].max)
         end
       end
     end
