@@ -5,9 +5,13 @@ rescue LoadError
   puts 'You must `gem install bundler` and `bundle install` to run rake tasks'
 end
 
-require 'yard'
+begin
+  require 'yard'
+  YARD::Rake::YardocTask.new
+rescue LoadError
+  puts "Skipping YARD tasks"
+end
 
-YARD::Rake::YardocTask.new
 
 Bundler::GemHelper.install_tasks
 

@@ -1,6 +1,8 @@
 MagicGrid
 =========
 
+[![Build Status](https://secure.travis-ci.org/rmg/magic_grid.png)](http://travis-ci.org/rmg/magic_grid)
+
 Takes a collection (ActiveRecord or Array) and creates a paginated table of
 it using a supplied column definition. It can generate the rows for you, or
 you can supply a block to do it yourself.
