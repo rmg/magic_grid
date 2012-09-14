@@ -5,6 +5,22 @@ source "http://rubygems.org"
 # development dependencies will be added by default to the :development group.
 gemspec
 
+#s.add_development_dependency "sqlite3"
+platforms :ruby do
+  gem 'sqlite3'
+end
+platforms :jruby do
+  gem 'jruby-openssl'
+  gem 'activerecord-jdbcsqlite3-adapter'
+end
+
+#  s.add_development_dependency "yard"
+#  s.add_development_dependency "redcarpet"
+unless ENV['TRAVIS']
+  gem 'yard'
+  gem 'redcarpet'
+end
+
 # jquery-rails is used by the dummy application
 gem "jquery-rails"
 
