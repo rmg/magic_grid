@@ -256,7 +256,8 @@ module MagicGrid
         paginate collection, opts
         #alias_method :magic_paginate, :paginate
       else
-        '<!-- INSTALL WillPaginate or Kaminari for a pager! -->'.html_safe
+        ("<!-- page #{collection.current_page} of #{collection.total_pages} -->" +
+                '<!-- INSTALL WillPaginate or Kaminari for a pager! -->').html_safe
       end
     end
 

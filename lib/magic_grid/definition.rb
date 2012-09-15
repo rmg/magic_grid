@@ -4,7 +4,8 @@ module MagicGrid
   class Definition
     #include WillPaginate::ActionView
     attr_accessor :columns, :collection, :magic_id, :options, :params,
-      :current_sort_col, :current_order, :default_order
+      :current_sort_col, :current_order, :default_order, :current_page,
+      :per_page
 
     DEFAULTS = {
       :class => [],
@@ -55,6 +56,8 @@ module MagicGrid
       end
       @default_order = @options[:default_order]
       @params = controller.try(:params) || {}
+      @current_page = [param(:page, 1), 1].max
+      @per_page = @options[:per_page]
       @collection = collection
       begin
         #if @collection.respond_to? :table
@@ -172,16 +175,22 @@ module MagicGrid
         @collection = @options[:post_filter].call(@collection)
       end
       # Paginate at the very end, after all sorting, filtering, etc..
-      if @options[:per_page]
+      if @per_page
         if @collection.respond_to? :paginate
-          @collection = @collection.paginate(:page => param(:page, 1),
-                                             :per_page => @options[:per_page])
+          @collection = @collection.paginate(:page => @current_page,
+                                             :per_page => @per_page)
         elsif @collection.respond_to? :page
-          @collection = @collection.page(param(:page, 1)).per(@options[:per_page])
+          @collection = @collection.page(@current_page).per(@per_page)
         elsif Module.const_defined? :Kaminari
-          @collection = Kaminari.paginate_array(@collection).page(param(:page, 1)).per(@options[:per_page])
+          @collection = Kaminari.paginate_array(@collection).page(@current_page).per(@per_page)
         else
-          @collection = @collection.each_slice(@options[:per_page]).drop([param(:page, 1) - 1, 0].max)
+          original = @collection
+          @collection = @collection.each_slice(@per_page).drop(@current_page - 1).first || []
+          class << @collection
+            attr_accessor :current_page, :total_pages
+          end
+          @collection.current_page = @current_page
+          @collection.total_pages = original.count / @per_page
         end
       end
     end
