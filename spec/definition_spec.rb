@@ -72,9 +72,12 @@ describe MagicGrid::Definition do
       controller.stub(:params) { HashWithIndifferentAccess.new({grid_page: 2}) }
       controller
     }
-    subject { MagicGrid::Definition.new(column_list, large_collection, controller, id: :grid) }
+    subject { MagicGrid::Definition.new(column_list, large_collection, controller, id: :grid, per_page: 17) }
     its(:collection) { should_not == empty_collection }
-    its(:collection) { should have(MagicGrid::Definition.runtime_defaults[:per_page]).items }
+    it "should give a collection with a page worth of items" do
+      subject.per_page.should < large_collection.count
+      subject.collection.should have(subject.per_page).items
+    end
     its(:columns) { should == column_list }
     its(:current_page) { should == 2 }
 
