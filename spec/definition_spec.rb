@@ -5,6 +5,7 @@ describe MagicGrid::Definition do
   pending "embarasses me with how tightly it is coupled with.. EVERYTHING"
 
   let (:empty_collection) { [] }
+  let (:large_collection) { 200.times.map { {name: "Name", description: "Describe me!"} } }
   let (:column_list) { [:name, :description] }
   let (:column_hash) { {} }
 
@@ -30,7 +31,6 @@ describe MagicGrid::Definition do
   its(:columns) { should == column_list }
   its(:options) { should == MagicGrid::Definition.runtime_defaults }
 
-
   descendings = [1, "1", :desc, :DESC, "desc", "DESC"]
   descendings.each do |down|
     it "should normalize #{down} to 1" do
@@ -43,5 +43,10 @@ describe MagicGrid::Definition do
     it "should normalize #{up} to 0" do
       expect(subject.order(up)).to eq(0)
     end
+  end
+
+  context "when given a large collection" do
+    subject { MagicGrid::Definition.new(column_list, large_collection) }
+    its(:collection) { should have(MagicGrid::Definition.runtime_defaults[:per_page]).items }
   end
 end
