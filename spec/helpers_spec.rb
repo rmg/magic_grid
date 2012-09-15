@@ -10,6 +10,15 @@ describe MagicGrid::Helpers do
   let(:empty_collection) { [] }
   let(:column_list) { [:name, :description] }
 
+  let(:view_renderer) {
+    double.tap { |v|
+      v.stub(:render)
+      v.stub(:params) { {} }
+      # controller.stub(:option)
+      v.stub(:url_for) {|h| "/foo?page=#{h[:page]}"}
+    }
+  }
+
   describe "#normalize_magic" do
 
     it "should turn an array into a MagicGrid::Definition" do
