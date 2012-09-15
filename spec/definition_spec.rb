@@ -25,7 +25,7 @@ describe MagicGrid::Definition do
   end
 
   let (:empty_collection) { [] }
-  let (:large_collection) { 200.times.map { {name: "Name", description: "Describe me!"} } }
+  let (:large_collection) { 200.times.map { |i| {id: i, name: "Name", description: "Describe me!"} } }
   let (:column_list) { [:name, :description] }
   let (:column_hash) { {} }
 
@@ -62,6 +62,7 @@ describe MagicGrid::Definition do
     subject { MagicGrid::Definition.new(column_list, large_collection, controller) }
     it_behaves_like "a basic grid"
     its(:collection) { should_not == empty_collection }
+
     its(:collection) { should have(MagicGrid::Definition.runtime_defaults[:per_page]).items }
     its(:columns) { should == column_list }
   end

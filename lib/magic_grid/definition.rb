@@ -185,9 +185,10 @@ module MagicGrid
           original = @collection
           @collection = @collection.each_slice(@per_page).drop(current_page - 1).first || []
           class << @collection
-            attr_accessor :current_page, :total_pages
+            attr_accessor :current_page, :total_pages, :original_count
           end
           @collection.current_page = current_page
+          @collection.original_count = original.count
           @collection.total_pages = original.count / @per_page
         end
       end
