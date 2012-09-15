@@ -1,5 +1,13 @@
-require 'bundler'
-Bundler.setup
+# require 'bundler'
+# Bundler.setup
+
+unless ENV['TRAVIS']
+  require 'simplecov'
+  SimpleCov.start do
+    add_filter '/spec/'
+    add_filter '/test/'
+  end
+end
 
 require 'action_view'
 require 'rails'

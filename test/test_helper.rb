@@ -1,6 +1,13 @@
 # Configure Rails Environment
 ENV["RAILS_ENV"] = "test"
 
+unless ENV['TRAVIS']
+  require 'simplecov'
+  SimpleCov.start do
+    add_filter '/dummy/'
+  end
+end
+
 require File.expand_path("../dummy/config/environment.rb",  __FILE__)
 require "rails/test_help"
 

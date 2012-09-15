@@ -19,6 +19,7 @@ end
 unless ENV['TRAVIS']
   gem 'yard'
   gem 'redcarpet'
+  gem 'simplecov', require: false
 end
 
 # jquery-rails is used by the dummy application
