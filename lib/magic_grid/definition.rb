@@ -183,7 +183,7 @@ module MagicGrid
           @collection = Kaminari.paginate_array(@collection).page(current_page).per(@per_page)
         else
           original = @collection
-          @collection = @collection.each_slice(@per_page).drop(current_page - 1).first || []
+          @collection = @collection.to_enum.each_slice(@per_page).drop(current_page - 1).first.to_a
           class << @collection
             attr_accessor :current_page, :total_pages, :original_count
           end
