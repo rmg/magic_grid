@@ -1,11 +1,13 @@
 require 'spec_helper'
 require 'magic_grid/definition'
+require 'active_support/core_ext/hash/indifferent_access'
 
 describe MagicGrid::Definition do
   pending "embarasses me with how tightly it is coupled with.. EVERYTHING"
 
   shared_examples "a basic grid" do
     its(:options) { should == MagicGrid::Definition.runtime_defaults }
+    its(:current_page) { should == 1 }
 
     descendings = [1, "1", :desc, :DESC, "desc", "DESC"]
     descendings.each do |down|
@@ -51,11 +53,36 @@ describe MagicGrid::Definition do
     it_behaves_like "a basic grid"
   end
 
-  context "when given a large collection" do
-    subject { MagicGrid::Definition.new(column_list, large_collection) }
+  context "when given a large collection and default options" do
+    let(:controller) {
+      controller = double()
+      controller.stub(:params) { {page: 2} }
+      controller
+    }
+    subject { MagicGrid::Definition.new(column_list, large_collection, controller) }
     it_behaves_like "a basic grid"
     its(:collection) { should_not == empty_collection }
     its(:collection) { should have(MagicGrid::Definition.runtime_defaults[:per_page]).items }
     its(:columns) { should == column_list }
+  end
+
+  context "when given a large collection and some options" do
+    let(:controller) {
+      controller = double()
+      controller.stub(:params) { HashWithIndifferentAccess.new({grid_page: 2}) }
+      controller
+    }
+    subject { MagicGrid::Definition.new(column_list, large_collection, controller, id: :grid) }
+    its(:collection) { should_not == empty_collection }
+    its(:collection) { should have(MagicGrid::Definition.runtime_defaults[:per_page]).items }
+    its(:columns) { should == column_list }
+    its(:current_page) { should == 2 }
+
+    it "should know how to extract its params" do
+      subject.param_key(:page).should == :grid_page
+      subject.param_key(:hunkydory).should == :grid_hunkydory
+      subject.param(:page).should == 2
+    end
+
   end
 end

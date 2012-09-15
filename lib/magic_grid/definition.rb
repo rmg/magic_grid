@@ -4,8 +4,7 @@ module MagicGrid
   class Definition
     #include WillPaginate::ActionView
     attr_accessor :columns, :collection, :magic_id, :options, :params,
-      :current_sort_col, :current_order, :default_order, :current_page,
-      :per_page
+      :current_sort_col, :current_order, :default_order, :per_page
 
     DEFAULTS = {
       :class => [],
@@ -55,8 +54,7 @@ module MagicGrid
         raise "I have no idea what that is, but it's not a Hash or an Array"
       end
       @default_order = @options[:default_order]
-      @params = controller.try(:params) || {}
-      @current_page = [param(:page, 1), 1].max
+      @params = controller && controller.params || {}
       @per_page = @options[:per_page]
       @collection = collection
       begin
@@ -177,19 +175,19 @@ module MagicGrid
       # Paginate at the very end, after all sorting, filtering, etc..
       if @per_page
         if @collection.respond_to? :paginate
-          @collection = @collection.paginate(:page => @current_page,
+          @collection = @collection.paginate(:page => current_page,
                                              :per_page => @per_page)
         elsif @collection.respond_to? :page
-          @collection = @collection.page(@current_page).per(@per_page)
-        elsif Module.const_defined? :Kaminari
-          @collection = Kaminari.paginate_array(@collection).page(@current_page).per(@per_page)
+          @collection = @collection.page(current_page).per(@per_page)
+        elsif @collection.is_a?(Array) and Module.const_defined?(:Kaminari)
+          @collection = Kaminari.paginate_array(@collection).page(current_page).per(@per_page)
         else
           original = @collection
-          @collection = @collection.each_slice(@per_page).drop(@current_page - 1).first || []
+          @collection = @collection.each_slice(@per_page).drop(current_page - 1).first || []
           class << @collection
             attr_accessor :current_page, :total_pages
           end
-          @collection.current_page = @current_page
+          @collection.current_page = current_page
           @collection.total_pages = original.count / @per_page
         end
       end
@@ -205,6 +203,10 @@ module MagicGrid
 
     def base_params
       @params.merge :magic_grid_id => @magic_id
+    end
+
+    def current_page
+      [param(:page, 1).to_i, 1].max
     end
 
     def order(something)
