@@ -12,7 +12,6 @@ rvm:
 gemfile:
   # - will_paginate.gemfile
   # - kaminari.gemfile
-  - no_paginator.rails30.gemfile
   - no_paginator.rails31.gemfile
   - no_paginator.rails32.gemfile
   # - gemfiles/3.0.gemfile
