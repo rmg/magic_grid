@@ -17,12 +17,10 @@ Gem::Specification.new do |s|
   s.files = Dir["lib/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
   s.test_files = Dir["{spec,test}/**/*"] - Dir["test/dummy/tmp/**/*", "test/dummy/db/*.sqlite3", "test/dummy/log/*.log"]
 
-  s.add_dependency "rails", ">= 3.1.0"
-#  s.add_dependency "will_paginate", "~> 3.0.0"
+  s.add_dependency "rails", ">= 3.0"
   s.add_dependency "jquery-rails" , ">= 1.0.17"
 
-  s.add_development_dependency "rake"
-  s.add_development_dependency "tarantula"
-  s.add_development_dependency "rspec"
-  s.add_development_dependency "rspec-mocks"
+  s.add_development_dependency "rake", "~> 0.9.2"
+  s.add_development_dependency "tarantula", "~> 0.4.0"
+  s.add_development_dependency "rspec", "~> 2.11.0"
 end
