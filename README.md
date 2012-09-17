@@ -3,9 +3,15 @@ MagicGrid
 
 [![Build Status](https://secure.travis-ci.org/rmg/magic_grid.png)](http://travis-ci.org/rmg/magic_grid)
 
-Takes a collection (ActiveRecord or Array) and creates a paginated table of
-it using a supplied column definition. It can generate the rows for you, or
-you can supply a block to do it yourself.
+Easy collection display grid with column sorting and pagination.
+
+Displays a collection (ActiveRelation or Array) wrapped in an html table with server
+side column sorting, filtering hooks, and search bar. Large collections can be
+paginated with either the will_paginate gem or kaminari gem if you use them, or a naive
+Enumerable based paginator (without pager links) if neither is present.
+
+Tables are styled using Themeroller compatible classes, which also don't look _too_ bad
+with Bootstrap.
 
 Basic Usage
 -----------

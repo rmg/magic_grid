@@ -10,8 +10,13 @@ Gem::Specification.new do |s|
   s.authors     = ["Ryan Graham"]
   s.email       = ["r.m.graham@gmail.com"]
   s.homepage    = "https://github.com/rmg/magic_grid"
-  s.summary     = "Simple collection displaying with pagination using will_paginate"
-  s.description = "Simple collection displaying with pagination using will_paginate"
+  s.summary     = "Easy collection display grid with column sorting and pagination"
+  s.description = <<-EOF
+    Displays a collection (ActiveRelation or Array) wrapped in an html table with server
+    side column sorting, filtering hooks, and search bar. Large collections can be
+    paginated with either the will_paginate gem or kaminari gem if you use them, or a naive
+    Enumerable based paginator (without pager links) if neither is present.
+  EOF
   s.has_rdoc    = 'yard'
 
   s.files = Dir["lib/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
