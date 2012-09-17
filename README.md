@@ -1,7 +1,7 @@
 MagicGrid
 =========
 
-[![Build Status](https://secure.travis-ci.org/rmg/magic_grid.png)](http://travis-ci.org/rmg/magic_grid)
+[![Build Status](https://secure.travis-ci.org/rmg/magic_grid.png?branch=master,stable,release)](http://travis-ci.org/rmg/magic_grid)
 
 Easy collection display grid with column sorting and pagination.
 
