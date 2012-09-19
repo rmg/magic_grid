@@ -107,7 +107,7 @@ module MagicGrid
         else
           @options[:listeners].each_pair do |key, value|
             if @params[value] and not @params[value].to_s.empty?
-              @collection = @collection.where(key => @params[value])
+              @collection = @collection.where(value => @params[value])
             end
           end
         end
