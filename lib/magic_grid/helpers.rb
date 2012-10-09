@@ -27,6 +27,7 @@ module MagicGrid
       base_params = grid.base_params
       data = {
         :searcher => grid.options[:searcher],
+        :current => url_for,
         :live_search => grid.options[:live_search],
         :listeners => (grid.options[:listeners] unless grid.options[:listeners].empty?),
         :remote => grid.options[:remote],
