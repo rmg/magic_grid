@@ -1,6 +1,7 @@
 require 'spec_helper'
 require 'magic_grid/helpers'
 require 'action_controller'
+require "active_support/core_ext"
 
 describe MagicGrid::Helpers do
 
@@ -9,13 +10,14 @@ describe MagicGrid::Helpers do
 
   let(:empty_collection) { [] }
   let(:column_list) { [:name, :description] }
-
-  let(:view_renderer) {
+  let(:controller) {
+    request = double.tap{ |r|
+      r.stub(:fullpath, "/foo?page=bar")
+    }
     double.tap { |v|
-      v.stub(:render)
+      v.stub(:render) { nil }
       v.stub(:params) { {} }
-      # controller.stub(:option)
-      v.stub(:url_for) {|h| "/foo?page=#{h[:page]}"}
+      v.stub(:request) { request }
     }
   }
 
