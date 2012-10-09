@@ -20,6 +20,7 @@ describe MagicGrid::Helpers do
       v.stub(:request) { request }
     }
   }
+  let(:view_renderer) { controller }
 
   describe "#normalize_magic" do
 
