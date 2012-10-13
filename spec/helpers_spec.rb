@@ -10,6 +10,7 @@ describe MagicGrid::Helpers do
 
   let(:empty_collection) { [] }
   let(:column_list) { [:name, :description] }
+
   let(:controller) {
     request = double.tap{ |r|
       r.stub(:fullpath, "/foo?page=bar")
@@ -20,6 +21,8 @@ describe MagicGrid::Helpers do
       v.stub(:request) { request }
     }
   }
+
+  # Kaminari uses view_renderer instead of controller
   let(:view_renderer) { controller }
 
   describe "#normalize_magic" do
@@ -39,11 +42,11 @@ describe MagicGrid::Helpers do
   describe "#magic_grid" do
     pending "DOES WAY TOO MUCH!!"
 
+    let(:emtpy_grid) { magic_grid empty_collection, column_list }
+
     it "should barf without any arguments" do
       expect { magic_grid }.to raise_error
     end
-
-    let(:emtpy_grid) { magic_grid empty_collection, column_list }
 
     it "should render a table" do
       expect( emtpy_grid ).not_to be_empty
