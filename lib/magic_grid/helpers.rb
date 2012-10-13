@@ -4,6 +4,10 @@ if Module.const_defined? :WillPaginate
   require 'will_paginate/array'
 end
 
+def MagicGrid::compact_hash(hash)
+  hash.select {|_,v| v }
+end
+
 module MagicGrid
   module Helpers
     def normalize_magic(collection, columns = [], options = {})
@@ -28,7 +32,7 @@ module MagicGrid
       content_tag('table',
                   :class => classes.join(' '),
                   :id => grid.magic_id,
-                  :data => data.select {|_,v| v }
+                  :data => MagicGrid.compact_hash(data)
                   ) do
         table = content_tag('thead', :data => {:params => base_params}
                            ) do
