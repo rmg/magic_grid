@@ -9,6 +9,7 @@ describe MagicGrid::Helpers do
   include MagicGrid::Helpers
 
   let(:empty_collection) { [] }
+
   let(:column_list) { [:name, :description] }
 
   let(:controller) {
@@ -43,6 +44,11 @@ describe MagicGrid::Helpers do
     pending "DOES WAY TOO MUCH!!"
 
     let(:emtpy_grid) { magic_grid empty_collection, column_list }
+    let(:searchabe_collection) {
+      collection = []
+      collection.stub(:search)
+      collection
+    }
 
     it "should barf without any arguments" do
       expect { magic_grid }.to raise_error
@@ -54,9 +60,9 @@ describe MagicGrid::Helpers do
     end
 
     context "when given an empty collection" do
-      let(:empty_grid) { magic_grid(empty_collection, column_list) }
+      subject { magic_grid empty_collection, column_list }
       it "should indicate there is no data" do
-        expect(empty_grid).to match(/"if-empty"/)
+        subject.should match(/"if-empty"/)
       end
     end
 
@@ -76,6 +82,11 @@ describe MagicGrid::Helpers do
         end
       }
       it { should =~ /HOKY_POKY_ALAMO: 1/ }
+    end
+
+    it "should render a search bar when asked" do
+      grid = magic_grid(searchabe_collection, column_list, :searchable => [:some_col])
+      grid.should match_select('input[type=search]')
     end
   end
 
