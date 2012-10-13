@@ -28,9 +28,11 @@ describe MagicGrid::Helpers do
       expect(normalize_magic([])).to be_a(MagicGrid::Definition)
     end
 
-    it "should give back the MagicGrid::Definition given, if given one" do
+    it "should give back the MagicGrid::Definition given, if given as any argument" do
       definition = normalize_magic([])
-      expect(normalize_magic(definition)).to be(definition)
+      expect(normalize_magic( definition )).to be(definition)
+      expect(normalize_magic( nil, definition )).to be(definition)
+      expect(normalize_magic( nil, nil, definition )).to be(definition)
     end
   end
 
