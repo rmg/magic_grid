@@ -7,15 +7,9 @@ end
 module MagicGrid
   module Helpers
     def normalize_magic(collection, columns = [], options = {})
-      if collection.is_a? MagicGrid::Definition
-        collection
-      elsif columns.is_a? MagicGrid::Definition
-        columns
-      elsif options.is_a? MagicGrid::Definition
-        options
-      else
-        MagicGrid::Definition.new(columns, collection, controller, options)
-      end
+      args_enum = [collection, columns, options].to_enum
+      given_grid = args_enum.find {|e| e.is_a? MagicGrid::Definition }
+      given_grid || MagicGrid::Definition.new(columns, collection, controller, options)
     end
 
     def magic_grid(collection = nil, cols = nil, opts = {}, &block)
