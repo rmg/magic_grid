@@ -18,10 +18,6 @@ module MagicGrid
       end
     end
 
-    def magic_collection(collection, cols, opts = {})
-      normalize_magic(collection, cols, opts).collection
-    end
-
     def magic_grid(collection = nil, cols = nil, opts = {}, &block)
       grid = normalize_magic(collection, cols, opts)
       base_params = grid.base_params

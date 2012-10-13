@@ -34,16 +34,6 @@ describe MagicGrid::Helpers do
     end
   end
 
-  describe "#magic_collection" do
-    pending "should probably be removed, it's not really used"
-
-    it "should give back a collection like the one given" do
-      my_empty_collection = empty_collection
-      expect(magic_collection(my_empty_collection, column_list)).to eq(my_empty_collection)
-    end
-
-  end
-
   describe "#magic_grid" do
     pending "DOES WAY TOO MUCH!!"
 
