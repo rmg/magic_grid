@@ -95,4 +95,16 @@ describe MagicGrid::Definition do
       subject.param(:page).should == 2
     end
   end
+
+  context "sorting" do
+    pending "sorting needs testing"
+    pending "test #order_sql"
+  end
+  context "filtering" do
+    pending "test listeners"
+    pending "test listener_handlers"
+    pending "test listening on a dumb collection"
+    pending "test callable post_filter"
+    pending "test collection post_filter"
+  end
 end
