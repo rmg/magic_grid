@@ -243,11 +243,11 @@ module MagicGrid
     def magic_paginate(collection, opts={})
       if respond_to? :will_paginate
         # WillPaginate
-        will_paginate collection, opts
+        will_paginate collection.paginated, opts
         #alias_method :magic_paginate, :will_paginate
       elsif respond_to? :paginate
         #Kaminari, or something else..
-        paginate collection, opts
+        paginate collection.paginated, opts
         #alias_method :magic_paginate, :paginate
       else
         ("<!-- page #{collection.current_page} of #{collection.total_pages} -->" +

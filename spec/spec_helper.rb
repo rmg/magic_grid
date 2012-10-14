@@ -12,6 +12,7 @@ end
 require 'action_view'
 require 'rails'
 require 'test/unit'
+require 'action_controller'
 
 begin
   require 'will_paginate'

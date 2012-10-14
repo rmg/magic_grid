@@ -100,7 +100,7 @@ describe MagicGrid::Helpers do
       let(:search_param) { 'foobar' }
       let(:searchabe_collection) {
         collection = []
-        collection.stub(:search)
+        collection.stub(:search) { collection }
         collection
       }
       let(:controller) {

@@ -13,6 +13,10 @@ module MagicGrid
       @logger || Rails.logger
     end
 
+    def collection
+      @collection.collection
+    end
+
     DEFAULTS = {
       :class => [],
       :top_pager => false,
@@ -127,7 +131,7 @@ module MagicGrid
       @options[:current_search] ||= param(:q)
       if @collection.searchable?
         if param(:q) and not param(:q).empty? and @options[:searchable]
-          @collection = @collection.apply_search(param(:q))
+          @collection.apply_search(param(:q))
         end
       else
         if @options[:searchable] or param(:q)
@@ -147,28 +151,7 @@ module MagicGrid
         @collection = @options[:post_filter].call(@collection)
       end
       # Paginate at the very end, after all sorting, filtering, etc..
-      if @per_page
-        if @collection.respond_to? :paginate
-          @collection = @collection.paginate(:page => current_page,
-                                             :per_page => @per_page)
-        elsif @collection.respond_to? :page
-          @collection = @collection.page(current_page).per(@per_page)
-        elsif @collection.is_a?(Array) and Module.const_defined?(:Kaminari)
-          @collection = Kaminari.paginate_array(@collection).page(current_page).per(@per_page)
-        else
-          original = @collection
-          @collection = @collection.to_enum
-          @collection = @collection.each_slice(@per_page)
-          @collection = @collection.drop(current_page - 1)
-          @collection = @collection.first.to_a
-          class << @collection
-            attr_accessor :current_page, :total_pages, :original_count
-          end
-          @collection.current_page = current_page
-          @collection.original_count = original.count
-          @collection.total_pages = original.count / @per_page
-        end
-      end
+      @collection = @collection.apply_pagination(current_page, @per_page)
     end
 
     def param_key(key)
