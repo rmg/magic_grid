@@ -1,19 +1,19 @@
-require 'delegate'
+require 'active_support'
 
 module MagicGrid
-  class Collection < Delegator
+  class Collection
 
     def initialize(collection, grid)
-      super(collection)
       @collection = collection
       @grid = grid
       @current_page = 1
     end
-    def __getobj__()    @collection;        end
-    def __setobj__(obj) @collection = obj;  end
 
-    attr_writer :logger
-    attr_accessor :collection, :grid
+    delegate :map, :count, :to => :collection
+
+    attr_writer :logger, :grid
+    attr_reader :collection, :grid
+    attr_reader :current_page, :original_count, :total_pages, :paginated
 
     def logger
       @logger || (@grid && @grid.logger) || Rails.logger
@@ -22,10 +22,10 @@ module MagicGrid
     def self.[](collection, grid)
       if collection.is_a?(self)
         collection.grid = grid
+        collection
       else
-        collection = Collection.new(collection, grid)
+        Collection.new(collection, grid)
       end
-      collection
     end
 
     def search_using_builtin(q)
@@ -70,6 +70,11 @@ module MagicGrid
     def searchable?
       search_method = @grid.options[:search_method]
       (@collection.respond_to?(:where) or (search_method and @collection.respond_to?(search_method)))
+    end
+
+    def apply_sorting(col, dir)
+      @collection = @collection.order("#{col} #{dir}")
+      self
     end
 
     def apply_search(q)

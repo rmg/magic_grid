@@ -5,7 +5,7 @@ require 'magic_grid/collection'
 module MagicGrid
   class Definition
     #include WillPaginate::ActionView
-    attr_accessor :columns, :collection, :magic_id, :options, :params,
+    attr_reader :columns, :magic_id, :options, :params,
       :current_sort_col, :current_order, :default_order, :per_page
 
     attr_writer :logger
@@ -105,7 +105,7 @@ module MagicGrid
         sort_col = @columns[sort_col_i][:sql]
         @current_order = order(param(:order, @default_order))
         sort_dir = order_sql(@current_order)
-        @collection = @collection.order("#{sort_col} #{sort_dir}")
+        @collection = @collection.apply_sort(sort_col, sort_dir)
       else
         Rails.logger.debug "#{self.class.name}: Ignoring sorting on non-AR collection"
       end
