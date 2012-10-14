@@ -1,5 +1,7 @@
 #require 'will_paginate/view_helpers/action_view'
 
+require 'magic_grid/collection'
+
 module MagicGrid
   class Definition
     #include WillPaginate::ActionView
@@ -56,7 +58,7 @@ module MagicGrid
       @default_order = @options[:default_order]
       @params = controller && controller.params || {}
       @per_page = @options[:per_page]
-      @collection = collection
+      @collection = Collection.new(collection)
       begin
         #if @collection.respond_to? :table
         table_name = @collection.quoted_table_name
