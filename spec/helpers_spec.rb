@@ -97,36 +97,29 @@ describe MagicGrid::Helpers do
     end
 
     context "renders top and bottom pagers as told" do
+      large_collection = (1..1000).to_a
       it "should render an actual pager" do
-        large_collection = (1..1000).to_a
         grid = magic_grid(large_collection, [:to_s])
-        puts grid
         if Module.const_defined? :WillPaginate
-          grid.should match_select("tfoot>tr>td.magic-pager>div", 1)
+          grid.should match_select("tfoot>tr>td.magic-pager>div.pagination", 1)
         elsif Module.const_defined? :Kaminari
-          grid.should match_select("tfoot>tr>td.magic-pager>nav", 1)
+          grid.should match_select("tfoot>tr>td.magic-pager>nav.pagination", 1)
         else
           grid.should match_select("tfoot>tr>td.magic-pager", /INSTALL/)
         end
       end
       it "should render only a bottom pager by default" do
-        grid = magic_grid( [1, 2], [:to_s] ) do |row|
-                 "a row: #{row}"
-               end
+        grid = magic_grid( large_collection, [:to_s] )
         grid.should match_select("thead>tr>td.magic-pager", 0)
         grid.should match_select("tfoot>tr>td.magic-pager", 1)
       end
       it "should render a top and bottom pager when told" do
-        grid = magic_grid( [1, 2], [:to_s], top_pager: true ) do |row|
-                 "a row: #{row}"
-               end
+        grid = magic_grid( large_collection, [:to_s], top_pager: true )
         grid.should match_select("thead>tr>td.magic-pager", 1)
         grid.should match_select("tfoot>tr>td.magic-pager", 1)
       end
       it "should render only a top pager when told" do
-        grid = magic_grid( [1, 2], [:to_s], top_pager: true, bottom_pager: false ) do |row|
-                 "a row: #{row}"
-               end
+        grid = magic_grid( large_collection, [:to_s], top_pager: true, bottom_pager: false )
         grid.should match_select("thead>tr>td.magic-pager", 1)
         grid.should match_select("tfoot>tr>td.magic-pager", 0)
       end
