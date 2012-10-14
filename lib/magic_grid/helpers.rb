@@ -57,17 +57,11 @@ module MagicGrid
           end
           if grid.options[:per_page] and grid.options[:top_pager]
             thead << content_tag('tr') do
-              content_tag('td', :class => 'full-width ui-widget-header',
-                          :colspan => grid.columns.count) do
-                pager = magic_paginate(grid.collection,
-                                      :param_name => grid.param_key(:page),
-                                      :params => base_params
-                                     )
+              magic_pager(grid, base_params) do
                 unless has_spinner
                   has_spinner = true
-                  pager << spinner
+                  spinner
                 end
-                pager
               end
             end
           end
@@ -91,13 +85,7 @@ module MagicGrid
           tfoot = ''.html_safe
           if grid.options[:per_page] and grid.options[:bottom_pager]
             tfoot << content_tag('tr') do
-              content_tag('td', :class => 'full-width ui-widget-header',
-                          :colspan => grid.columns.count) do
-                magic_paginate(grid.collection,
-                              :param_name => grid.param_key(:page),
-                              :params => base_params
-                             )
-              end
+              magic_pager(grid, base_params)
             end
           end
           if tfoot.empty? and not grid.options[:empty_footer]
@@ -252,6 +240,22 @@ module MagicGrid
       else
         ("<!-- page #{collection.current_page} of #{collection.total_pages} -->" +
                 '<!-- INSTALL WillPaginate or Kaminari for a pager! -->').html_safe
+      end
+    end
+
+    def magic_pager(grid, base_params, &block)
+      content_tag('tr') do
+        content_tag('td', :class => 'full-width ui-widget-header',
+                    :colspan => grid.columns.count) do
+          pager = magic_paginate(grid.collection,
+                                :param_name => grid.param_key(:page),
+                                :params => base_params
+                               )
+          if block_given?
+            pager << capture(&block)
+          end
+          pager
+        end
       end
     end
 
