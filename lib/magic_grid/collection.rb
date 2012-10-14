@@ -13,7 +13,7 @@ module MagicGrid
 
     attr_writer :logger, :grid
     attr_reader :collection, :grid
-    attr_reader :current_page, :original_count, :total_pages, :paginated
+    attr_reader :current_page, :original_count, :total_pages
 
     def logger
       @logger || (@grid && @grid.logger) || Rails.logger
@@ -138,7 +138,6 @@ module MagicGrid
             attr_accessor :current_page, :total_pages, :original_count
           end
         end
-        @paginated = @collection
       end
       self
     end
