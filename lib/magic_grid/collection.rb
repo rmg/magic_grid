@@ -108,6 +108,15 @@ module MagicGrid
       self
     end
 
+    def has_post_filter?
+      @collection.respond_to? :post_filter
+    end
+
+    def apply_post_filter
+      @collection = @collection.post_filter
+      self
+    end
+
     def apply_pagination(current_page, per_page)
       if per_page
         @original_count = @collection.count

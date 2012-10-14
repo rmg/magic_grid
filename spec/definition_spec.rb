@@ -158,9 +158,50 @@ describe MagicGrid::Definition do
     its(:collection) { should == [56, 21] }
   end
 
-  context "post_filters" do
-    pending "test listening on a dumb collection"
-    pending "test callable post_filter"
-    pending "test collection post_filter"
+  pending "test listening on a dumb collection"
+
+  context "post_filtering with a callable post_filter" do
+    data = [1,56,7,21,1]
+    filter = Proc.new do |c|
+      c.select { |i| i > 10 }
+    end
+    let(:controller) {
+      controller = double.tap do |c|
+        c.stub(:params) { HashWithIndifferentAccess.new({f1: 1}) }
+      end
+    }
+    let(:collection) {
+      data
+    }
+    subject { MagicGrid::Definition.new([{:sql => "foo"}],
+                                        collection,
+                                        controller,
+                                        id: :grid, post_filter: filter) }
+    its(:collection) { should == [56, 21] }
   end
+
+  context "post_filtering with a collection post_filter" do
+    data = [1,56,7,21,1]
+    filter = Proc.new do |c|
+      c.select { |i| i > 10 }
+    end
+    let(:controller) {
+      controller = double.tap do |c|
+        c.stub(:params) { HashWithIndifferentAccess.new({f1: 1}) }
+      end
+    }
+    let(:collection) {
+      data.tap do |d|
+        d.stub(:post_filter) do |h|
+          d.select { |d| d > 10 }
+        end
+      end
+    }
+    subject { MagicGrid::Definition.new([{:sql => "foo"}],
+                                        collection,
+                                        controller,
+                                        id: :grid, collection_post_filter?: true) }
+    its(:collection) { should == [56, 21] }
+  end
+
 end

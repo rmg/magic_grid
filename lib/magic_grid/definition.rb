@@ -144,11 +144,11 @@ module MagicGrid
         @options[:searcher] = param_key(:searcher)
       end
       # Do collection filter first, may convert from AR to Array
-      if @options[:collection_post_filter?] and @collection.respond_to?(:post_filter)
-        @collection = @collection.post_filter(controller)
+      if @options[:collection_post_filter?] and @collection.has_post_filter?
+        @collection.apply_post_filter
       end
       if @options[:post_filter] and @options[:post_filter].respond_to?(:call)
-        @collection = @options[:post_filter].call(@collection)
+        @collection.apply_filter_callback @options[:post_filter]
       end
       # Paginate at the very end, after all sorting, filtering, etc..
       @collection.apply_pagination(current_page, @per_page)
