@@ -11,7 +11,7 @@ class SpiderTest < ActionDispatch::IntegrationTest
   def test_users
     t = tarantula_crawler(self)
     #t.handlers << Relevance::Tarantula::TidyHandler.new
-    t.crawl_timeout = 15.seconds
+    t.crawl_timeout = 5.seconds
     t.skip_uri_patterns += @@to_skip 
     t.crawl '/users'
   end
@@ -19,7 +19,7 @@ class SpiderTest < ActionDispatch::IntegrationTest
   def test_posts
     t = tarantula_crawler(self)
     #t.handlers << Relevance::Tarantula::TidyHandler.new
-    t.crawl_timeout = 15.seconds
+    t.crawl_timeout = 5.seconds
     t.skip_uri_patterns += @@to_skip 
     t.crawl '/posts'
   end
