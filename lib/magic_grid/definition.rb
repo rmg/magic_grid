@@ -112,13 +112,13 @@ module MagicGrid
 
       @options[:searchable] = [] if @options[:searchable] and not @options[:searchable].kind_of? Array
 
-      if @collection.respond_to?(:where) or @options[:listener_handler].respond_to?(:call)
+      if @collection.filterable? or @options[:listener_handler].respond_to?(:call)
         if @options[:listener_handler].respond_to? :call
-          @collection = @options[:listener_handler].call(@collection)
+          @collection.apply_filter_callback @options[:listener_handler]
         else
           @options[:listeners].each_pair do |key, value|
             if @params[value] and not @params[value].to_s.empty?
-              @collection = @collection.where(value => @params[value])
+              @collection.apply_filter(value => @params[value])
             end
           end
         end

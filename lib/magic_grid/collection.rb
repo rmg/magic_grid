@@ -90,6 +90,24 @@ module MagicGrid
       self
     end
 
+    def filterable?
+      @collection.respond_to? :where
+    end
+
+    def apply_filter(filters = {})
+      if @collection.respond_to? :where
+        @collection = @collection.where filters
+      end
+      self
+    end
+
+    def apply_filter_callback(callback)
+      if callback.respond_to? :call
+        @collection = callback.call(@collection)
+      end
+      self
+    end
+
     def apply_pagination(current_page, per_page)
       if per_page
         @original_count = @collection.count
