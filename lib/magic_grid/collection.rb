@@ -19,7 +19,7 @@ module MagicGrid
     end
 
     def self.[](collection, grid)
-      if collection.is_a?(Collection)
+      if collection.is_a?(self)
         collection.grid = grid
       else
         collection = Collection.new(collection, grid)

@@ -4,11 +4,19 @@ require 'magic_grid/collection'
 describe MagicGrid::Collection do
 
   context "via [] class method" do
-    let(:actual_collection) { [1,2,3,4] }
-    let(:magic_collection) { MagicGrid::Collection.new(actual_collection, :original_grid) }
-    subject { MagicGrid::Collection[magic_collection, :new_grid] }
-    its(:collection) { should eq(actual_collection) }
-    its(:grid) { should eq(:new_grid) }
+    context "when given a MagicGrid::Collection" do
+      let(:actual_collection) { [1,2,3,4] }
+      let(:magic_collection) { MagicGrid::Collection.new(actual_collection, :original_grid) }
+      subject { MagicGrid::Collection[magic_collection, :new_grid] }
+      its(:collection) { should eq(actual_collection) }
+      its(:grid) { should eq(:new_grid) }
+    end
+    context "when given a basic collection" do
+      let(:actual_collection) { [1,2,3,4] }
+      subject { MagicGrid::Collection[actual_collection, :original_grid] }
+      its(:collection) { should eq(actual_collection) }
+      its(:grid) { should eq(:original_grid) }
+    end
   end
 
   context "when based on an array" do
