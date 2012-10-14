@@ -120,8 +120,7 @@ module MagicGrid
         end
       end
       @options[:current_search] ||= param(:q)
-      if (@collection.respond_to?(:where) or
-          (@options[:search_method] and @collection.respond_to?(@options[:search_method])))
+      if @collection.searchable?
         if param(:q) and not param(:q).empty? and @options[:searchable]
           @collection = @collection.apply_search(param(:q))
         end

@@ -51,6 +51,11 @@ module MagicGrid
       result
     end
 
+    def searchable?
+      search_method = @grid.options[:search_method]
+      (@collection.respond_to?(:where) or (search_method and @collection.respond_to?(search_method)))
+    end
+
     def apply_search(q)
       @collection = search_using_builtin(q)
     rescue
