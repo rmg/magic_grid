@@ -35,7 +35,8 @@ Rails.backtrace_cleaner.remove_silencers!
 
 # I has a sad :-(
 module Rails
-  def logger.debug(*ignore) end
+  def logger.debug(*ignore) ; end
+  def logger.warn(*ignore) ; end
 end
 
 module ActionFaker

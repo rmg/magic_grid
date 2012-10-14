@@ -117,6 +117,25 @@ describe MagicGrid::Definition do
     # pending "test #order_sql"
   end
   context "filtering" do
+    data = [1,56,7,21,1]
+    let(:controller) {
+      controller = double.tap do |c|
+        c.stub(:params) { HashWithIndifferentAccess.new({f1: 1}) }
+      end
+    }
+    let(:collection) {
+      data.tap do |d|
+        d.stub(:where) do |h|
+          d.select { |d| d < 10 }
+        end
+      end
+    }
+    subject { MagicGrid::Definition.new([{:sql => "foo"}],
+                                        collection,
+                                        controller,
+                                        id: :grid, listeners: {f1: :f1}) }
+    its(:collection) { should == [1, 7, 1] }
+
     pending "test listeners"
     pending "test listener_handlers"
     pending "test listening on a dumb collection"
