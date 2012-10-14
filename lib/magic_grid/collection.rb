@@ -67,14 +67,18 @@ module MagicGrid
       result
     end
 
+    def sortable?
+      @collection.respond_to?(:order)
+    end
+
+    def apply_sort(col, dir)
+      @collection = @collection.order("#{col} #{dir}")
+      self
+    end
+
     def searchable?
       search_method = @grid.options[:search_method]
       (@collection.respond_to?(:where) or (search_method and @collection.respond_to?(search_method)))
-    end
-
-    def apply_sorting(col, dir)
-      @collection = @collection.order("#{col} #{dir}")
-      self
     end
 
     def apply_search(q)

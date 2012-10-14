@@ -101,11 +101,11 @@ module MagicGrid
         @magic_id << @collection.to_sql.hash.abs.to_s(36) if @collection.respond_to? :to_sql
       end
       @current_sort_col = sort_col_i = param(:col, @options[:default_col]).to_i
-      if @collection.respond_to?(:order) and @columns.count > sort_col_i and @columns[sort_col_i].has_key?(:sql)
+      if @collection.sortable? and @columns.count > sort_col_i and @columns[sort_col_i].has_key?(:sql)
         sort_col = @columns[sort_col_i][:sql]
         @current_order = order(param(:order, @default_order))
         sort_dir = order_sql(@current_order)
-        @collection = @collection.apply_sort(sort_col, sort_dir)
+        @collection.apply_sort(sort_col, sort_dir)
       else
         Rails.logger.debug "#{self.class.name}: Ignoring sorting on non-AR collection"
       end

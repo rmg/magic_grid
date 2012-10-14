@@ -25,4 +25,18 @@ describe MagicGrid::Collection do
     its(:collection) { should eq(collection) }
     its(:grid) { should be_nil }
   end
+
+  context "when based on something sortable" do
+    data = [1,5,3,2,56,7]
+    let(:sortable_collection) {
+      data.tap do |d|
+        d.stub(:order) { d }
+      end
+    }
+    it "should send #order when sorted" do
+      collection = MagicGrid::Collection.new(sortable_collection, nil)
+      sortable_collection.should_receive(:order)
+      collection.apply_sort("col", "order")
+    end
+  end
 end

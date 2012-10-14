@@ -97,8 +97,24 @@ describe MagicGrid::Definition do
   end
 
   context "sorting" do
-    pending "sorting needs testing"
-    pending "test #order_sql"
+    data = [1,56,7,21,1]
+    let(:controller) {
+      controller = double()
+      controller.stub(:params) { HashWithIndifferentAccess.new({grid_order: 1}) }
+      controller
+    }
+    let(:collection) {
+      data.tap do |d|
+        d.stub(:order) do |col, dir|
+          dir == "ASC" ? d.sort : d.sort.reverse
+        end
+      end
+    }
+    subject { MagicGrid::Definition.new([{:sql => "foo"}], collection, controller, id: :grid) }
+    its(:collection) { should == data.sort.reverse }
+
+    # pending "sorting needs testing"
+    # pending "test #order_sql"
   end
   context "filtering" do
     pending "test listeners"
