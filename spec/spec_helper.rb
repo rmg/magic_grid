@@ -17,7 +17,7 @@ require 'action_controller'
 begin
   require 'will_paginate'
   require 'will_paginate/array'
-  require 'will_paginate/view_helpers'
+  require 'will_paginate/view_helpers/action_view'
   puts "Testing with WillPaginate"
 rescue LoadError
   puts "skipping WillPaginate"
@@ -78,7 +78,7 @@ RSpec.configure do |config|
   config.filter_run :focus
 
   config.include ActionView::Helpers
-  config.include WillPaginate::ViewHelpers if Module.const_defined? :WillPaginate
+  config.include WillPaginate::ActionView if Module.const_defined? :WillPaginate
   config.include Kaminari::ActionViewExtension if Module.const_defined? :Kaminari
   config.include ActionFaker
 
