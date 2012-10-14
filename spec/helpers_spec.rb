@@ -121,15 +121,35 @@ describe MagicGrid::Helpers do
         grid.should match_select('input[type=search]')
       end
 
-      it "should call where on an ActiveRecord collection when there are search params" do
-        search_col = :some_col
+      context "when the collection responds to #where" do
+        it "should call where when there are search params" do
+          search_col = :some_col
+          table_name = "tbl"
+          search_sql = "tbl.some_col"
 
-        collection = fake_active_record_collection("tbl")
-        collection.should_receive(:where).
-                   with("tbl.some_col LIKE :search", {:search=>"%#{search_param}%"})
+          collection = fake_active_record_collection(table_name)
+          collection.should_receive(:where).
+                     with("#{search_sql} LIKE :search", {:search=>"%#{search_param}%"})
 
-        grid = magic_grid(collection, column_list, :id => "grid_id", :searchable => [search_col])
-        grid.should match_select('input[type=search]')
+          grid = magic_grid(collection, column_list, :id => "grid_id", :searchable => [search_col])
+        end
+
+        it "should use custom sql for call to where when given" do
+          search_col = :some_col
+          search_sql = "sql that doesn't necessarily match column name"
+          table_name = "table name not used in query"
+
+          collection = fake_active_record_collection(table_name)
+          collection.should_receive(:where).
+                     with("#{search_sql} LIKE :search", {:search=>"%#{search_param}%"})
+
+          magic_grid(collection,
+                     [ :name,
+                       :description,
+                       {:col => search_col, :sql => search_sql}
+                       ],
+                     :id => "grid_id", :searchable => [search_col])
+        end
       end
     end
   end

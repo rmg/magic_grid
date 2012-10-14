@@ -44,8 +44,8 @@ module ActionFaker
   def output_buffer()
     @output_buffer
   end
-  def url_for
-    "fake_url"
+  def url_for(*args)
+    "fake_url(#{args.inspect})"
   end
   def controller
     stub_controller = ActionController::Base.new

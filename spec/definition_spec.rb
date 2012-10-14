@@ -94,6 +94,5 @@ describe MagicGrid::Definition do
       subject.param_key(:hunkydory).should == :grid_hunkydory
       subject.param(:page).should == 2
     end
-
   end
 end
