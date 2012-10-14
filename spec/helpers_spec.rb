@@ -59,7 +59,6 @@ describe MagicGrid::Helpers do
 
   describe "#magic_grid" do
     pending "DOES WAY TOO MUCH!!"
-    pending "test top_pager"
 
     let(:emtpy_grid) { magic_grid empty_collection, column_list }
 

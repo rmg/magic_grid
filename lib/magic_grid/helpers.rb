@@ -56,12 +56,10 @@ module MagicGrid
             end
           end
           if grid.options[:per_page] and grid.options[:top_pager]
-            thead << content_tag('tr') do
-              magic_pager(grid, base_params) do
-                unless has_spinner
-                  has_spinner = true
-                  spinner
-                end
+            thead << magic_pager(grid, base_params) do
+              unless has_spinner
+                has_spinner = true
+                spinner
               end
             end
           end
@@ -84,9 +82,7 @@ module MagicGrid
         table << content_tag('tfoot') do
           tfoot = ''.html_safe
           if grid.options[:per_page] and grid.options[:bottom_pager]
-            tfoot << content_tag('tr') do
-              magic_pager(grid, base_params)
-            end
+            tfoot << magic_pager(grid, base_params)
           end
           if tfoot.empty? and not grid.options[:empty_footer]
             tfoot = content_tag 'tr' do
@@ -251,9 +247,7 @@ module MagicGrid
                                 :param_name => grid.param_key(:page),
                                 :params => base_params
                                )
-          if block_given?
-            pager << capture(&block)
-          end
+          pager << capture(&block) if block_given?
           pager
         end
       end
