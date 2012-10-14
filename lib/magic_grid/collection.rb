@@ -52,12 +52,11 @@ module MagicGrid
     end
 
     def apply_search(q)
-      begin
-        @collection = search_using_builtin(q)
-      rescue
-        Rails.logger.debug "Given collection doesn't respond to #{@grid.options[:search_method]} well"
-        @collection = search_using_where(q)
-      end
+      @collection = search_using_builtin(q)
+    rescue
+      Rails.logger.debug "Given collection doesn't respond to #{@grid.options[:search_method]} well"
+      @collection = search_using_where(q)
+    ensure
       self
     end
   end
