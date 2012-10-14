@@ -203,6 +203,7 @@ describe MagicGrid::Helpers do
           search_sql = "tbl.some_col"
 
           collection = fake_active_record_collection(table_name)
+          magic_collection = MagicGrid::Collection.new(collection, nil)
           collection.should_receive(:where).and_raise("some failure")
 
           expect {
