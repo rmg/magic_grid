@@ -67,6 +67,13 @@ describe MagicGrid::Definition do
     its(:columns) { should == column_list }
   end
 
+  context "when given a MagicGrid::Collection" do
+    actual_collection = [1,2,3]
+    let(:collection) { MagicGrid::Collection.new(actual_collection, nil) }
+    subject { MagicGrid::Definition.new(column_list, collection, controller) }
+    its(:collection) { should eq(actual_collection) }
+  end
+
   context "when given a large collection and some options" do
     let(:controller) {
       controller = double()
