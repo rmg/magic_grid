@@ -3,6 +3,17 @@ require 'magic_grid/helpers'
 require 'action_controller'
 require "active_support/core_ext"
 
+def make_controller
+  request = double.tap{ |r|
+    r.stub(:fullpath, "/foo?page=bar")
+  }
+  double.tap { |v|
+    v.stub(:render) { nil }
+    v.stub(:params) { {} }
+    v.stub(:request) { request }
+  }
+end
+
 describe MagicGrid::Helpers do
 
   # Let's use the helpers the way they're meant to be used!
@@ -12,16 +23,7 @@ describe MagicGrid::Helpers do
 
   let(:column_list) { [:name, :description] }
 
-  let(:controller) {
-    request = double.tap{ |r|
-      r.stub(:fullpath, "/foo?page=bar")
-    }
-    double.tap { |v|
-      v.stub(:render) { nil }
-      v.stub(:params) { {} }
-      v.stub(:request) { request }
-    }
-  }
+  let(:controller) { make_controller }
 
   # Kaminari uses view_renderer instead of controller
   let(:view_renderer) { controller }
@@ -44,11 +46,6 @@ describe MagicGrid::Helpers do
     pending "DOES WAY TOO MUCH!!"
 
     let(:emtpy_grid) { magic_grid empty_collection, column_list }
-    let(:searchabe_collection) {
-      collection = []
-      collection.stub(:search)
-      collection
-    }
 
     it "should barf without any arguments" do
       expect { magic_grid }.to raise_error
@@ -84,9 +81,32 @@ describe MagicGrid::Helpers do
       it { should =~ /HOKY_POKY_ALAMO: 1/ }
     end
 
-    it "should render a search bar when asked" do
-      grid = magic_grid(searchabe_collection, column_list, :searchable => [:some_col])
-      grid.should match_select('input[type=search]')
+    context "searching" do
+      let(:search_param) { 'foobar' }
+      let(:searchabe_collection) {
+        collection = []
+        collection.stub(:search)
+        collection
+      }
+      let(:controller) {
+        make_controller.tap { |c|
+          c.stub(:params) { {:grid_id_q => search_param} }
+        }
+      }
+
+      it "should render a search bar when asked" do
+        grid = magic_grid(searchabe_collection, column_list, :searchable => [:some_col])
+        grid.should match_select('input[type=search]')
+      end
+
+      it "should search a searchable collection when there are search params" do
+        collection = (1..1000).to_a
+        #collection.stub(:search)
+        #collection = searchabe_collection
+        collection.should_receive(:search).with(search_param) { collection }
+        grid = magic_grid(collection, column_list, :id => "grid_id", :searchable => [:some_col])
+        grid.should match_select('input[type=search]')
+      end
     end
   end
 
