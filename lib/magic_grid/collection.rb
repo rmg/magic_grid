@@ -51,7 +51,7 @@ module MagicGrid
       result
     end
 
-    def perform_search(q)
+    def apply_search(q)
       begin
         @collection = search_using_builtin(q)
       rescue
