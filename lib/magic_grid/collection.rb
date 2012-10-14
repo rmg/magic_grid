@@ -2,6 +2,17 @@ require 'delegate'
 
 module MagicGrid
   class Collection < Delegator
+
+    def initialize(collection, grid)
+      super(collection)
+      @collection = collection
+      @grid = grid
+    end
+    def __getobj__()    @collection;        end
+    def __setobj__(obj) @collection = obj;  end
+
+    attr_writer :grid
+
     def self.[](collection, grid)
       if collection.is_a?(Collection)
         collection.grid = grid
@@ -9,22 +20,6 @@ module MagicGrid
         collection = Collection.new(collection, grid)
       end
       collection
-    end
-
-    attr_writer :grid
-
-    def initialize(collection, grid)
-      super(collection)
-      @collection = collection
-      @grid = grid
-    end
-
-    def __getobj__
-      @collection
-    end
-
-    def __setobj__(obj)
-      @collection = obj
     end
 
     def search_using_builtin(q)
