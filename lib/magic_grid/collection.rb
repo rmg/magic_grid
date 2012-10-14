@@ -11,10 +11,11 @@ module MagicGrid
     def __getobj__()    @collection;        end
     def __setobj__(obj) @collection = obj;  end
 
-    attr_writer :grid, :logger
+    attr_writer :logger
+    attr_accessor :collection, :grid
 
     def logger
-      @logger || @grid && @grid.logger || Rails.logger
+      @logger || (@grid && @grid.logger) || Rails.logger
     end
 
     def self.[](collection, grid)
@@ -59,7 +60,7 @@ module MagicGrid
           clauses = search_cols.map {|c| c << " LIKE :search" }.join(" OR ")
           result = @collection.where(clauses, {:search => "%#{q}%"})
         rescue
-          @logger.debug "Given collection doesn't respond to :where well"
+          self.logger.debug "Given collection doesn't respond to :where well"
         end
       end
       result
@@ -73,7 +74,7 @@ module MagicGrid
     def apply_search(q)
       @collection = search_using_builtin(q)
     rescue
-      @logger.debug "Given collection doesn't respond to #{@grid.options[:search_method]} well"
+      self.logger.debug "Given collection doesn't respond to #{@grid.options[:search_method]} well"
       @collection = search_using_where(q)
     ensure
       self

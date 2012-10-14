@@ -8,6 +8,11 @@ module MagicGrid
     attr_accessor :columns, :collection, :magic_id, :options, :params,
       :current_sort_col, :current_order, :default_order, :per_page
 
+    attr_writer :logger
+    def logger
+      @logger || Rails.logger
+    end
+
     DEFAULTS = {
       :class => [],
       :top_pager => false,

@@ -205,6 +205,9 @@ describe MagicGrid::Helpers do
           collection = fake_active_record_collection(table_name)
           magic_collection = MagicGrid::Collection.new(collection, nil)
           collection.should_receive(:where).and_raise("some failure")
+          # magic_collection.logger = double.tap do |l|
+          #   l.should_receive(:debug)
+          # end
 
           expect {
             magic_grid(collection, column_list, :id => "grid_id", :searchable => [search_col])
