@@ -151,7 +151,7 @@ module MagicGrid
         @collection = @options[:post_filter].call(@collection)
       end
       # Paginate at the very end, after all sorting, filtering, etc..
-      @collection = @collection.apply_pagination(current_page, @per_page)
+      @collection.apply_pagination(current_page, @per_page)
     end
 
     def param_key(key)
