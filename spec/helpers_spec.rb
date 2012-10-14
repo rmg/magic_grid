@@ -14,6 +14,21 @@ def make_controller
   }
 end
 
+def fake_connection
+  double(:connection).tap do |c|
+    c.stub(:quote_column_name) { |col| col.to_s }
+  end
+end
+
+def fake_active_record_collection(table_name = 'some_table')
+  (1..1000).to_a.tap do |c|
+    c.stub(:connection => fake_connection)
+    c.stub(:table_name => table_name)
+    c.stub(:where) { c }
+  end
+end
+
+
 describe MagicGrid::Helpers do
 
   # Let's use the helpers the way they're meant to be used!
@@ -101,10 +116,19 @@ describe MagicGrid::Helpers do
 
       it "should search a searchable collection when there are search params" do
         collection = (1..1000).to_a
-        #collection.stub(:search)
-        #collection = searchabe_collection
         collection.should_receive(:search).with(search_param) { collection }
         grid = magic_grid(collection, column_list, :id => "grid_id", :searchable => [:some_col])
+        grid.should match_select('input[type=search]')
+      end
+
+      it "should call where on an ActiveRecord collection when there are search params" do
+        search_col = :some_col
+
+        collection = fake_active_record_collection("tbl")
+        collection.should_receive(:where).
+                   with("tbl.some_col LIKE :search", {:search=>"%#{search_param}%"})
+
+        grid = magic_grid(collection, column_list, :id => "grid_id", :searchable => [search_col])
         grid.should match_select('input[type=search]')
       end
     end

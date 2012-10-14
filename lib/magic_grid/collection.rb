@@ -2,6 +2,17 @@ require 'delegate'
 
 module MagicGrid
   class Collection < Delegator
+    def self.[](collection, grid)
+      if collection.is_a?(Collection)
+        collection.grid = grid
+      else
+        collection = Collection.new(collection, grid)
+      end
+      collection
+    end
+
+    attr_writer :grid
+
     def initialize(collection, grid)
       super(collection)
       @collection = collection
@@ -20,6 +31,10 @@ module MagicGrid
       @collection.__send__(@grid.options[:search_method], q)
     end
 
+    def quote_column_name(col)
+      @collection.connection.quote_column_name(col.to_s)
+    end
+
     def search_using_where(q)
       result = @collection
       search_cols = @grid.options[:searchable].map do |searchable|
@@ -29,7 +44,7 @@ module MagicGrid
           if known and known.key?(:sql)
             known[:sql]
           else
-            "#{table_name}.#{@collection.connection.quote_column_name(searchable.to_s)}"
+            "#{@collection.table_name}.#{quote_column_name(searchable)}"
           end
         when Integer
           @grid.columns[searchable][:sql]
@@ -43,7 +58,7 @@ module MagicGrid
       unless search_cols.empty?
         begin
           clauses = search_cols.map {|c| c << " LIKE :search" }.join(" OR ")
-          result = @collection.where(clauses, {:search => "%#{param(:q)}%"})
+          result = @collection.where(clauses, {:search => "%#{q}%"})
         rescue
           Rails.logger.debug "Given collection doesn't respond to :where well"
         end

@@ -58,7 +58,7 @@ module MagicGrid
       @default_order = @options[:default_order]
       @params = controller && controller.params || {}
       @per_page = @options[:per_page]
-      @collection = Collection.new(collection, self)
+      @collection = Collection[collection, self]
       begin
         #if @collection.respond_to? :table
         table_name = @collection.quoted_table_name
