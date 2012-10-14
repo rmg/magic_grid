@@ -97,6 +97,30 @@ describe MagicGrid::Helpers do
       it { should =~ /HOKY_POKY_ALAMO: 1/ }
     end
 
+    context "renders top and bottom pagers as told" do
+      it "should render only a bottom pager by default" do
+        grid = magic_grid( [1, 2], [:to_s] ) do |row|
+                 "a row: #{row}"
+               end
+        grid.should match_select("thead>tr>td.magic-pager", 0)
+        grid.should match_select("tfoot>tr>td.magic-pager", 1)
+      end
+      it "should render a top and bottom pager when told" do
+        grid = magic_grid( [1, 2], [:to_s], top_pager: true ) do |row|
+                 "a row: #{row}"
+               end
+        grid.should match_select("thead>tr>td.magic-pager", 1)
+        grid.should match_select("tfoot>tr>td.magic-pager", 1)
+      end
+      it "should render only a top pager when told" do
+        grid = magic_grid( [1, 2], [:to_s], top_pager: true, bottom_pager: false ) do |row|
+                 "a row: #{row}"
+               end
+        grid.should match_select("thead>tr>td.magic-pager", 1)
+        grid.should match_select("tfoot>tr>td.magic-pager", 0)
+      end
+    end
+
     context "searching" do
       let(:search_param) { 'foobar' }
       let(:searchabe_collection) {

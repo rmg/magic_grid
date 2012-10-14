@@ -245,7 +245,7 @@ module MagicGrid
 
     def magic_pager(grid, base_params, &block)
       content_tag('tr') do
-        content_tag('td', :class => 'full-width ui-widget-header',
+        content_tag('td', :class => 'full-width ui-widget-header magic-pager',
                     :colspan => grid.columns.count) do
           pager = magic_paginate(grid.collection,
                                 :param_name => grid.param_key(:page),
