@@ -116,7 +116,8 @@ describe MagicGrid::Definition do
     # pending "sorting needs testing"
     # pending "test #order_sql"
   end
-  context "filtering" do
+
+  context "filtering with #where" do
     data = [1,56,7,21,1]
     let(:controller) {
       controller = double.tap do |c|
@@ -135,9 +136,29 @@ describe MagicGrid::Definition do
                                         controller,
                                         id: :grid, listeners: {f1: :f1}) }
     its(:collection) { should == [1, 7, 1] }
+  end
 
-    pending "test listeners"
-    pending "test listener_handlers"
+  context "filtering with a callback" do
+    data = [1,56,7,21,1]
+    filter = Proc.new do |c|
+      c.select { |i| i > 10 }
+    end
+    let(:controller) {
+      controller = double.tap do |c|
+        c.stub(:params) { HashWithIndifferentAccess.new({f1: 1}) }
+      end
+    }
+    let(:collection) {
+      data
+    }
+    subject { MagicGrid::Definition.new([{:sql => "foo"}],
+                                        collection,
+                                        controller,
+                                        id: :grid, listener_handler: filter) }
+    its(:collection) { should == [56, 21] }
+  end
+
+  context "post_filters" do
     pending "test listening on a dumb collection"
     pending "test callable post_filter"
     pending "test collection post_filter"
