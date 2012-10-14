@@ -58,7 +58,7 @@ module MagicGrid
       @default_order = @options[:default_order]
       @params = controller && controller.params || {}
       @per_page = @options[:per_page]
-      @collection = Collection.new(collection)
+      @collection = Collection.new(collection, self)
       begin
         #if @collection.respond_to? :table
         table_name = @collection.quoted_table_name
@@ -123,39 +123,7 @@ module MagicGrid
       if (@collection.respond_to?(:where) or
           (@options[:search_method] and @collection.respond_to?(@options[:search_method])))
         if param(:q) and not param(:q).empty? and @options[:searchable]
-          orig_collection = @collection
-          begin
-            @collection = @collection.__send__(@options[:search_method], param(:q))
-          rescue
-            Rails.logger.debug "Given collection doesn't respond to #{@options[:search_method]} well"
-            @collection = orig_collection
-            search_cols = @options[:searchable].map do |searchable|
-              case searchable
-              when Symbol
-                known = @columns.find {|col| col[:col] == searchable}
-                if known and known.key?(:sql)
-                  known[:sql]
-                else
-                  "#{table_name}.#{@collection.connection.quote_column_name(searchable.to_s)}"
-                end
-              when Integer
-                @columns[searchable][:sql]
-              when String
-                searchable
-              else
-                raise "Searchable must be identifiable"
-              end
-            end
-            unless search_cols.empty?
-              begin
-                clauses = search_cols.map {|c| c << " LIKE :search" }.join(" OR ")
-                @collection = @collection.where(clauses, {:search => "%#{param(:q)}%"})
-              rescue
-                Rails.logger.debug "Given collection doesn't respond to :where well"
-                @collection = orig_collection
-              end
-            end
-          end
+          @collection = @collection.perform_search(param(:q))
         end
       else
         if @options[:searchable] or param(:q)
