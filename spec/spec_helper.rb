@@ -40,19 +40,14 @@ module Rails
 end
 
 module ActionFaker
-  def output_buffer=(o)
-    @output_buffer = o
-  end
-  def output_buffer()
-    @output_buffer
-  end
+  attr_accessor :output_buffer
   def url_for(*args)
     "fake_url(#{args.inspect})"
   end
   def controller
-    stub_controller = ActionController::Base.new
-    def stub_controller.params(*ignored) {} end
-    stub_controller
+    double.tap { |c|
+      c.stub(:params => {})
+    }
   end
 end
 

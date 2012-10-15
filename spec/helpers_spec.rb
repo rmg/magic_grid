@@ -4,11 +4,11 @@ require 'action_controller'
 require "active_support/core_ext"
 
 def make_controller
-  request = double.tap{ |r|
+  request = double.tap { |r|
     r.stub(:fullpath, "/foo?page=bar")
   }
   double.tap { |v|
-    v.stub(:render) { nil }
+    v.stub(:render)
     v.stub(:params) { {} }
     v.stub(:request) { request }
   }
