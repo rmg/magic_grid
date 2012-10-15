@@ -98,6 +98,13 @@ describe MagicGrid::Helpers do
 
     context "renders top and bottom pagers as told" do
       large_collection = (1..1000).to_a
+
+      if Module.const_defined? :Kaminari
+        def render(*args)
+          "<nav class='pagination'><!-- paginate! --></nav>".html_safe
+        end
+      end
+
       it "should render an actual pager" do
         grid = magic_grid(large_collection, [:to_s])
         if Module.const_defined? :WillPaginate
