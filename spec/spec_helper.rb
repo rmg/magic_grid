@@ -44,11 +44,6 @@ module ActionFaker
   def url_for(*args)
     "fake_url(#{args.inspect})"
   end
-  def controller
-    double.tap { |c|
-      c.stub(:params => {})
-    }
-  end
 end
 
 class TextSelector
