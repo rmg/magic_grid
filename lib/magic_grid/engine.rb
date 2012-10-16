@@ -1,3 +1,5 @@
+require 'magic_grid/logger'
+
 module MagicGrid
   class Engine < ::Rails::Engine
     # Once in production, on every page view in development
