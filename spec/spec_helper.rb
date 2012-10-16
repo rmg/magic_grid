@@ -9,6 +9,7 @@ unless ENV['TRAVIS']
   end
 end
 
+require 'magic_grid/logger'
 require 'action_view'
 require 'rails'
 require 'test/unit'
@@ -33,10 +34,9 @@ end
 
 Rails.backtrace_cleaner.remove_silencers!
 
-# I has a sad :-(
-module Rails
-  def logger.debug(*ignore) ; end
-  def logger.warn(*ignore) ; end
+class NullObject
+  def method_missing(*args, &block) self; end
+  def nil?; true; end
 end
 
 module ActionFaker
@@ -71,6 +71,10 @@ RSpec.configure do |config|
   config.include WillPaginate::ActionView if Module.const_defined? :WillPaginate
   config.include Kaminari::ActionViewExtension if Module.const_defined? :Kaminari
   config.include ActionFaker
+
+  config.before do
+    MagicGrid.logger = NullObject.new
+  end
 
   # Run specs in random order to surface order dependencies. If you find an
   # order dependency and want to debug it, you can fix the order by providing

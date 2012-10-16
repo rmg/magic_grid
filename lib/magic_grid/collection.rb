@@ -1,4 +1,5 @@
 require 'active_support/core_ext'
+require 'magic_grid/logger'
 
 module MagicGrid
   class Collection
@@ -11,13 +12,8 @@ module MagicGrid
 
     delegate :map, :count, :to => :collection
 
-    attr_writer :logger, :grid
-    attr_reader :collection, :grid
-    attr_reader :current_page, :original_count, :total_pages
-
-    def logger
-      @logger || (@grid && @grid.logger) || Rails.logger
-    end
+    attr_accessor :grid
+    attr_reader :collection, :current_page, :original_count, :total_pages
 
     def self.[](collection, grid)
       if collection.is_a?(self)
@@ -61,7 +57,7 @@ module MagicGrid
           clauses = search_cols.map {|c| c << " LIKE :search" }.join(" OR ")
           result = @collection.where(clauses, {:search => "%#{q}%"})
         rescue
-          self.logger.debug "Given collection doesn't respond to :where well"
+          MagicGrid.logger.debug "Given collection doesn't respond to :where well"
         end
       end
       result
@@ -84,7 +80,7 @@ module MagicGrid
     def apply_search(q)
       @collection = search_using_builtin(q)
     rescue
-      self.logger.debug "Given collection doesn't respond to #{@grid.options[:search_method]} well"
+      MagicGrid.logger.debug "Given collection doesn't respond to #{@grid.options[:search_method]} well"
       @collection = search_using_where(q)
     ensure
       self

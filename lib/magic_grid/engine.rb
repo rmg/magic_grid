@@ -10,5 +10,9 @@ module MagicGrid
       # Provide some fallback translations that users can override
       app.config.i18n.load_path += Dir.glob(File.expand_path('../../locales/*.{rb,yml}', __FILE__))
     end
+
+    initializer "Rails logger" do
+      MagicGrid.logger = Rails.logger
+    end
   end
 end

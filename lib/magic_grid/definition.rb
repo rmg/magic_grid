@@ -1,5 +1,6 @@
 #require 'will_paginate/view_helpers/action_view'
 
+require 'magic_grid/logger'
 require 'magic_grid/collection'
 
 module MagicGrid
@@ -7,11 +8,6 @@ module MagicGrid
     #include WillPaginate::ActionView
     attr_reader :columns, :magic_id, :options, :params,
       :current_sort_col, :current_order, :default_order, :per_page
-
-    attr_writer :logger
-    def logger
-      @logger || Rails.logger
-    end
 
     def collection
       @collection.collection
@@ -73,7 +69,7 @@ module MagicGrid
         table_name = @collection.quoted_table_name
         table_columns = @collection.table.columns.map {|c| c.name}
       rescue
-        self.logger.debug "Given collection doesn't respond to :table well"
+        MagicGrid.logger.debug "Given collection doesn't respond to :table well"
         table_name = nil
         table_columns = @columns.each_index.to_a
       end
@@ -107,7 +103,7 @@ module MagicGrid
         sort_dir = order_sql(@current_order)
         @collection.apply_sort(sort_col, sort_dir)
       else
-        self.logger.debug "#{self.class.name}: Ignoring sorting on non-AR collection"
+        MagicGrid.logger.debug "#{self.class.name}: Ignoring sorting on non-AR collection"
       end
 
       @options[:searchable] = [] if @options[:searchable] and not @options[:searchable].kind_of? Array
@@ -124,7 +120,7 @@ module MagicGrid
         end
       else
         unless @options[:listeners].empty?
-          self.logger.warn "#{self.class.name}: Ignoring listener on dumb collection"
+          MagicGrid.logger.warn "#{self.class.name}: Ignoring listener on dumb collection"
           @options[:listeners] = {}
         end
       end
@@ -135,7 +131,7 @@ module MagicGrid
         end
       else
         if @options[:searchable] or param(:q)
-          self.logger.warn "#{self.class.name}: Ignoring searchable fields on non-AR collection"
+          MagicGrid.logger.warn "#{self.class.name}: Ignoring searchable fields on non-AR collection"
         end
         @options[:searchable] = false
       end
