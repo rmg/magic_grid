@@ -8,12 +8,19 @@ module MagicGrid
       @collection = collection
       @grid = grid
       @current_page = 1
+      @sorts = []
+      @filter_callbacks = []
+      @filters = []
+      @searches = []
+      @post_filters = []
+      @post_filter_callbacks = []
+      @paginations = []
     end
 
     delegate :map, :count, :to => :collection
 
     attr_accessor :grid
-    attr_reader :collection, :current_page, :original_count, :total_pages
+    attr_reader :current_page, :original_count, :total_pages
 
     def self.[](collection, grid)
       if collection.is_a?(self)
@@ -24,16 +31,16 @@ module MagicGrid
       end
     end
 
-    def search_using_builtin(q)
-      @collection.__send__(@grid.options[:search_method], q)
-    end
-
     def quote_column_name(col)
       @collection.connection.quote_column_name(col.to_s)
     end
 
-    def search_using_where(q)
-      result = @collection
+    def search_using_builtin(collection, q)
+      collection.__send__(@grid.options[:search_method], q)
+    end
+
+    def search_using_where(collection, q)
+      result = collection
       search_cols = @grid.options[:searchable].map do |searchable|
         case searchable
         when Symbol
@@ -55,7 +62,7 @@ module MagicGrid
       unless search_cols.empty?
         begin
           clauses = search_cols.map {|c| c << " LIKE :search" }.join(" OR ")
-          result = @collection.where(clauses, {:search => "%#{q}%"})
+          result = collection.where(clauses, {:search => "%#{q}%"})
         rescue
           MagicGrid.logger.debug "Given collection doesn't respond to :where well"
         end
@@ -68,22 +75,24 @@ module MagicGrid
     end
 
     def apply_sort(col, dir)
-      @collection = @collection.order("#{col} #{dir}")
+      @sorts << "#{col} #{dir}"
       self
     end
 
     def searchable?
-      search_method = @grid.options[:search_method]
-      (@collection.respond_to?(:where) or (search_method and @collection.respond_to?(search_method)))
+      filterable? or @collection.respond_to? @grid.options[:search_method]
     end
 
     def apply_search(q)
-      @collection = search_using_builtin(q)
+      @searches << q
+      self
+    end
+
+    def perform_search(collection, q)
+      search_using_builtin(collection, q)
     rescue
       MagicGrid.logger.debug "Given collection doesn't respond to #{@grid.options[:search_method]} well"
-      @collection = search_using_where(q)
-    ensure
-      self
+      search_using_where(collection, q)
     end
 
     def filterable?
@@ -92,14 +101,14 @@ module MagicGrid
 
     def apply_filter(filters = {})
       if @collection.respond_to? :where
-        @collection = @collection.where filters
+        @filters << filters
       end
       self
     end
 
     def apply_filter_callback(callback)
       if callback.respond_to? :call
-        @collection = callback.call(@collection)
+        @filter_callbacks << callback
       end
       self
     end
@@ -109,34 +118,70 @@ module MagicGrid
     end
 
     def apply_post_filter
-      @collection = @collection.post_filter
+      @post_filters << :post_filter
       self
     end
 
     def apply_pagination(current_page, per_page)
       if per_page
-        @original_count = @collection.count
-        @total_pages = @original_count / per_page
-        @current_page = current_page
-        if @collection.respond_to? :paginate
-          @collection = @collection.paginate(:page => current_page,
-                                             :per_page => per_page)
-        elsif @collection.respond_to? :page
-          @collection = @collection.page(current_page).per(per_page)
-        elsif @collection.is_a?(Array) and Module.const_defined?(:Kaminari)
-          @collection = Kaminari.paginate_array(@collection).page(current_page).per(per_page)
-        else
-          @collection = @collection.to_enum
-          @collection = @collection.each_slice(per_page)
-          @collection = @collection.drop(current_page - 1)
-          @collection = @collection.first.to_a
-          class << @collection
-            attr_accessor :current_page, :total_pages, :original_count
-          end
-        end
+        @paginations << {:current_page => current_page, :per_page => per_page}
       end
       self
     end
+
+    def perform_pagination(collection, current_page, per_page)
+      @original_count = @collection.count
+      @total_pages = @original_count / per_page
+      @current_page = current_page
+      if collection.respond_to? :paginate
+        collection = collection.paginate(:page => current_page,
+                                           :per_page => per_page)
+      elsif collection.respond_to? :page
+        collection = collection.page(current_page).per(per_page)
+      elsif collection.is_a?(Array) and Module.const_defined?(:Kaminari)
+        collection = Kaminari.paginate_array(collection).page(current_page).per(per_page)
+      else
+        collection = collection.to_enum
+        collection = collection.each_slice(per_page)
+        collection = collection.drop(current_page - 1)
+        collection = collection.first.to_a
+        class << collection
+          attr_accessor :current_page, :total_pages, :original_count
+        end
+      end
+      collection
+    end
+
+    def apply_all_operations(collection)
+      @sorts.each do |ordering|
+        collection = collection.order(ordering)
+      end
+      @filter_callbacks.each do |callback|
+        collection = callback.call(collection)
+      end
+      @filters.each do |hsh|
+        collection = collection.where(hsh)
+      end
+      @searches.each do |query|
+        collection = perform_search(collection, query)
+      end
+      @post_filters.each do |filter|
+        collection = collection.__send__(filter)
+      end
+      @post_filter_callbacks.each do |callback|
+        collection = callback.call(collection)
+      end
+      @paginations.each do |params|
+        collection = perform_pagination(collection, params[:current_page], params[:per_page])
+      end
+      collection
+    end
+
+    def collection
+      @reduced_collection ||= apply_all_operations(@collection)
+    end
+
+
 
   end
 end
