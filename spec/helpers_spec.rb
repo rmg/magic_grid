@@ -20,14 +20,26 @@ def fake_connection
   end
 end
 
-def fake_active_record_collection(table_name = 'some_table')
+def fake_active_record_collection(table_name = 'some_table',
+                                  columns = [:name, :description])
+
+  columns = columns.map { |c|
+    double.tap do |col|
+      col.stub(:name) { c }
+    end
+  }
   (1..1000).to_a.tap do |c|
     c.stub(:connection => fake_connection)
+    c.stub(:quoted_table_name => table_name)
     c.stub(:table_name => table_name)
     c.stub(:where) { c }
+    c.stub(:table) {
+            double.tap do |t|
+              t.stub(:columns) { columns }
+            end
+          }
   end
 end
-
 
 describe MagicGrid::Helpers do
 
@@ -252,6 +264,52 @@ describe MagicGrid::Helpers do
         end
       end
     end
+
+    context "sorting" do
+      let(:sortable_collection) {
+        columns = column_list.map { |c|
+          double.tap do |col|
+            col.stub(:name) { c }
+          end
+        }
+        collection = fake_active_record_collection.tap do |c|
+          c.stub(:table) {
+            double.tap do |t|
+              t.stub(:columns) { columns }
+            end
+          }
+        end
+      }
+      it "should render sortable column headers when a collection is sortable" do
+        grid = magic_grid(sortable_collection, column_list)
+        grid.should match_select("thead>tr>th.sorter>a>span.ui-icon", column_list.count)
+      end
+
+      # context "when a sort column is given" do
+      #   let(:search_param) { 'foobar' }
+      #   let(:controller) {
+      #     make_controller.tap { |c|
+      #       c.stub(:params) { {:grid_id_col => 1} }
+      #     }
+      #   }
+      # end
+      # context "when a sort order is given" do
+      #   let(:controller) {
+      #     make_controller.tap { |c|
+      #       c.stub(:params) { {:grid_id_order => 1} }
+      #     }
+      #   }
+      # end
+      # context "when a sort order and column are given" do
+      #   let(:search_param) { 'foobar' }
+      #   let(:controller) {
+      #     make_controller.tap { |c|
+      #       c.stub(:params) { {:grid_id_q => 1} }
+      #     }
+      #   }
+      # end
+    end
+
   end
 
 end
