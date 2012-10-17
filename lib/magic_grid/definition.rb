@@ -71,7 +71,7 @@ module MagicGrid
         table_columns = @collection.column_names
       rescue
         msg = "Given collection doesn't respond to :quoted_table_name or :table well: "
-        MagicGrid.logger.debug(msg, $!)
+        MagicGrid.logger.debug("#{msg} - #{$!}")
         table_name = nil
         table_columns = @columns.each_index.to_a
       end
