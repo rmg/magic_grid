@@ -79,6 +79,7 @@ module MagicGrid
     end
 
     def apply_sort(col, dir)
+      @reduced_collection = nil
       @sorts << "#{col} #{dir}"
       self
     end
@@ -88,6 +89,7 @@ module MagicGrid
     end
 
     def apply_search(q)
+      @reduced_collection = nil
       @searches << q
       self
     end
@@ -105,6 +107,7 @@ module MagicGrid
 
     def apply_filter(filters = {})
       if @collection.respond_to? :where
+        @reduced_collection = nil
         @filters << filters
       end
       self
@@ -112,6 +115,7 @@ module MagicGrid
 
     def apply_filter_callback(callback)
       if callback.respond_to? :call
+        @reduced_collection = nil
         @filter_callbacks << callback
       end
       self
@@ -122,12 +126,14 @@ module MagicGrid
     end
 
     def apply_post_filter
+      @reduced_collection = nil
       @post_filters << :post_filter
       self
     end
 
     def apply_pagination(current_page, per_page)
       if per_page
+        @reduced_collection = nil
         @paginations << {:current_page => current_page, :per_page => per_page}
       end
       self
