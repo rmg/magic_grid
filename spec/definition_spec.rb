@@ -103,18 +103,14 @@ describe MagicGrid::Definition do
       controller.stub(:params) { HashWithIndifferentAccess.new({grid_order: 1}) }
       controller
     }
-    let(:collection) {
-      data.tap do |d|
-        d.stub(:order) do |col, dir|
-          dir == "ASC" ? d.sort : d.sort.reverse
-        end
-      end
-    }
-    subject { MagicGrid::Definition.new([{:sql => "foo"}], collection, controller, id: :grid) }
-    its(:collection) { should == data.sort.reverse }
+    let(:collection) { data }
+    it "should sort collection using #order" do
+      collection.should_receive(:order).with("foo DESC") { data.sort.reverse }
+      grid = MagicGrid::Definition.new([{:sql => "foo"}], collection, controller, id: :grid)
 
-    # pending "sorting needs testing"
-    # pending "test #order_sql"
+      grid.collection.should == data.sort.reverse
+    end
+    pending "test #order_sql directly"
   end
 
   context "filtering with #where" do

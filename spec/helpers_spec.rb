@@ -133,121 +133,122 @@ describe MagicGrid::Helpers do
     end
 
     context "searching" do
-      let(:search_param) { 'foobar' }
       let(:searchabe_collection) {
-        collection = []
-        collection.stub(:search) { collection }
-        collection
+        collection = [].tap do |c|
+          c.stub(:search) { collection }
+        end
       }
-      let(:controller) {
-        make_controller.tap { |c|
-          c.stub(:params) { {:grid_id_q => search_param} }
-        }
-      }
-
       it "should render a search bar when asked" do
         grid = magic_grid(searchabe_collection, column_list, :searchable => [:some_col])
         grid.should match_select('input[type=search]')
       end
 
-      it "should search a searchable collection when there are search params" do
-        collection = (1..1000).to_a
-        collection.should_receive(:search).with(search_param) { collection }
-        grid = magic_grid(collection, column_list, :id => "grid_id", :searchable => [:some_col])
-        grid.should match_select('input[type=search]')
-      end
-
-      context "when the collection responds to #where" do
-        it "should call where when there are search params" do
-          search_col = :some_col
-          table_name = "tbl"
-          search_sql = "tbl.some_col"
-
-          collection = fake_active_record_collection(table_name)
-          collection.should_receive(:where).
-                     with("#{search_sql} LIKE :search", {:search=>"%#{search_param}%"})
-
-          grid = magic_grid(collection, column_list, :id => "grid_id", :searchable => [search_col])
+      context "when a search query is given" do
+        let(:search_param) { 'foobar' }
+        let(:controller) {
+          make_controller.tap { |c|
+            c.stub(:params) { {:grid_id_q => search_param} }
+          }
+        }
+        it "should search a searchable collection when there are search params" do
+          collection = (1..1000).to_a
+          collection.should_receive(:search).with(search_param) { collection }
+          grid = magic_grid(collection, column_list, :id => "grid_id", :searchable => [:some_col])
+          grid.should match_select('input[type=search]')
         end
 
-        it "should use custom sql from column for call to where when given" do
-          search_col = :some_col
-          search_sql = "sql that doesn't necessarily match column name"
-          table_name = "table name not used in query"
+        context "when the collection responds to #where" do
+          it "should call where when there are search params" do
+            search_col = :some_col
+            table_name = "tbl"
+            search_sql = "tbl.some_col"
 
-          collection = fake_active_record_collection(table_name)
-          collection.should_receive(:where).
-                     with("#{search_sql} LIKE :search", {:search=>"%#{search_param}%"})
+            collection = fake_active_record_collection(table_name)
+            collection.should_receive(:where).
+                       with("#{search_sql} LIKE :search", {:search=>"%#{search_param}%"})
 
-          magic_grid(collection,
-                     [ :name,
-                       :description,
-                       {:col => search_col, :sql => search_sql}
-                       ],
-                     :id => "grid_id", :searchable => [search_col])
-        end
-
-        it "should use column number to look up search column" do
-          search_col = :some_col
-          search_sql = "sql that doesn't necessarily match column name"
-          table_name = "table name not used in query"
-
-          collection = fake_active_record_collection(table_name)
-          collection.should_receive(:where).
-                     with("#{search_sql} LIKE :search", {:search=>"%#{search_param}%"})
-
-          magic_grid(collection,
-                     [ :name,
-                       :description,
-                       {:col => search_col, :sql => search_sql}
-                       ],
-                     :id => "grid_id", :searchable => [2])
-        end
-
-        it "should use custom sql for call to where when given" do
-          search_col = :some_col
-          custom_search_col = "some custom search column"
-          search_sql = custom_search_col
-          table_name = "table name not used in query"
-
-          collection = fake_active_record_collection(table_name)
-          collection.should_receive(:where).
-                     with("#{search_sql} LIKE :search", {:search=>"%#{search_param}%"})
-
-          magic_grid(collection,
-                     [ :name,
-                       :description,
-                       {:col => search_col, :sql => search_sql}
-                       ],
-                     :id => "grid_id", :searchable => [custom_search_col])
-        end
-
-        it "should fail when given bad searchable columns" do
-          collection = fake_active_record_collection()
-          collection.should_not_receive(:where)
-
-          expect {
-            magic_grid(collection,
-                       [ :name, :description],
-                       :id => "grid_id", :searchable => [nil])
-          }.to raise_error
-        end
-
-        it "should not fail if #where fails" do
-          search_col = :some_col
-          table_name = "tbl"
-          search_sql = "tbl.some_col"
-
-          collection = fake_active_record_collection(table_name)
-          magic_collection = MagicGrid::Collection.new(collection, nil)
-          collection.should_receive(:where).and_raise("some failure")
-          MagicGrid.logger = double.tap do |l|
-            l.should_receive(:debug).at_least(:once)
+            grid = magic_grid(collection, column_list, :id => "grid_id", :searchable => [search_col])
           end
 
-          expect {
-            magic_grid(collection, column_list, :id => "grid_id", :searchable => [search_col])
-          }.to_not raise_error
+          it "should use custom sql from column for call to where when given" do
+            search_col = :some_col
+            search_sql = "sql that doesn't necessarily match column name"
+            table_name = "table name not used in query"
+
+            collection = fake_active_record_collection(table_name)
+            collection.should_receive(:where).
+                       with("#{search_sql} LIKE :search", {:search=>"%#{search_param}%"})
+
+            magic_grid(collection,
+                       [ :name,
+                         :description,
+                         {:col => search_col, :sql => search_sql}
+                         ],
+                       :id => "grid_id", :searchable => [search_col])
+          end
+
+          it "should use column number to look up search column" do
+            search_col = :some_col
+            search_sql = "sql that doesn't necessarily match column name"
+            table_name = "table name not used in query"
+
+            collection = fake_active_record_collection(table_name)
+            collection.should_receive(:where).
+                       with("#{search_sql} LIKE :search", {:search=>"%#{search_param}%"})
+
+            magic_grid(collection,
+                       [ :name,
+                         :description,
+                         {:col => search_col, :sql => search_sql}
+                         ],
+                       :id => "grid_id", :searchable => [2])
+          end
+
+          it "should use custom sql for call to where when given" do
+            search_col = :some_col
+            custom_search_col = "some custom search column"
+            search_sql = custom_search_col
+            table_name = "table name not used in query"
+
+            collection = fake_active_record_collection(table_name)
+            collection.should_receive(:where).
+                       with("#{search_sql} LIKE :search", {:search=>"%#{search_param}%"})
+
+            magic_grid(collection,
+                       [ :name,
+                         :description,
+                         {:col => search_col, :sql => search_sql}
+                         ],
+                       :id => "grid_id", :searchable => [custom_search_col])
+          end
+
+          it "should fail when given bad searchable columns" do
+            collection = fake_active_record_collection()
+            collection.should_not_receive(:where)
+
+            expect {
+              magic_grid(collection,
+                         [ :name, :description],
+                         :id => "grid_id", :searchable => [nil])
+            }.to raise_error
+          end
+
+          it "should not fail if #where fails" do
+            search_col = :some_col
+            table_name = "tbl"
+            search_sql = "tbl.some_col"
+
+            collection = fake_active_record_collection(table_name)
+            magic_collection = MagicGrid::Collection.new(collection, nil)
+            collection.should_receive(:where).and_raise("some failure")
+            MagicGrid.logger = double.tap do |l|
+              l.should_receive(:debug).at_least(:once)
+            end
+
+            expect {
+              magic_grid(collection, column_list, :id => "grid_id", :searchable => [search_col])
+            }.to_not raise_error
+          end
         end
       end
     end

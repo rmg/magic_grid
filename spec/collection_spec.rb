@@ -34,9 +34,11 @@ describe MagicGrid::Collection do
       end
     }
     it "should send #order when sorted" do
+      ordered = [1,2,3,4,5]
       collection = MagicGrid::Collection.new(sortable_collection, nil)
-      sortable_collection.should_receive(:order)
+      sortable_collection.should_receive(:order) { ordered }
       collection.apply_sort("col", "order")
+      collection.collection.should == ordered
     end
   end
 end
