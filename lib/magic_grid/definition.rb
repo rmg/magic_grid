@@ -16,7 +16,7 @@ module MagicGrid
       :bottom_pager => true,
       :remote => false,
       :per_page => 30,
-      :searchable => false,
+      :searchable => [],
       :search_method => :search,
       :min_search_length => 3,
       :id => false,
@@ -120,21 +120,17 @@ module MagicGrid
         end
       end
 
-      @options[:searchable] = [] if @options[:searchable] and not @options[:searchable].kind_of? Array
+      @options[:searchable] = Array(@options[:searchable])
       @options[:current_search] ||= param(:q)
       if @collection.searchable?
-        if param(:q) and not param(:q).empty? and @options[:searchable]
+        if param(:q) and not param(:q).empty? and not @options[:searchable].empty?
           @collection.apply_search(param(:q))
         end
       else
-        if @options[:searchable] or param(:q)
+        if not @options[:searchable].empty? or param(:q)
           MagicGrid.logger.warn "#{self.class.name}: Ignoring searchable fields on non-AR collection"
         end
-        @options[:searchable] = false
-      end
-      if not @options[:searcher] and @options[:searchable]
-        @options[:needs_searcher] = true
-        @options[:searcher] = param_key(:searcher)
+        @options[:searchable] = []
       end
 
       # Do collection filter first, may convert from AR to Array
@@ -146,6 +142,22 @@ module MagicGrid
       end
       # Paginate at the very end, after all sorting, filtering, etc..
       @collection.apply_pagination(current_page, @per_page)
+    end
+
+    def searchable?
+      @collection.searchable? and not @options[:searchable].empty?
+    end
+
+    def needs_searcher?
+      @options[:needs_searcher] or (searchable? and not @options[:searcher])
+    end
+
+    def searcher
+      if needs_searcher?
+        param_key(:searcher)
+      else
+        @options[:searcher]
+      end
     end
 
     def param_key(key)

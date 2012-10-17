@@ -20,7 +20,7 @@ module MagicGrid
       grid = normalize_magic(collection, cols, opts)
       base_params = grid.base_params
       data = {
-        :searcher => grid.options[:searcher],
+        :searcher => grid.searcher,
         :current => controller.request.fullpath,
         :live_search => grid.options[:live_search],
         :listeners => (grid.options[:listeners] unless grid.options[:listeners].empty?),
@@ -42,7 +42,7 @@ module MagicGrid
                         :id => (grid.magic_id.to_s + "_spinner"),
                         :class => "magic_grid_spinner"
                        )
-          if grid.options[:needs_searcher]
+          if grid.needs_searcher?
             thead << content_tag('tr') do
               content_tag('td', :class => 'searcher full-width ui-widget-header',
                           :colspan => grid.columns.count) do
@@ -209,9 +209,9 @@ module MagicGrid
         :min_length => grid.options[:min_search_length],
         :current => grid.options[:current_search] || "",
       }
-      searcher = label_tag(grid.options[:searcher].to_sym,
-        grid.options[:searcher_label])
-      searcher << search_field_tag(grid.options[:searcher].to_sym,
+      searcher = label_tag(grid.searcher.to_sym,
+                           grid.options[:searcher_label])
+      searcher << search_field_tag(grid.searcher.to_sym,
         grid.param(:q),
         :placeholder => grid.options[:searcher_tooltip],
         :size => grid.options[:searcher_size],
