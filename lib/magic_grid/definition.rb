@@ -1,11 +1,8 @@
-#require 'will_paginate/view_helpers/action_view'
-
 require 'magic_grid/logger'
 require 'magic_grid/collection'
 
 module MagicGrid
   class Definition
-    #include WillPaginate::ActionView
     attr_reader :columns, :magic_id, :options, :params,
       :current_sort_col, :current_order, :default_order, :per_page
 
@@ -106,8 +103,6 @@ module MagicGrid
         MagicGrid.logger.debug "#{self.class.name}: Ignoring sorting on non-AR collection"
       end
 
-      @options[:searchable] = [] if @options[:searchable] and not @options[:searchable].kind_of? Array
-
       if @collection.filterable? or @options[:listener_handler].respond_to?(:call)
         if @options[:listener_handler].respond_to? :call
           @collection.apply_filter_callback @options[:listener_handler]
@@ -124,6 +119,8 @@ module MagicGrid
           @options[:listeners] = {}
         end
       end
+
+      @options[:searchable] = [] if @options[:searchable] and not @options[:searchable].kind_of? Array
       @options[:current_search] ||= param(:q)
       if @collection.searchable?
         if param(:q) and not param(:q).empty? and @options[:searchable]
@@ -139,6 +136,7 @@ module MagicGrid
         @options[:needs_searcher] = true
         @options[:searcher] = param_key(:searcher)
       end
+
       # Do collection filter first, may convert from AR to Array
       if @options[:collection_post_filter?] and @collection.has_post_filter?
         @collection.apply_post_filter
