@@ -17,7 +17,7 @@ module MagicGrid
       @paginations = []
     end
 
-    delegate :map, :count, :to => :collection
+    delegate :quoted_table_name, :map, :count, :to => :collection
 
     attr_accessor :grid
     attr_reader :current_page, :original_count, :total_pages
@@ -29,6 +29,10 @@ module MagicGrid
       else
         Collection.new(collection, grid)
       end
+    end
+
+    def column_names
+      @collection.table.columns.map {|c| c.name}
     end
 
     def quote_column_name(col)

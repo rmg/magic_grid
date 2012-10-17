@@ -227,11 +227,11 @@ module MagicGrid
     def magic_paginate(collection, opts={})
       if respond_to? :will_paginate
         # WillPaginate
-        will_paginate collection, opts
+        will_paginate collection.collection, opts
         #alias_method :magic_paginate, :will_paginate
       elsif respond_to? :paginate
         #Kaminari, or something else..
-        paginate collection, opts
+        paginate collection.collection, opts
         #alias_method :magic_paginate, :paginate
       else
         ("<!-- page #{collection.current_page} of #{collection.total_pages} -->" +
@@ -243,7 +243,7 @@ module MagicGrid
       content_tag('tr') do
         content_tag('td', :class => 'full-width ui-widget-header magic-pager',
                     :colspan => grid.columns.count) do
-          pager = magic_paginate(grid.collection,
+          pager = magic_paginate(grid.magic_collection,
                                 :param_name => grid.param_key(:page),
                                 :params => base_params
                                )

@@ -6,6 +6,10 @@ module MagicGrid
     attr_reader :columns, :magic_id, :options, :params,
       :current_sort_col, :current_order, :default_order, :per_page
 
+    def magic_collection
+      @collection
+    end
+
     def collection
       @collection.collection
     end
@@ -64,9 +68,10 @@ module MagicGrid
       begin
         #if @collection.respond_to? :table
         table_name = @collection.quoted_table_name
-        table_columns = @collection.table.columns.map {|c| c.name}
+        table_columns = @collection.column_names
       rescue
-        MagicGrid.logger.debug "Given collection doesn't respond to :table well"
+        msg = "Given collection doesn't respond to :quoted_table_name or :table well: "
+        MagicGrid.logger.debug(msg, $!)
         table_name = nil
         table_columns = @columns.each_index.to_a
       end
@@ -81,7 +86,7 @@ module MagicGrid
         c[:id] = i
         i += 1
         if c.key?(:col) and c[:col].is_a?(Symbol) and table_columns.include?(c[:col])
-          c[:sql] = "#{table_name}.#{@collection.connection.quote_column_name(c[:col].to_s)}" unless c.key?(:sql)
+          c[:sql] = "#{table_name}.#{@collection.quote_column_name(c[:col].to_s)}" unless c.key?(:sql)
         end
         c[:label] = c[:col].to_s.titleize if not c.key? :label
         hash << c[:label]
