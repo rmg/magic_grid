@@ -347,4 +347,8 @@ describe MagicGrid::Helpers do
 
   end
 
+  describe "#magic_row" do
+    pending "need example for callable column definitions"
+  end
+
 end
