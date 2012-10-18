@@ -45,6 +45,25 @@ describe MagicGrid::Definition do
     expect { MagicGrid::Definition.new() }.to raise_error
   end
 
+  context "options that can't be used" do
+      let(:controller) {
+        double.tap do |c|
+          c.stub(:params) { {} }
+        end
+      }
+    it "doesn't barf when listeners are given for a dumb collection" do
+      expect {
+        MagicGrid::Definition.new([:a], [1], controller, :listeners => {:a => :a})
+      }.not_to raise_error
+    end
+
+    it "doesn't barf when search columns are given for a dumb collection" do
+      expect {
+        MagicGrid::Definition.new([:a], [1], controller, :searchable => [:a])
+      }.not_to raise_error
+    end
+  end
+
   context "when given an empty collection" do
     subject { MagicGrid::Definition.new(column_list, empty_collection) }
     its(:base_params) { should include(:magic_grid_id) }
