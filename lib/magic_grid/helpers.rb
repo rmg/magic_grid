@@ -1,9 +1,5 @@
 require 'magic_grid/definition'
 
-if Module.const_defined? :WillPaginate
-  require 'will_paginate/array'
-end
-
 def MagicGrid::compact_hash(hash)
   hash.select {|_,v| v }
 end
