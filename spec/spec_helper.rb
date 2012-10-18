@@ -11,9 +11,8 @@ end
 
 require 'magic_grid/logger'
 require 'action_view'
-require 'rails'
+require 'action_dispatch'
 require 'test/unit'
-require 'action_controller'
 
 begin
   require 'will_paginate'
@@ -31,8 +30,6 @@ begin
 rescue LoadError
   puts "skipping Kaminari"
 end
-
-Rails.backtrace_cleaner.remove_silencers!
 
 class NullObject
   def method_missing(*args, &block) self; end

@@ -1,7 +1,5 @@
 require 'spec_helper'
 require 'magic_grid/helpers'
-require 'action_controller'
-require "active_support/core_ext"
 
 def make_controller
   request = double.tap { |r|

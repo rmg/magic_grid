@@ -1,6 +1,5 @@
 require 'spec_helper'
 require 'magic_grid/definition'
-require 'active_support/core_ext/hash/indifferent_access'
 
 describe MagicGrid::Definition do
   pending "embarasses me with how tightly it is coupled with.. EVERYTHING"
