@@ -1,3 +1,7 @@
+if Module.const_defined? :WillPaginate
+  require 'will_paginate/array'
+end
+
 class UsersController < ApplicationController
   # GET /users
   # GET /users.json
