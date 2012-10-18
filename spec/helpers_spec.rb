@@ -108,6 +108,28 @@ describe MagicGrid::Helpers do
       it { should =~ /HOKY_POKY_ALAMO: 1/ }
     end
 
+    context "when given an array of Symbols as column list" do
+      subject {
+        magic_grid( [1,2], [:col1, :col2]) do |row|
+          "draw a row"
+        end
+      }
+      it { should match(/draw a row/) }
+      it("capitalizes the column name") { should match(/Col1/) }
+      it { should match(/Col2/) }
+    end
+
+    context "when given an array of Strings as column list" do
+      subject {
+        magic_grid( [1,2], ["CamelCase", "lower_case"]) do |row|
+          "draw a row"
+        end
+      }
+      it { should match(/draw a row/) }
+      it("leaves case alone") { should match(/CamelCase/) }
+      it("leaves underscores alone") { should match(/lower_case/) }
+    end
+
     context "renders top and bottom pagers as told" do
       large_collection = (1..1000).to_a
 
