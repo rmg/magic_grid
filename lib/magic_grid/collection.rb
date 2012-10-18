@@ -121,6 +121,14 @@ module MagicGrid
       self
     end
 
+    def apply_post_filter_callback(callback)
+      if callback.respond_to? :call
+        @reduced_collection = nil
+        @post_filter_callbacks << callback
+      end
+      self
+    end
+
     def has_post_filter?
       @collection.respond_to? :post_filter
     end
