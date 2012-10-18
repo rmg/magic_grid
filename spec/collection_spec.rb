@@ -42,6 +42,18 @@ describe MagicGrid::Collection do
     end
   end
 
+  context "when post filter callback is given" do
+    it "should call the given callback when the collection is reduced" do
+      array = [1]
+      callback = double.tap do |cb|
+        cb.should_receive(:call).with(array) { [2] }
+      end
+      collection = MagicGrid::Collection.new(array, nil)
+      collection.apply_post_filter_callback(callback)
+      collection.collection.should == [2]
+    end
+  end
+
   describe "#perform_pagination" do
     context "when #paginate (aka WillPaginate) is available" do
       it "should call paginate helper when it is detected" do
