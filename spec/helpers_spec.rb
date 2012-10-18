@@ -90,6 +90,19 @@ describe MagicGrid::Helpers do
       end
     end
 
+    context "when given an empty collection and an if_empty callback" do
+      it "calls the callback" do
+        if_emtpy_string = "ZOMG! NO ROWS!"
+        callback = double.tap do |cb|
+          cb.should_receive(:call).with(instance_of MagicGrid::Definition) {
+            if_emtpy_string
+          }
+        end
+        grid = magic_grid empty_collection, column_list, :if_empty => callback
+        grid.should include(if_emtpy_string)
+      end
+    end
+
     context "when given a non-empty collection" do
       subject { magic_grid( [1, 2], [:to_s] ) }
       it "should not indicate there is no data" do
