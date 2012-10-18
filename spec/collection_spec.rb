@@ -41,4 +41,63 @@ describe MagicGrid::Collection do
       collection.collection.should == ordered
     end
   end
+
+  describe "#perform_pagination" do
+    context "when #paginate (aka WillPaginate) is available" do
+      it "should call paginate helper when it is detected" do
+        array = [1].tap do |a|
+          a.should_receive(:paginate).with(:page => 1, :per_page => 1) { a }
+        end
+        collection = MagicGrid::Collection.new(array, nil)
+        collection.perform_pagination(array, 1, 1).should == array
+      end
+    end
+
+    context "when #page (possibly from Kaminari) is available" do
+      it "should call paginate helper when it is detected" do
+        array = [1].tap do |a|
+          a.should_receive(:per).with(1) { a }
+          a.should_receive(:page).with(1) { a }
+        end
+        collection = MagicGrid::Collection.new(array, nil)
+        collection.perform_pagination(array, 1, 1).should == array
+      end
+    end
+
+    context "when given an Array and Kaminari is available" do
+      it "should call paginate helper when it is detected" do
+        array = Array.new(10) { 1 }
+        kaminaried_array = [1,1].tap do |ka|
+          ka.should_receive(:per).with(1) { ka }
+          ka.should_receive(:page).with(1) { ka }
+        end
+        kaminari = double.tap do |k|
+          k.should_receive(:paginate_array).with(array) { kaminaried_array }
+        end
+        stub_const('Kaminari', kaminari)
+        collection = MagicGrid::Collection.new(array, nil)
+        collection.perform_pagination(array, 1, 1).should == kaminaried_array
+      end
+    end
+
+    context "when no pagination is provided" do
+
+      # TODO replace this when rspec-mocks add 'hide_const'
+      before :each do
+        if Module.const_defined?('Kaminari')
+          @kaminari = get_const_defined_on(self, 'Kaminari')
+          remove_const('Kaminari')
+        end
+      end
+      after :each do
+        const_set('Kaminari', @kaminari) if @kaminari
+      end
+
+      it "should attempt to use Enumerable methods to perform pagination" do
+        array = Array.new(100) { 1 }
+        collection = MagicGrid::Collection.new(array, nil)
+        collection.perform_pagination(array, 1, 1).should == [1]
+      end
+    end
+  end
 end
