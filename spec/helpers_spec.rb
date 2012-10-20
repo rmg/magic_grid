@@ -428,4 +428,23 @@ describe MagicGrid::Helpers do
       search_bar(grid).should match_select("button", :text => tracer)
     end
   end
+
+  describe "column sorting helpers" do
+    it "#reverse_order" do
+      reverse_order(0).should == 1
+      reverse_order(1).should == 0
+      reverse_order(2).should == 0
+    end
+    it "#order_icon" do
+      order_icon(0).should match_select('span.ui-icon-triangle-1-n')
+      order_icon(1).should match_select('span.ui-icon-triangle-1-s')
+      order_icon(2).should match_select('span.ui-icon-carat-2-n-s')
+    end
+    it "#order_class" do
+      order_class(0).should == 'sort-asc'
+      order_class(1).should == 'sort-desc'
+      order_class(2).should == 'sort-none'
+    end
+  end
+
 end
