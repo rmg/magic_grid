@@ -412,4 +412,20 @@ describe MagicGrid::Helpers do
     end
   end
 
+  describe "#search_bar" do
+    searchable_opts = { :needs_searcher => true }
+    it "renders a search field" do
+      cols = [:some_col]
+      grid = MagicGrid::Definition.new(cols, nil, nil, searchable_opts)
+      search_bar(grid).should match_select("input[type=search]")
+    end
+    it "renders a search button if told to" do
+      tracer = "ZOMG! A BUTTON!"
+      cols = [:some_col]
+      opts = searchable_opts.merge(:search_button => true,
+                                   :searcher_button => tracer)
+      grid = MagicGrid::Definition.new(cols, nil, nil, opts)
+      search_bar(grid).should match_select("button", :text => tracer)
+    end
+  end
 end
