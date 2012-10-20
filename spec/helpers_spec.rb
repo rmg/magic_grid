@@ -346,7 +346,48 @@ describe MagicGrid::Helpers do
   end
 
   describe "#magic_row" do
-    pending "need example for callable column definitions"
+    let(:tracer) { "OMG A MAGIC CELL!" }
+
+    context "with a callable column option" do
+      let(:record) { 1 }
+
+      it "should use :to_s as a method if callable" do
+        callable = double.tap do |c|
+          c.should_receive(:call).with( record ) { tracer }
+        end
+        cols = [ {:col => 'Col', :to_s => callable} ]
+        collection = MagicGrid::Definition.new(cols)
+        magic_row( record , collection ).should include(tracer)
+      end
+
+      it "should use :col as a method if callable" do
+        callable = double.tap do |c|
+          c.should_receive(:call).with( record ) { tracer }
+        end
+        cols = [ {:col => callable, :label => "Column"} ]
+        collection = MagicGrid::Definition.new(cols)
+        magic_row( record , collection ).should include(tracer)
+      end
+    end
+
+    context "with a symbol that is a method on the record" do
+      let(:record) { double(1) }
+
+      it "should use :to_s as a method on record if it responds to it" do
+        record.should_receive(:some_inconceivable_method_name) { tracer }
+        cols = [ {:col => :some_col, :to_s => :some_inconceivable_method_name} ]
+        collection = MagicGrid::Definition.new(cols)
+        magic_row( record , collection ).should include(tracer)
+      end
+
+      it "should use :col as a method on record if it responds to it" do
+        record.should_receive(:some_inconceivable_method_name) { tracer }
+        cols = [ {:col => :some_inconceivable_method_name} ]
+        collection = MagicGrid::Definition.new(cols)
+        magic_row( record , collection ).should include(tracer)
+      end
+    end
+
   end
 
 end
