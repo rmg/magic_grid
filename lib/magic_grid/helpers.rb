@@ -97,12 +97,10 @@ module MagicGrid
         grid.columns.reduce(''.html_safe) do |acc, col|
           classes = ['ui-state-default'] << col[:class]
           acc <<
-          if col.is_a? String
-            content_tag 'th', col.html_safe, :class => classes.join(' ')
-          elsif not col.key? :sql
-            content_tag 'th', col[:label].html_safe, :class => classes.join(' ')
-          else
+          if col.key? :sql
             sortable_header(grid, col, opts)
+          else
+            content_tag 'th', col[:label].html_safe, :class => classes.join(' ')
           end
         end
       end
