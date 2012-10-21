@@ -5,7 +5,7 @@ module MagicGrid
   class Collection
 
     def initialize(collection, grid)
-      @collection = collection
+      @collection = collection || []
       @grid = grid
       @current_page = 1
       @sorts = []
