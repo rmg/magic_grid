@@ -140,33 +140,34 @@ module MagicGrid
     end
 
     def apply_pagination(current_page, per_page)
-      if per_page
-        @reduced_collection = nil
-        @paginations << {:current_page => current_page, :per_page => per_page}
-      end
+      @per_page = per_page
+      @original_count = @collection.count
+      @total_pages = @original_count / @per_page
+      @current_page = current_page
+      @reduced_collection = nil
       self
     end
 
-    def perform_pagination(collection, current_page, per_page)
-      @original_count = @collection.count
-      @total_pages = @original_count / per_page
-      @current_page = current_page
+    def perform_pagination(collection)
+      return collection unless @per_page
+
       if collection.respond_to? :paginate
-        collection = collection.paginate(:page => current_page,
-                                           :per_page => per_page)
+        collection = collection.paginate(:page => @current_page,
+                                         :per_page => @per_page)
       elsif collection.respond_to? :page
-        collection = collection.page(current_page).per(per_page)
+        collection = collection.page(@current_page).per(@per_page)
       elsif collection.is_a?(Array) and Module.const_defined?(:Kaminari)
-        collection = Kaminari.paginate_array(collection).page(current_page).per(per_page)
+        collection = Kaminari.paginate_array(collection).page(@current_page).per(@per_page)
       else
         collection = collection.to_enum
-        collection = collection.each_slice(per_page)
-        collection = collection.drop(current_page - 1)
+        collection = collection.each_slice(@per_page)
+        collection = collection.drop(@current_page - 1)
         collection = collection.first.to_a
         class << collection
           attr_accessor :current_page, :total_pages, :original_count
         end
       end
+
       collection
     end
 
@@ -189,10 +190,8 @@ module MagicGrid
       @post_filter_callbacks.each do |callback|
         collection = callback.call(collection)
       end
-      @paginations.each do |params|
-        collection = perform_pagination(collection, params[:current_page], params[:per_page])
-      end
-      collection
+      # Paginate at the very end, after all sorting, filtering, etc..
+      perform_pagination(collection)
     end
 
     def collection

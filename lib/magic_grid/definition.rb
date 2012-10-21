@@ -145,7 +145,6 @@ module MagicGrid
       if @options[:post_filter] and @options[:post_filter].respond_to?(:call)
         @collection.apply_post_filter_callback @options[:post_filter]
       end
-      # Paginate at the very end, after all sorting, filtering, etc..
       @collection.apply_pagination(current_page, @per_page)
     end
 
