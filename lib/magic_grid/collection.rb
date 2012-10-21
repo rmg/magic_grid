@@ -198,7 +198,5 @@ module MagicGrid
       @reduced_collection ||= apply_all_operations(@collection)
     end
 
-
-
   end
 end

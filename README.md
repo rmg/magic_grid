@@ -2,6 +2,7 @@ MagicGrid
 =========
 
 [![Build Status](https://secure.travis-ci.org/rmg/magic_grid.png?branch=master)](http://travis-ci.org/rmg/magic_grid)
+[![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/rmg/magic_grid)
 
 Easy collection display grid with column sorting and pagination.
 
