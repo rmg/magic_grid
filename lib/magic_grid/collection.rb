@@ -151,7 +151,7 @@ module MagicGrid
 
     def apply_pagination(current_page, per_page)
       @original_count = self.count @collection
-      @per_page = per_page
+      @per_page = per_page ? per_page : @original_count
       @total_pages = @original_count / @per_page
       @current_page = current_page
       @reduced_collection = nil
