@@ -75,11 +75,9 @@ module MagicGrid
         table_name = nil
         table_columns = @columns.each_index.to_a
       end
-      i = 0
       hash = []
-      @columns.map! do |c|
+      @columns.map!.each_with_index do |c, i|
         c = create_column(c, table_columns, i)
-        i += 1
         hash << c[:label]
         c
       end
