@@ -78,17 +78,8 @@ module MagicGrid
       i = 0
       hash = []
       @columns.map! do |c|
-        if c.is_a? Symbol
-          c = {:col => c}
-        elsif c.is_a? String
-          c = {:label => c}
-        end
-        c[:id] = i
+        c = create_column(c, table_columns, i)
         i += 1
-        if c.key?(:col) and c[:col].is_a?(Symbol) and table_columns.include?(c[:col])
-          c[:sql] = "#{table_name}.#{@collection.quote_column_name(c[:col].to_s)}" unless c.key?(:sql)
-        end
-        c[:label] = c[:col].to_s.titleize if not c.key? :label
         hash << c[:label]
         c
       end
@@ -146,6 +137,20 @@ module MagicGrid
         @collection.apply_post_filter_callback @options[:post_filter]
       end
       @collection.apply_pagination(current_page, @per_page)
+    end
+
+    def create_column(c, table_columns, i)
+      if c.is_a? Symbol
+        c = {:col => c}
+      elsif c.is_a? String
+        c = {:label => c}
+      end
+      c[:id] = i
+      if c.key?(:col) and c[:col].is_a?(Symbol) and table_columns.include?(c[:col])
+        c[:sql] = "#{@collection.quoted_table_name}.#{@collection.quote_column_name(c[:col].to_s)}" unless c.key?(:sql)
+      end
+      c[:label] = c[:col].to_s.titleize if not c.key? :label
+      c
     end
 
     def searchable?
