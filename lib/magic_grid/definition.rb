@@ -77,9 +77,9 @@ module MagicGrid
       end
       hash = []
       @columns.map!.each_with_index do |c, i|
-        c = create_column(c, table_columns, i)
-        hash << c[:label]
-        c
+        create_column(c, table_columns, i).tap do |col|
+          hash << col[:label]
+        end
       end
       if @options[:id]
         @magic_id = @options[:id]
