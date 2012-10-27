@@ -67,7 +67,7 @@ module MagicGrid
       @per_page = @options[:per_page]
       @collection = Collection[collection, self]
       @columns.map!.each_with_index do |c, i|
-        create_column(c, i)
+        MagicGrid::Column.new(@collection, c, i)
       end
       @current_sort_col = sort_col_i = param(:col, @options[:default_col]).to_i
       if @collection.sortable? and @columns.count > sort_col_i and @columns[sort_col_i].has_key?(:sql)
@@ -127,10 +127,6 @@ module MagicGrid
         @magic_id << @collection.to_sql.hash.abs.to_s(36) if @collection.respond_to? :to_sql
       end
       @magic_id
-    end
-
-    def create_column(c, i)
-      MagicGrid::Column.new(@collection, c, i)
     end
 
     def searchable?
