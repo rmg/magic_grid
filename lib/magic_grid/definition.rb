@@ -1,5 +1,6 @@
 require 'magic_grid/logger'
 require 'magic_grid/collection'
+require 'magic_grid/column'
 
 module MagicGrid
   class Definition
@@ -129,17 +130,7 @@ module MagicGrid
     end
 
     def create_column(c, i)
-      if c.is_a? Symbol
-        c = {:col => c}
-      elsif c.is_a? String
-        c = {:label => c}
-      end
-      c[:id] = i
-      if c.key?(:col) and c[:col].is_a?(Symbol) and @collection.column_names(@columns.count).include?(c[:col])
-        c[:sql] = "#{@collection.quoted_table_name}.#{@collection.quote_column_name(c[:col].to_s)}" unless c.key?(:sql)
-      end
-      c[:label] = c[:col].to_s.titleize if not c.key? :label
-      c
+      MagicGrid::Column.new(@collection, c, i)
     end
 
     def searchable?
