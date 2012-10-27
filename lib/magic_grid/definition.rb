@@ -65,18 +65,8 @@ module MagicGrid
       @params = controller && controller.params || {}
       @per_page = @options[:per_page]
       @collection = Collection[collection, self]
-      begin
-        #if @collection.respond_to? :table
-        table_name = @collection.quoted_table_name
-        table_columns = @collection.column_names
-      rescue
-        msg = "Given collection doesn't respond to :quoted_table_name or :table well: "
-        MagicGrid.logger.debug("#{msg} - #{$!}")
-        table_name = nil
-        table_columns = @columns.each_index.to_a
-      end
       @columns.map!.each_with_index do |c, i|
-        create_column(c, table_columns, i)
+        create_column(c, i)
       end
       @current_sort_col = sort_col_i = param(:col, @options[:default_col]).to_i
       if @collection.sortable? and @columns.count > sort_col_i and @columns[sort_col_i].has_key?(:sql)
@@ -138,14 +128,14 @@ module MagicGrid
       @magic_id
     end
 
-    def create_column(c, table_columns, i)
+    def create_column(c, i)
       if c.is_a? Symbol
         c = {:col => c}
       elsif c.is_a? String
         c = {:label => c}
       end
       c[:id] = i
-      if c.key?(:col) and c[:col].is_a?(Symbol) and table_columns.include?(c[:col])
+      if c.key?(:col) and c[:col].is_a?(Symbol) and @collection.column_names(@columns.count).include?(c[:col])
         c[:sql] = "#{@collection.quoted_table_name}.#{@collection.quote_column_name(c[:col].to_s)}" unless c.key?(:sql)
       end
       c[:label] = c[:col].to_s.titleize if not c.key? :label

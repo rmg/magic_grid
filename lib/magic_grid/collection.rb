@@ -31,8 +31,12 @@ module MagicGrid
       end
     end
 
-    def column_names
+    def column_names(count = 0)
       @collection.table.columns.map {|c| c.name}
+    rescue
+      msg = "Given collection doesn't respond to :quoted_table_name or :table well: "
+      MagicGrid.logger.debug("#{msg} - #{$!}")
+      (0..count).to_a
     end
 
     def quote_column_name(col)
