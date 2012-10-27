@@ -3,7 +3,7 @@ require 'magic_grid/collection'
 
 module MagicGrid
   class Definition
-    attr_reader :columns, :magic_id, :options, :params,
+    attr_reader :columns, :options, :params,
       :current_sort_col, :current_order, :default_order, :per_page
 
     def magic_collection
@@ -75,17 +75,8 @@ module MagicGrid
         table_name = nil
         table_columns = @columns.each_index.to_a
       end
-      hash = []
       @columns.map!.each_with_index do |c, i|
-        create_column(c, table_columns, i).tap do |col|
-          hash << col[:label]
-        end
-      end
-      if @options[:id]
-        @magic_id = @options[:id]
-      else
-        @magic_id = hash.join.hash.abs.to_s(36)
-        @magic_id << @collection.to_sql.hash.abs.to_s(36) if @collection.respond_to? :to_sql
+        create_column(c, table_columns, i)
       end
       @current_sort_col = sort_col_i = param(:col, @options[:default_col]).to_i
       if @collection.sortable? and @columns.count > sort_col_i and @columns[sort_col_i].has_key?(:sql)
@@ -137,6 +128,16 @@ module MagicGrid
       @collection.apply_pagination(current_page, @per_page)
     end
 
+    def magic_id
+      if @options[:id]
+        @magic_id = @options[:id]
+      else
+        @magic_id = @columns.map{|c| c[:label]}.join.hash.abs.to_s(36)
+        @magic_id << @collection.to_sql.hash.abs.to_s(36) if @collection.respond_to? :to_sql
+      end
+      @magic_id
+    end
+
     def create_column(c, table_columns, i)
       if c.is_a? Symbol
         c = {:col => c}
@@ -168,7 +169,7 @@ module MagicGrid
     end
 
     def param_key(key)
-      "#{@magic_id}_#{key}".to_sym
+      "#{magic_id}_#{key}".to_sym
     end
 
     def param(key, default=nil)
@@ -176,7 +177,7 @@ module MagicGrid
     end
 
     def base_params
-      @params.merge :magic_grid_id => @magic_id
+      @params.merge :magic_grid_id => magic_id
     end
 
     def current_page
