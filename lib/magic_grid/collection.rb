@@ -149,19 +149,21 @@ module MagicGrid
     end
 
     def count(collection = nil)
-      countable = collection || @collection
-      count_or_hash = countable.count
-      if Array(count_or_hash).flatten.count > 1
-        count_or_hash.count
-      else
-        count_or_hash
+      count_or_hash = collection || @collection
+      while count_or_hash.respond_to? :count
+        count_or_hash = count_or_hash.count
       end
+      count_or_hash
     end
 
     def apply_pagination(current_page, per_page)
       @original_count = self.count @collection
       @per_page = per_page ? per_page : @original_count
-      @total_pages = @original_count / @per_page
+      if @per_page == 0 and @original_count == 0
+        @total_pages = @per_page = 1
+      else
+        @total_pages = @original_count / @per_page
+      end
       @current_page = current_page
       @reduced_collection = nil
       self
