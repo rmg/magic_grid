@@ -100,7 +100,7 @@ module MagicGrid
           if col.key? :sql
             sortable_header(grid, col, opts)
           else
-            content_tag 'th', col[:label].html_safe, class: classes.join(' ')
+            content_tag 'th', col.label.html_safe, class: classes.join(' ')
           end
         end
       end
@@ -174,7 +174,7 @@ module MagicGrid
 
     def sortable_header(grid, col, opts = {})
       id = col[:id]
-      label = col[:label] || id.titleize
+      label = col.label || id.titleize
       default_sort_order = opts.fetch(:default_order, grid.order(grid.default_order))
       my_params = grid.base_params.merge({
         grid.param_key(:col) => id,

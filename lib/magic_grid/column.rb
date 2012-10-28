@@ -9,6 +9,10 @@ module MagicGrid
       end
     end
 
+    def label
+      @col[:label]
+    end
+
     private
     def initialize(collection, c, i)
       @collection = collection

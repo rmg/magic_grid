@@ -121,7 +121,7 @@ module MagicGrid
       if @options[:id]
         @magic_id = @options[:id]
       else
-        @magic_id = @columns.map{|c| c[:label]}.join.hash.abs.to_s(36)
+        @magic_id = @columns.map(&:label).join.hash.abs.to_s(36)
         @magic_id << @collection.to_sql.hash.abs.to_s(36) if @collection.respond_to? :to_sql
       end
       @magic_id
