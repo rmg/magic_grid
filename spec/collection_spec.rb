@@ -49,7 +49,7 @@ describe MagicGrid::Collection do
         cb.should_receive(:call).with(array) { [2] }
       end
       collection = MagicGrid::Collection.new(array, nil)
-      collection.apply_post_filter_callback(callback)
+      collection.add_post_filter_callback(callback)
       collection.collection.should == [2]
     end
   end

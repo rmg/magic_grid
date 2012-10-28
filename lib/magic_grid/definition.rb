@@ -96,27 +96,11 @@ module MagicGrid
           @options[:listeners] = {}
         end
       end
-
-      @options[:searchable] = Array(@options[:searchable])
       @options[:current_search] ||= param(:q)
-      if @collection.searchable?
-        if param(:q) and not param(:q).empty? and not @options[:searchable].empty?
-          @collection.apply_search(param(:q))
-        end
-      else
-        if not @options[:searchable].empty? or param(:q)
-          MagicGrid.logger.warn "#{self.class.name}: Ignoring searchable fields on non-AR collection"
-        end
-        @options[:searchable] = []
-      end
-
-      # Do collection filter first, may convert from AR to Array
-      if @options[:collection_post_filter?] and @collection.has_post_filter?
-        @collection.apply_post_filter
-      end
-      if @options[:post_filter] and @options[:post_filter].respond_to?(:call)
-        @collection.apply_post_filter_callback @options[:post_filter]
-      end
+      @collection.searchable_columns = Array(@options[:searchable])
+      @collection.apply_search(param(:q))
+      @collection.enable_post_filter @options[:collection_post_filter?]
+      @collection.add_post_filter_callback @options[:post_filter]
       @collection.apply_pagination(current_page, @per_page)
     end
 
@@ -131,7 +115,7 @@ module MagicGrid
     end
 
     def searchable?
-      @collection.searchable? and not @options[:searchable].empty?
+      @collection.searchable?
     end
 
     def needs_searcher?

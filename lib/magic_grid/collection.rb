@@ -15,11 +15,12 @@ module MagicGrid
       @post_filters = []
       @post_filter_callbacks = []
       @paginations = []
+      @searchable_columns = []
     end
 
     delegate :quoted_table_name, :map, :count, to: :collection
 
-    attr_accessor :grid
+    attr_accessor :grid, :searchable_columns
     attr_reader :current_page, :original_count, :total_pages
 
     def self.[](collection, grid)
@@ -84,12 +85,19 @@ module MagicGrid
     end
 
     def searchable?
-      filterable? or @collection.respond_to? @grid.options[:search_method]
+      filterable? and not searchable_columns.empty? or
+        @collection.respond_to? @grid.options[:search_method]
     end
 
     def apply_search(q)
-      @reduced_collection = nil
-      @searches << q
+      if q and not q.empty?
+        if searchable?
+          @reduced_collection = nil
+          @searches << q
+        else
+          MagicGrid.logger.warn "#{self.class.name}: Ignoring searchable fields on collection"
+        end
+      end
       self
     end
 
@@ -120,7 +128,7 @@ module MagicGrid
       self
     end
 
-    def apply_post_filter_callback(callback)
+    def add_post_filter_callback(callback)
       if callback.respond_to? :call
         @reduced_collection = nil
         @post_filter_callbacks << callback
@@ -132,9 +140,11 @@ module MagicGrid
       @collection.respond_to? :post_filter
     end
 
-    def apply_post_filter
+    def enable_post_filter(yes = true)
       @reduced_collection = nil
-      @post_filters << :post_filter
+      if yes and has_post_filter?
+        @post_filters << :post_filter
+      end
       self
     end
 
@@ -193,6 +203,7 @@ module MagicGrid
       @searches.each do |query|
         collection = perform_search(collection, query)
       end
+      # Do collection filter first, may convert from AR to Array
       @post_filters.each do |filter|
         collection = collection.__send__(filter)
       end
