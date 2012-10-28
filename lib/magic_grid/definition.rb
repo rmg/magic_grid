@@ -66,9 +66,7 @@ module MagicGrid
       @params = controller && controller.params || {}
       @per_page = @options[:per_page]
       @collection = Collection[collection, self]
-      @columns.map!.each_with_index do |c, i|
-        MagicGrid::Column.new(@collection, c, i)
-      end
+      @columns = MagicGrid::Column.columns_for_collection(@collection, @columns)
       @current_sort_col = sort_col_i = param(:col, @options[:default_col]).to_i
       if @collection.sortable? and @columns.count > sort_col_i and @columns[sort_col_i].has_key?(:sql)
         sort_col = @columns[sort_col_i][:sql]

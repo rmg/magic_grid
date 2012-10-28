@@ -67,7 +67,7 @@ describe MagicGrid::Definition do
     subject { MagicGrid::Definition.new(column_list, empty_collection) }
     its(:base_params) { should include(:magic_grid_id) }
     its(:collection) { should == empty_collection }
-    its(:columns) { should == column_list }
+    its('columns.length') { should == column_list.length }
     it_behaves_like "a basic grid"
   end
 
@@ -82,7 +82,7 @@ describe MagicGrid::Definition do
     its(:collection) { should_not == empty_collection }
 
     its(:collection) { should have(MagicGrid::Definition.runtime_defaults[:per_page]).items }
-    its(:columns) { should == column_list }
+    its('columns.length') { should == column_list.length }
   end
 
   context "when given a MagicGrid::Collection" do
@@ -104,7 +104,7 @@ describe MagicGrid::Definition do
       subject.per_page.should < large_collection.count
       subject.collection.should have(subject.per_page).items
     end
-    its(:columns) { should == column_list }
+    its('columns.length') { should == column_list.length }
     its(:current_page) { should == 2 }
 
     it "should know how to extract its params" do

@@ -3,6 +3,13 @@ module MagicGrid
     extend Forwardable
     def_delegators :@col, :[], :key?, :has_key?
 
+    def self.columns_for_collection(collection, columns)
+      columns.map.each_with_index do |c, i|
+        MagicGrid::Column.new(collection, c, i)
+      end
+    end
+
+    private
     def initialize(collection, c, i)
       @collection = collection
       @col = case c
