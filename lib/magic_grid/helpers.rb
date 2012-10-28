@@ -97,7 +97,7 @@ module MagicGrid
         grid.columns.reduce(''.html_safe) do |acc, col|
           classes = ['ui-state-default'] << col[:class]
           acc <<
-          if col.key? :sql
+          if col.sortable?
             sortable_header(grid, col, opts)
           else
             content_tag 'th', col.label.html_safe, class: classes.join(' ')

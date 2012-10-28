@@ -67,9 +67,12 @@ module MagicGrid
       @per_page = @options[:per_page]
       @collection = Collection[collection, self]
       @columns = MagicGrid::Column.columns_for_collection(@collection, @columns)
-      @current_sort_col = sort_col_i = param(:col, @options[:default_col]).to_i
-      if @collection.sortable? and @columns.count > sort_col_i and @columns[sort_col_i].has_key?(:sql)
-        sort_col = @columns[sort_col_i][:sql]
+      @current_sort_col = param(:col, @options[:default_col]).to_i
+      unless (0...@columns.count).cover? @current_sort_col
+        @current_sort_col = @options[:default_col]
+      end
+      if @collection.sortable? and @columns[@current_sort_col].sortable?
+        sort_col = @columns[@current_sort_col][:sql]
         @current_order = order(param(:order, @default_order))
         sort_dir = order_sql(@current_order)
         @collection.apply_sort(sort_col, sort_dir)

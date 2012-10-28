@@ -1,7 +1,7 @@
 module MagicGrid
   class Column
     extend Forwardable
-    def_delegators :@col, :[], :key?, :has_key?
+    def_delegators :@col, :[], :key?
 
     def self.columns_for_collection(collection, columns)
       columns.map.each_with_index do |c, i|
@@ -11,6 +11,10 @@ module MagicGrid
 
     def label
       @col[:label]
+    end
+
+    def sortable?
+      @col.has_key?(:sql)
     end
 
     private
