@@ -69,6 +69,12 @@ describe MagicGrid::Definition do
     its(:collection) { should == empty_collection }
     its('columns.length') { should == column_list.length }
     it_behaves_like "a basic grid"
+
+    context "when pagination is disabled" do
+      subject { MagicGrid::Definition.new(column_list, empty_collection, nil, per_page: false) }
+      its(:current_page) { should == 1 }
+      its(:collection) { should be_empty }
+    end
   end
 
   context "when given a large collection and default options" do
