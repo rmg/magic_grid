@@ -60,7 +60,7 @@ module MagicGrid
         @options = self.class.runtime_defaults.merge opts
         @columns = cols_or_opts
       else
-        raise "I have no idea what that is, but it's not a Hash or an Array"
+        raise "I have no idea what that is, but it's not a columns list or options hash"
       end
       @default_order = @options[:default_order]
       @params = controller && controller.params || {}
@@ -77,7 +77,7 @@ module MagicGrid
         sort_dir = order_sql(@current_order)
         @collection.apply_sort(sort_col, sort_dir)
       else
-        MagicGrid.logger.debug "#{self.class.name}: Ignoring sorting on non-AR collection"
+        MagicGrid.logger.debug "#{self.class.name}: Ignoring sorting on collection"
       end
 
       if @collection.filterable? or @options[:listener_handler].respond_to?(:call)
