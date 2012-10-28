@@ -17,7 +17,7 @@ module MagicGrid
       @paginations = []
     end
 
-    delegate :quoted_table_name, :map, :count, :to => :collection
+    delegate :quoted_table_name, :map, :count, to: :collection
 
     attr_accessor :grid
     attr_reader :current_page, :original_count, :total_pages
@@ -70,7 +70,7 @@ module MagicGrid
       unless search_cols.empty?
         begin
           clauses = search_cols.map {|c| c << " LIKE :search" }.join(" OR ")
-          result = collection.where(clauses, {:search => "%#{q}%"})
+          result = collection.where(clauses, {search: "%#{q}%"})
         rescue
           MagicGrid.logger.debug "Given collection doesn't respond to :where well"
         end
@@ -166,8 +166,8 @@ module MagicGrid
       return collection unless @per_page
 
       if collection.respond_to? :paginate
-        collection = collection.paginate(:page => @current_page,
-                                         :per_page => @per_page)
+        collection = collection.paginate(page: @current_page,
+                                         per_page: @per_page)
       elsif collection.respond_to? :page
         collection = collection.page(@current_page).per(@per_page)
       elsif collection.is_a?(Array) and Module.const_defined?(:Kaminari)

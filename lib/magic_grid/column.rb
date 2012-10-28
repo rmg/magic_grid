@@ -1,6 +1,3 @@
-#require 'magic_grid/logger'
-#require 'magic_grid/collection'
-
 module MagicGrid
   class Column
     extend Forwardable
@@ -10,9 +7,9 @@ module MagicGrid
       @collection = collection
       @col = case c
               when Symbol
-                {:col => c}
+                {col: c}
               when String
-                {:label => c}
+                {label: c}
               else
                 c
               end

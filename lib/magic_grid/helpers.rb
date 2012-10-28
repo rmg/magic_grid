@@ -16,32 +16,32 @@ module MagicGrid
       grid = normalize_magic(collection, cols, opts)
       base_params = grid.base_params
       data = {
-        :searcher => grid.searcher,
-        :current => controller.request.fullpath,
-        :live_search => grid.options[:live_search],
-        :listeners => (grid.options[:listeners] unless grid.options[:listeners].empty?),
-        :remote => grid.options[:remote],
-        :default_ajax_handler => grid.options[:default_ajax_handler],
-        :params => base_params,
+        searcher: grid.searcher,
+        current: controller.request.fullpath,
+        live_search: grid.options[:live_search],
+        listeners: (grid.options[:listeners] unless grid.options[:listeners].empty?),
+        remote: grid.options[:remote],
+        default_ajax_handler: grid.options[:default_ajax_handler],
+        params: base_params,
       }
       classes = ['magic_grid'] << grid.options[:class]
       content_tag('table',
-                  :class => classes.join(' '),
-                  :id => grid.magic_id,
-                  :data => MagicGrid.compact_hash(data)
+                  class: classes.join(' '),
+                  id: grid.magic_id,
+                  data: MagicGrid.compact_hash(data)
                   ) do
-        table = content_tag('thead', :data => {:params => base_params}
+        table = content_tag('thead', data: {params: base_params}
                            ) do
           thead = ''.html_safe
           has_spinner = false
           spinner = tag('span',
-                        :id => (grid.magic_id.to_s + "_spinner"),
-                        :class => "magic_grid_spinner"
+                        id: (grid.magic_id.to_s + "_spinner"),
+                        class: "magic_grid_spinner"
                        )
           if grid.needs_searcher?
             thead << content_tag('tr') do
-              content_tag('td', :class => 'searcher full-width ui-widget-header',
-                          :colspan => grid.columns.count) do
+              content_tag('td', class: 'searcher full-width ui-widget-header',
+                          colspan: grid.columns.count) do
                 searcher = search_bar(grid)
                 unless has_spinner
                   has_spinner = true
@@ -61,8 +61,8 @@ module MagicGrid
           end
           if thead.empty? and not grid.options[:empty_header]
             thead = content_tag 'tr' do
-              content_tag('td', :class => 'full-width ui-widget-header',
-                          :colspan => grid.columns.count) do
+              content_tag('td', class: 'full-width ui-widget-header',
+                          colspan: grid.columns.count) do
                 unless has_spinner
                   has_spnner = true
                   spinner
@@ -72,7 +72,7 @@ module MagicGrid
           end
           thead << magic_headers(grid)
         end
-        table << content_tag('tbody', :class => "ui-widget-content") do
+        table << content_tag('tbody', class: "ui-widget-content") do
           magic_rows(grid, &block)
         end
         table << content_tag('tfoot') do
@@ -82,8 +82,8 @@ module MagicGrid
           end
           if tfoot.empty? and not grid.options[:empty_footer]
             tfoot = content_tag 'tr' do
-              content_tag('td', nil, :class => 'full-width ui-widget-header',
-                          :colspan => grid.columns.count)
+              content_tag('td', nil, class: 'full-width ui-widget-header',
+                          colspan: grid.columns.count)
             end
           end
           tfoot
@@ -100,7 +100,7 @@ module MagicGrid
           if col.key? :sql
             sortable_header(grid, col, opts)
           else
-            content_tag 'th', col[:label].html_safe, :class => classes.join(' ')
+            content_tag 'th', col[:label].html_safe, class: classes.join(' ')
           end
         end
       end
@@ -118,8 +118,8 @@ module MagicGrid
       end
       if rows.empty? and if_empty
         content_tag 'tr' do
-          content_tag('td', :colspan => grid.columns.count,
-                      :class => 'if-empty') do
+          content_tag('td', colspan: grid.columns.count,
+                      class: 'if-empty') do
             if if_empty.respond_to? :call
               if_empty.call(grid).to_s
             else
@@ -134,9 +134,9 @@ module MagicGrid
 
     def magic_row(record, cols, collection = nil)
       grid = normalize_magic(collection, cols)
-      content_tag 'tr', :class => cycle('odd', 'even') do
+      content_tag 'tr', class: cycle('odd', 'even') do
         grid.columns.reduce(''.html_safe) do |acc, c|
-          acc << content_tag('td', :class => c[:class].try(:join, ' ')) do
+          acc << content_tag('td', class: c[:class].try(:join, ' ')) do
             method = c[:to_s] || c[:col]
             if method.respond_to? :call
               method.call(record)
@@ -153,7 +153,7 @@ module MagicGrid
     end
 
     def order_icon(order = -1)
-      content_tag 'span', '', :class => "ui-icon #{order_icon_class(order)}"
+      content_tag 'span', '', class: "ui-icon #{order_icon_class(order)}"
     end
 
     def order_icon_class(order = -1)
@@ -193,27 +193,27 @@ module MagicGrid
         label << order_icon()
       end
       my_params.delete(grid.param_key(:order)) if my_params[grid.param_key(:order)].to_i == default_sort_order.to_i
-      content_tag 'th', :class => classes.join(' ') do
-        link_to label.html_safe, my_params, :remote => grid.options[:remote]
+      content_tag 'th', class: classes.join(' ') do
+        link_to label.html_safe, my_params, remote: grid.options[:remote]
       end
     end
 
     def search_bar(grid)
       searcher_data = {
-        :min_length => grid.options[:min_search_length],
-        :current => grid.options[:current_search] || "",
+        min_length: grid.options[:min_search_length],
+        current: grid.options[:current_search] || "",
       }
       searcher = label_tag(grid.searcher.to_sym,
                            grid.options[:searcher_label])
       searcher << search_field_tag(grid.searcher.to_sym,
         grid.param(:q),
-        :placeholder => grid.options[:searcher_tooltip],
-        :size => grid.options[:searcher_size],
-        :data => searcher_data,
-        :form => "a form that doesn't exist")
+        placeholder: grid.options[:searcher_tooltip],
+        size: grid.options[:searcher_size],
+        data: searcher_data,
+        form: "a form that doesn't exist")
       if grid.options[:search_button]
         searcher << button_tag(grid.options[:searcher_button],
-          :class => 'magic-grid-search-button')
+          class: 'magic-grid-search-button')
       end
       searcher
     end
@@ -235,11 +235,11 @@ module MagicGrid
 
     def magic_pager(grid, base_params, &block)
       content_tag('tr') do
-        content_tag('td', :class => 'full-width ui-widget-header magic-pager',
-                    :colspan => grid.columns.count) do
+        content_tag('td', class: 'full-width ui-widget-header magic-pager',
+                    colspan: grid.columns.count) do
           pager = magic_paginate(grid.magic_collection,
-                                :param_name => grid.param_key(:page),
-                                :params => base_params
+                                param_name: grid.param_key(:page),
+                                params: base_params
                                )
           pager << capture(&block) if block_given?
           pager

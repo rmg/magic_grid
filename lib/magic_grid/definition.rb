@@ -16,39 +16,39 @@ module MagicGrid
     end
 
     DEFAULTS = {
-      :class => [],
-      :top_pager => false,
-      :bottom_pager => true,
-      :remote => false,
-      :per_page => 30,
-      :searchable => [],
-      :search_method => :search,
-      :min_search_length => 3,
-      :id => false,
-      :searcher => false,
-      :needs_searcher => false,
-      :live_search => false,
-      :current_search => nil,
-      :listeners => {},
-      :listener_handler => nil,
-      :default_col => 0,
-      :default_order => :asc,
-      :empty_header => false,
-      :empty_footer => false,
-      :post_filter => false,
-      :collection_post_filter? => true,
-      :default_ajax_handler => true,
-      :search_button => false,
-      :searcher_size => nil,
+      class: [],
+      top_pager: false,
+      bottom_pager: true,
+      remote: false,
+      per_page: 30,
+      searchable: [],
+      search_method: :search,
+      min_search_length: 3,
+      id: false,
+      searcher: false,
+      needs_searcher: false,
+      live_search: false,
+      current_search: nil,
+      listeners: {},
+      listener_handler: nil,
+      default_col: 0,
+      default_order: :asc,
+      empty_header: false,
+      empty_footer: false,
+      post_filter: false,
+      collection_post_filter: true,
+      default_ajax_handler: true,
+      search_button: false,
+      searcher_size: nil,
     }
 
     def self.runtime_defaults
       # run these lazily to catch any late I18n path changes
       DEFAULTS.merge(
-        :if_empty => I18n.t("magic_grid.no_results").capitalize, # "No results found."
-        :searcher_label => I18n.t("magic_grid.search.label").capitalize + ': ', # "Search: "
-        :searcher_tooltip =>I18n.t("magic_grid.search.tooltip"), # "type.. + <return>"
-        :searcher_button =>I18n.t("magic_grid.search.button").capitalize, # "Search"
+        if_empty:         I18n.t("magic_grid.no_results").capitalize, # "No results found."
+        searcher_label:   I18n.t("magic_grid.search.label").capitalize + ': ', # "Search: "
+        searcher_tooltip: I18n.t("magic_grid.search.tooltip"), # "type.. + <return>"
+        searcher_button:  I18n.t("magic_grid.search.button").capitalize, # "Search"
       )
     end
 
@@ -154,7 +154,7 @@ module MagicGrid
     end
 
     def base_params
-      @params.merge :magic_grid_id => magic_id
+      @params.merge magic_grid_id: magic_id
     end
 
     def current_page

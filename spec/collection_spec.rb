@@ -62,7 +62,7 @@ describe MagicGrid::Collection do
     context "when #paginate (aka WillPaginate) is available" do
       it "should call paginate helper when it is detected" do
         array = [1].tap do |a|
-          a.should_receive(:paginate).with(:page => 1, :per_page => 1) { a }
+          a.should_receive(:paginate).with(page: 1, per_page: 1) { a }
         end
         collection = MagicGrid::Collection.new(array, nil)
         collection.apply_pagination(1, 1)

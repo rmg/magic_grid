@@ -52,13 +52,13 @@ describe MagicGrid::Definition do
       }
     it "doesn't barf when listeners are given for a dumb collection" do
       expect {
-        MagicGrid::Definition.new([:a], [1], controller, :listeners => {:a => :a})
+        MagicGrid::Definition.new([:a], [1], controller, listeners: {a: :a})
       }.not_to raise_error
     end
 
     it "doesn't barf when search columns are given for a dumb collection" do
       expect {
-        MagicGrid::Definition.new([:a], [1], controller, :searchable => [:a])
+        MagicGrid::Definition.new([:a], [1], controller, searchable: [:a])
       }.not_to raise_error
     end
   end
@@ -124,7 +124,7 @@ describe MagicGrid::Definition do
     let(:collection) { data }
     it "should sort collection using #order" do
       collection.should_receive(:order).with("foo DESC") { data.sort.reverse }
-      grid = MagicGrid::Definition.new([{:sql => "foo"}], collection, controller, id: :grid)
+      grid = MagicGrid::Definition.new([{sql: "foo"}], collection, controller, id: :grid)
 
       grid.collection.should == data.sort.reverse
     end
@@ -145,7 +145,7 @@ describe MagicGrid::Definition do
         end
       end
     }
-    subject { MagicGrid::Definition.new([{:sql => "foo"}],
+    subject { MagicGrid::Definition.new([{sql: "foo"}],
                                         collection,
                                         controller,
                                         id: :grid, listeners: {f1: :f1}) }
@@ -165,7 +165,7 @@ describe MagicGrid::Definition do
     let(:collection) {
       data
     }
-    subject { MagicGrid::Definition.new([{:sql => "foo"}],
+    subject { MagicGrid::Definition.new([{sql: "foo"}],
                                         collection,
                                         controller,
                                         id: :grid, listener_handler: filter) }
@@ -187,7 +187,7 @@ describe MagicGrid::Definition do
     let(:collection) {
       data
     }
-    subject { MagicGrid::Definition.new([{:sql => "foo"}],
+    subject { MagicGrid::Definition.new([{sql: "foo"}],
                                         collection,
                                         controller,
                                         id: :grid, post_filter: filter) }
@@ -211,7 +211,7 @@ describe MagicGrid::Definition do
         end
       end
     }
-    subject { MagicGrid::Definition.new([{:sql => "foo"}],
+    subject { MagicGrid::Definition.new([{sql: "foo"}],
                                         collection,
                                         controller,
                                         id: :grid, collection_post_filter?: true) }
