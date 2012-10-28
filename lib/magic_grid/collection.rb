@@ -52,13 +52,9 @@ module MagicGrid
         case searchable
         when Symbol
           known = @grid.columns.find {|col| col[:col] == searchable}
-          if known and known.key?(:sql)
-            known[:sql]
-          else
-            "#{@collection.table_name}.#{quote_column_name(searchable)}"
-          end
+          known && known.custom_sql || "#{@collection.table_name}.#{quote_column_name(searchable)}"
         when Integer
-          @grid.columns[searchable][:sql]
+          @grid.columns[searchable].custom_sql
         when String
           searchable
         else
