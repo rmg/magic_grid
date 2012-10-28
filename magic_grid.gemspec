@@ -12,10 +12,11 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/rmg/magic_grid"
   s.summary     = "Easy collection display grid with column sorting and pagination"
   s.description = <<-EOF
-    Displays a collection (ActiveRelation or Array) wrapped in an html table with server
-    side column sorting, filtering hooks, and search bar. Large collections can be
-    paginated with either the will_paginate gem or kaminari gem if you use them, or a naive
-    Enumerable based paginator (without pager links) if neither is present.
+    Displays a collection (ActiveRelation or Array-like object) wrapped in an
+    html table with server side column sorting, filtering hooks, and search
+    bar. Large collections can be paginated with either the will_paginate gem
+    or kaminari gem if you use them, or a naive Enumerable based paginator
+    (without pager links) if neither is present.
   EOF
   s.has_rdoc    = 'yard'
 
