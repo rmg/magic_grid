@@ -72,7 +72,7 @@ module MagicGrid
         @current_sort_col = @options[:default_col]
       end
       if @collection.sortable? and @columns[@current_sort_col].sortable?
-        sort_col = @columns[@current_sort_col][:sql]
+        sort_col = @columns[@current_sort_col].custom_sql
         @current_order = order(param(:order, @default_order))
         sort_dir = order_sql(@current_order)
         @collection.apply_sort(sort_col, sort_dir)

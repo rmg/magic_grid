@@ -1,7 +1,5 @@
 module MagicGrid
   class Column
-    extend Forwardable
-    def_delegators :@col, :[]
 
     def self.columns_for_collection(collection, columns)
       columns.map.each_with_index do |c, i|
@@ -19,6 +17,22 @@ module MagicGrid
 
     def custom_sql
       @col[:sql]
+    end
+
+    def id
+      @col[:id]
+    end
+
+    def name
+      @col[:col]
+    end
+
+    def html_classes
+      Array(@col[:class]).join ' '
+    end
+
+    def reader
+      @col[:to_s] || @col[:col]
     end
 
     private

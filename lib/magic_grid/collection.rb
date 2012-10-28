@@ -51,7 +51,7 @@ module MagicGrid
       search_cols = @grid.options[:searchable].map do |searchable|
         case searchable
         when Symbol
-          known = @grid.columns.find {|col| col[:col] == searchable}
+          known = @grid.columns.find {|col| col.name == searchable}
           known && known.custom_sql || "#{@collection.table_name}.#{quote_column_name(searchable)}"
         when Integer
           @grid.columns[searchable].custom_sql

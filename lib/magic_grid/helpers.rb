@@ -95,7 +95,7 @@ module MagicGrid
       grid = normalize_magic(collection, cols, opts)
       content_tag 'tr' do
         grid.columns.reduce(''.html_safe) do |acc, col|
-          classes = ['ui-state-default'] << col[:class]
+          classes = ['ui-state-default'] << col.html_classes
           acc <<
           if col.sortable?
             sortable_header(grid, col, opts)
@@ -136,8 +136,8 @@ module MagicGrid
       grid = normalize_magic(collection, cols)
       content_tag 'tr', class: cycle('odd', 'even') do
         grid.columns.reduce(''.html_safe) do |acc, c|
-          acc << content_tag('td', class: c[:class].try(:join, ' ')) do
-            method = c[:to_s] || c[:col]
+          acc << content_tag('td', class: c.html_classes) do
+            method = c.reader
             if method.respond_to? :call
               method.call(record)
             elsif record.respond_to? method
@@ -173,7 +173,7 @@ module MagicGrid
     end
 
     def sortable_header(grid, col, opts = {})
-      id = col[:id]
+      id = col.id
       label = col.label || id.titleize
       default_sort_order = opts.fetch(:default_order, grid.order(grid.default_order))
       my_params = grid.base_params.merge({
@@ -181,7 +181,7 @@ module MagicGrid
       })
       my_params = HashWithIndifferentAccess.new(my_params)
       order = nil
-      classes = ['sorter ui-state-default'] << col[:class]
+      classes = ['sorter ui-state-default'] << col.html_classes
       current = id.to_s == grid.current_sort_col.to_s
       if current
         order = grid.current_order

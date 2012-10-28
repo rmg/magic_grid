@@ -100,8 +100,8 @@ describe MagicGrid::Helpers do
       it "should not indicate there is no data" do
         should_not match(/if-empty/)
       end
-      it { should  =~ /<td>1<\/td>/ }
-      it { should  =~ /<td>2<\/td>/ }
+      it { should  match_select("td", text: "1") }
+      it { should  match_select("td", text: "2") }
     end
 
     context "when given a block" do
