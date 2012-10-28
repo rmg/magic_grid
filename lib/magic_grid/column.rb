@@ -21,7 +21,7 @@ module MagicGrid
                 c
               end
       @col[:id] = i
-      if @col.key?(:col) and @col[:col].is_a?(Symbol) and @collection.column_names(i).include?(@col[:col])
+      if @collection.column_names.include?(@col[:col])
         @col[:sql] = "#{@collection.quoted_table_name}.#{@collection.quote_column_name(@col[:col].to_s)}" unless @col.key?(:sql)
       end
       @col[:label] ||= @col[:col].to_s.titleize

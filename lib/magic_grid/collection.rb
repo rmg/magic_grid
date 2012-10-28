@@ -31,12 +31,11 @@ module MagicGrid
       end
     end
 
-    def column_names(count = 0)
-      @collection.table.columns.map {|c| c.name}
+    def column_names
+      @collection.table.column_names
     rescue
-      msg = "Given collection doesn't respond to :quoted_table_name or :table well: "
-      MagicGrid.logger.debug("#{msg} - #{$!}")
-      (0..count).to_a
+      MagicGrid.logger.debug("Given collection doesn't respond to #table well: #{$!}")
+      []
     end
 
     def quote_column_name(col)
