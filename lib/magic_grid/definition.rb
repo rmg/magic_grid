@@ -85,25 +85,15 @@ module MagicGrid
         MagicGrid.logger.debug "#{self.class.name}: Ignoring sorting on collection"
       end
 
-      if @collection.filterable? or @options[:listener_handler].respond_to?(:call)
-        if @options[:listener_handler].respond_to? :call
-          @collection.apply_filter_callback @options[:listener_handler]
-        else
-          @options[:listeners].each_pair do |key, value|
-            if @params[value] and not @params[value].to_s.empty?
-              @collection.apply_filter(value => @params[value])
-            end
-          end
-        end
-      else
-        unless @options[:listeners].empty?
-          MagicGrid.logger.warn "#{self.class.name}: Ignoring listener on dumb collection"
-          @options[:listeners] = {}
+      @collection.apply_filter_callback @options[:listener_handler]
+      @options[:listeners].each_pair do |key, value|
+        if @params[value] and not @params[value].to_s.empty?
+          @collection.apply_filter(value => @params[value])
         end
       end
       @options[:current_search] ||= param(:q)
       @collection.searchable_columns = Array(@options[:searchable])
-      @collection.apply_search(param(:q))
+      @collection.apply_search @options[:current_search]
       @collection.enable_post_filter @options[:collection_post_filter?]
       @collection.add_post_filter_callback @options[:post_filter]
       @collection.apply_pagination(current_page, @per_page)

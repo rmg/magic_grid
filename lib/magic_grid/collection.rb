@@ -113,7 +113,7 @@ module MagicGrid
     end
 
     def apply_filter(filters = {})
-      if @collection.respond_to? :where
+      if filterable?
         @reduced_collection = nil
         @filters << filters
       end
