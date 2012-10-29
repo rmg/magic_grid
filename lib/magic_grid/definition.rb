@@ -15,14 +15,22 @@ module MagicGrid
       @collection.collection
     end
 
-    DEFAULTS = {
+    COLLECTION_DEFAULTS = {
+      per_page: 30,
+      searchable: [],
+      search_method: :search,
+      listener_handler: nil,
+      default_col: 0,
+      default_order: :asc,
+      post_filter: false,
+      collection_post_filter: true,
+    }
+
+    GRID_DEFAULTS = {
       class: [],
       top_pager: false,
       bottom_pager: true,
       remote: false,
-      per_page: 30,
-      searchable: [],
-      search_method: :search,
       min_search_length: 3,
       id: false,
       searcher: false,
@@ -30,17 +38,14 @@ module MagicGrid
       live_search: false,
       current_search: nil,
       listeners: {},
-      listener_handler: nil,
-      default_col: 0,
-      default_order: :asc,
       empty_header: false,
       empty_footer: false,
-      post_filter: false,
-      collection_post_filter: true,
       default_ajax_handler: true,
       search_button: false,
       searcher_size: nil,
     }
+
+    DEFAULTS = GRID_DEFAULTS.merge COLLECTION_DEFAULTS
 
     def self.runtime_defaults
       # run these lazily to catch any late I18n path changes
