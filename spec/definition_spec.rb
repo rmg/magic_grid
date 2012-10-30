@@ -138,24 +138,17 @@ describe MagicGrid::Definition do
   end
 
   context "filtering with #where" do
-    data = [1,56,7,21,1]
-    let(:controller) {
-      controller = double.tap do |c|
-        c.stub(:params) { HashWithIndifferentAccess.new({f1: 1}) }
-      end
-    }
-    let(:collection) {
-      data.tap do |d|
-        d.stub(:where) do |h|
-          d.select { |d| d < 10 }
-        end
-      end
-    }
-    subject { MagicGrid::Definition.new([{sql: "foo"}],
-                                        collection,
-                                        controller,
-                                        id: :grid, listeners: {f1: :f1}) }
-    its(:collection) { should == [1, 7, 1] }
+    it "should use listeners with #where when asked to" do
+      filter_param = HashWithIndifferentAccess.new({f1: 1})
+      controller = double(params: filter_param)
+      collection = [1,56,7,21,1]
+      collection.should_receive(:where).with(filter_param).and_return([1, 7, 1])
+      grid = MagicGrid::Definition.new([{sql: "foo"}],
+                                          collection,
+                                          controller,
+                                          id: :grid, listeners: {f1: :f1})
+      grid.collection.should == [1, 7, 1]
+    end
   end
 
   context "filtering with a callback" do
