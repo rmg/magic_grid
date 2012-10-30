@@ -101,13 +101,19 @@ module MagicGrid
     end
 
     def magic_id
-      if @options[:id]
-        @magic_id = @options[:id]
+      @options.fetch(:id, columns_hash + collection_hash)
+    end
+
+    def columns_hash
+      @columns.map(&:label).join.hash.abs.to_s(36)
+    end
+
+    def collection_hash
+      if @collection.respond_to? :to_sql
+        @collection.to_sql.hash.abs.to_s(36)
       else
-        @magic_id = @columns.map(&:label).join.hash.abs.to_s(36)
-        @magic_id << @collection.to_sql.hash.abs.to_s(36) if @collection.respond_to? :to_sql
+        ""
       end
-      @magic_id
     end
 
     def searchable?
