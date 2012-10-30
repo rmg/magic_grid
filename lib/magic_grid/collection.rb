@@ -40,7 +40,11 @@ module MagicGrid
     end
 
     def quote_column_name(col)
-      @collection.connection.quote_column_name(col.to_s)
+      if col.is_a? Symbol and @collection.respond_to? :quoted_table_name
+        "#{quoted_table_name}.#{@collection.connection.quote_column_name(col.to_s)}"
+      else
+        col.to_s
+      end
     end
 
     def search_using_builtin(collection, q)
@@ -49,22 +53,9 @@ module MagicGrid
 
     def search_using_where(collection, q)
       result = collection
-      search_cols = @grid.options[:searchable].map do |searchable|
-        case searchable
-        when Symbol
-          known = @grid.columns.find {|col| col.name == searchable}
-          known && known.custom_sql || "#{@collection.table_name}.#{quote_column_name(searchable)}"
-        when Integer
-          @grid.columns[searchable].custom_sql
-        when String
-          searchable
-        else
-          raise "Searchable must be identifiable"
-        end
-      end
-
-      unless search_cols.empty?
+      unless searchable_columns.empty?
         begin
+          search_cols = searchable_columns.map {|c| c.custom_sql || c.name }
           clauses = search_cols.map {|c| c << " LIKE :search" }.join(" OR ")
           result = collection.where(clauses, {search: "%#{q}%"})
         rescue
