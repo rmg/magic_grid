@@ -14,7 +14,7 @@ module MagicGrid
           when String
             FilterOnlyColumn.new(searchable)
           else
-            raise "Searchable must be identifiable"
+            raise "Searchable must be identifiable: #{searchable}"
           end
         }.compact
       end
