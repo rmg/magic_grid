@@ -71,12 +71,16 @@ module MagicGrid
       @default_order = @options[:default_order]
       @params = controller && controller.params || {}
       @per_page = @options[:per_page]
+
       @collection = Collection[collection, self]
+
       @columns = MagicGrid::Column.columns_for_collection(@collection, @columns)
+
       @current_sort_col = param(:col, @options[:default_col]).to_i
       unless (0...@columns.count).cover? @current_sort_col
         @current_sort_col = @options[:default_col]
       end
+
       if @collection.sortable? and @columns[@current_sort_col].sortable?
         sort_col = @columns[@current_sort_col].custom_sql
         @current_order = order(param(:order, @default_order))
@@ -92,9 +96,10 @@ module MagicGrid
       filters = @params.slice(*filter_keys).reject {|k,v| v.to_s.empty? }
       @collection.apply_filter filters
 
-      @options[:current_search] ||= param(:q)
       @collection.searchable_columns = Array(@options[:searchable])
+      @options[:current_search] ||= param(:q)
       @collection.apply_search @options[:current_search]
+
       @collection.enable_post_filter @options[:collection_post_filter?]
       @collection.add_post_filter_callback @options[:post_filter]
       @collection.apply_pagination(current_page, @per_page)
