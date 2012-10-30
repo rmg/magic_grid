@@ -25,7 +25,7 @@ module MagicGrid
     end
 
     def sortable?
-      @col.has_key?(:sql)
+      not custom_sql.blank?
     end
 
     def custom_sql

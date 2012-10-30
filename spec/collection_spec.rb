@@ -37,7 +37,8 @@ describe MagicGrid::Collection do
       ordered = [1,2,3,4,5]
       collection = MagicGrid::Collection.new(sortable_collection, nil)
       sortable_collection.should_receive(:order) { ordered }
-      collection.apply_sort("col", "order")
+      column = MagicGrid::FilterOnlyColumn.new("col")
+      collection.apply_sort(column, "order")
       collection.collection.should == ordered
     end
   end

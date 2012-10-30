@@ -70,8 +70,10 @@ module MagicGrid
     end
 
     def apply_sort(col, dir)
-      @reduced_collection = nil
-      @sorts << "#{col} #{dir}"
+      if sortable? and col.sortable?
+        @reduced_collection = nil
+        @sorts << "#{col.custom_sql} #{dir}"
+      end
       self
     end
 
