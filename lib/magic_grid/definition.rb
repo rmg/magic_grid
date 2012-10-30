@@ -1,6 +1,7 @@
 require 'magic_grid/logger'
 require 'magic_grid/collection'
 require 'magic_grid/column'
+require 'active_support/core_ext'
 
 module MagicGrid
   class Definition
@@ -86,11 +87,11 @@ module MagicGrid
       end
 
       @collection.apply_filter_callback @options[:listener_handler]
-      @options[:listeners].each_pair do |key, value|
-        if @params[value] and not @params[value].to_s.empty?
-          @collection.apply_filter(value => @params[value])
-        end
-      end
+
+      filter_keys = @options[:listeners].values
+      filters = @params.slice(*filter_keys).reject {|k,v| v.to_s.empty? }
+      @collection.apply_filter filters
+
       @options[:current_search] ||= param(:q)
       @collection.searchable_columns = Array(@options[:searchable])
       @collection.apply_search @options[:current_search]
