@@ -113,7 +113,7 @@ module MagicGrid
     end
 
     def apply_filter(filters = {})
-      if filterable?
+      if filterable? and not filters.empty?
         @reduced_collection = nil
         @filters << filters
       end
