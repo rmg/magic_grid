@@ -5,6 +5,7 @@ module MagicGrid
       columns.map.each_with_index { |c, i|
         MagicGrid::Column.new(collection, c, i)
       }.tap do |cols|
+        search_disabled = false
         collection.searchable_columns = Array(searchables).map { |searchable|
           case searchable
           when Symbol
@@ -13,10 +14,15 @@ module MagicGrid
             cols[searchable]
           when String
             FilterOnlyColumn.new(searchable)
+          when true
+            nil
+          when false
+            search_disabled = true
           else
             raise "Searchable must be identifiable: #{searchable}"
           end
         }.compact
+        collection.searchable_columns = [] if search_disabled
       end
     end
 
