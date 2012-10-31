@@ -4,6 +4,17 @@ require 'magic_grid/logger'
 module MagicGrid
   class Collection
 
+    DEFAULTS = {
+      per_page: 30,
+      searchable: [],
+      search_method: :search,
+      listener_handler: nil,
+      default_col: 0,
+      default_order: :asc,
+      post_filter: false,
+      collection_post_filter: true,
+    }
+
     def initialize(collection, grid)
       @collection = collection || []
       @grid = grid

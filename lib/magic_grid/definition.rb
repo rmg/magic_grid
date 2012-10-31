@@ -16,18 +16,7 @@ module MagicGrid
       @collection.collection
     end
 
-    COLLECTION_DEFAULTS = {
-      per_page: 30,
-      searchable: [],
-      search_method: :search,
-      listener_handler: nil,
-      default_col: 0,
-      default_order: :asc,
-      post_filter: false,
-      collection_post_filter: true,
-    }
-
-    GRID_DEFAULTS = {
+    DEFAULTS = {
       class: [],
       top_pager: false,
       bottom_pager: true,
@@ -46,11 +35,10 @@ module MagicGrid
       searcher_size: nil,
     }
 
-    DEFAULTS = GRID_DEFAULTS.merge COLLECTION_DEFAULTS
-
     def self.runtime_defaults
       # run these lazily to catch any late I18n path changes
-      DEFAULTS.merge(
+      DEFAULTS.merge(Collection::DEFAULTS)
+              .merge(
         if_empty:         I18n.t("magic_grid.no_results").capitalize, # "No results found."
         searcher_label:   I18n.t("magic_grid.search.label").capitalize + ': ', # "Search: "
         searcher_tooltip: I18n.t("magic_grid.search.tooltip"), # "type.. + <return>"
