@@ -63,7 +63,8 @@ describe MagicGrid::Collection do
           a.should_receive(:paginate).with(page: 1, per_page: 1) { a }
         end
         collection = MagicGrid::Collection.new(array, nil)
-        collection.apply_pagination(1, 1)
+        collection.per_page = 1
+        collection.apply_pagination 1
         collection.perform_pagination(array).should == array
       end
     end
@@ -76,7 +77,8 @@ describe MagicGrid::Collection do
             a.should_receive(:page).with(1) { array }
           end
           collection = MagicGrid::Collection.new(array, nil)
-          collection.apply_pagination(1, 1)
+          collection.per_page = 1
+          collection.apply_pagination 1
           collection.perform_pagination(array).should == array
         end
       end
@@ -93,7 +95,8 @@ describe MagicGrid::Collection do
           end
           stub_const('Kaminari', kaminari)
           collection = MagicGrid::Collection.new(array, nil)
-          collection.apply_pagination(1, 1)
+          collection.per_page = 1
+          collection.apply_pagination 1
           collection.perform_pagination(array).should == kaminaried_array
         end
       end
@@ -114,7 +117,8 @@ describe MagicGrid::Collection do
       it "should attempt to use Enumerable methods to perform pagination" do
         array = Array.new(100) { 1 }
         collection = MagicGrid::Collection.new(array, nil)
-        collection.apply_pagination(1, 1)
+        collection.per_page = 1
+        collection.apply_pagination 1
         collection.perform_pagination(array).should == [1]
       end
     end

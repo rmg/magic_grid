@@ -201,7 +201,7 @@ module MagicGrid
     def search_bar(grid)
       searcher_data = {
         min_length: grid.options[:min_search_length],
-        current: grid.options[:current_search] || "",
+        current: grid.current_search || "",
       }
       searcher = label_tag(grid.searcher.to_sym,
                            grid.options[:searcher_label])

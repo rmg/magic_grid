@@ -26,7 +26,6 @@ module MagicGrid
       searcher: false,
       needs_searcher: false,
       live_search: false,
-      current_search: nil,
       listeners: {},
       empty_header: false,
       empty_footer: false,
@@ -65,8 +64,6 @@ module MagicGrid
                                                           @columns,
                                                           @options[:searchable])
 
-      @options[:current_search] ||= param(:q)
-
       @current_sort_col = param(:col, @options[:default_col]).to_i
       unless (0...@columns.count).cover? @current_sort_col
         @current_sort_col = @options[:default_col]
@@ -77,12 +74,17 @@ module MagicGrid
       filter_keys = @options[:listeners].values
       filters = @params.slice(*filter_keys).reject {|k,v| v.to_s.empty? }
       @collection.apply_filter filters
-      @collection.apply_pagination(current_page, @options[:per_page])
+      @collection.apply_pagination(current_page)
+      @collection.apply_search current_search
 
+      @collection.per_page = @options[:per_page]
       @collection.apply_filter_callback @options[:listener_handler]
-      @collection.apply_search @options[:current_search]
       @collection.enable_post_filter @options[:collection_post_filter?]
       @collection.add_post_filter_callback @options[:post_filter]
+    end
+
+    def current_search
+      param(:q)
     end
 
     def magic_id

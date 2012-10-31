@@ -166,14 +166,17 @@ module MagicGrid
       count_or_hash
     end
 
-    def apply_pagination(current_page, per_page)
+    def per_page=(n)
       @original_count = self.count @collection
-      @per_page = per_page ? per_page : @original_count
+      @per_page = n ? n : @original_count
       if @per_page == 0 and @original_count == 0
         @total_pages = @per_page = 1
       else
         @total_pages = @original_count / @per_page
       end
+    end
+
+    def apply_pagination(current_page)
       @current_page = current_page
       @reduced_collection = nil
       self
