@@ -21,7 +21,7 @@ module MagicGrid
     delegate :quoted_table_name, :map, :count, to: :collection
 
     attr_accessor :grid, :searchable_columns
-    attr_reader :current_page, :original_count, :total_pages
+    attr_reader :current_page, :original_count, :total_pages, :per_page
 
     def self.[](collection, grid)
       if collection.is_a?(self)

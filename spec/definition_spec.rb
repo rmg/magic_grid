@@ -107,8 +107,8 @@ describe MagicGrid::Definition do
     subject { MagicGrid::Definition.new(column_list, large_collection, controller, id: :grid, per_page: 17) }
     its(:collection) { should_not == empty_collection }
     it "should give a collection with a page worth of items" do
-      subject.per_page.should < large_collection.count
-      subject.collection.should have(subject.per_page).items
+      subject.magic_collection.per_page.should < large_collection.count
+      subject.collection.should have(subject.magic_collection.per_page).items
     end
     its('columns.length') { should == column_list.length }
     its(:current_page) { should == 2 }

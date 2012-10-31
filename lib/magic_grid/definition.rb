@@ -6,7 +6,7 @@ require 'active_support/core_ext'
 module MagicGrid
   class Definition
     attr_reader :columns, :options, :params,
-      :current_sort_col, :current_order, :default_order, :per_page
+      :current_sort_col, :current_order, :default_order
 
     def magic_collection
       @collection
@@ -70,13 +70,14 @@ module MagicGrid
       end
       @default_order = @options[:default_order]
       @params = controller && controller.params || {}
-      @per_page = @options[:per_page]
 
       @collection = Collection[collection, self]
 
       @columns = MagicGrid::Column.columns_for_collection(@collection,
                                                           @columns,
                                                           @options[:searchable])
+
+      @options[:current_search] ||= param(:q)
 
       @current_sort_col = param(:col, @options[:default_col]).to_i
       unless (0...@columns.count).cover? @current_sort_col
@@ -85,18 +86,15 @@ module MagicGrid
       @current_order = order(param(:order, @default_order))
       @collection.apply_sort(@columns[@current_sort_col], order_sql(@current_order))
 
-      @collection.apply_filter_callback @options[:listener_handler]
-
       filter_keys = @options[:listeners].values
       filters = @params.slice(*filter_keys).reject {|k,v| v.to_s.empty? }
       @collection.apply_filter filters
+      @collection.apply_pagination(current_page, @options[:per_page])
 
-      @options[:current_search] ||= param(:q)
+      @collection.apply_filter_callback @options[:listener_handler]
       @collection.apply_search @options[:current_search]
-
       @collection.enable_post_filter @options[:collection_post_filter?]
       @collection.add_post_filter_callback @options[:post_filter]
-      @collection.apply_pagination(current_page, @per_page)
     end
 
     def magic_id
