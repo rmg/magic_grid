@@ -58,7 +58,7 @@ module MagicGrid
       @default_order = @options[:default_order]
       @params = controller && controller.params || {}
 
-      @collection = Collection[collection, self]
+      @collection = Collection[collection, @options]
 
       @columns = MagicGrid::Column.columns_for_collection(@collection,
                                                           @columns,

@@ -15,10 +15,9 @@ module MagicGrid
       collection_post_filter: true,
     }
 
-    def initialize(collection, grid)
+    def initialize(collection, opts)
       @collection = collection || []
-      @grid = grid
-      @options = grid.options if grid.respond_to? :options
+      @options = opts
       @current_page = 1
       @sorts = []
       @filter_callbacks = []
@@ -35,17 +34,16 @@ module MagicGrid
     attr_accessor :searchable_columns
     attr_reader :current_page, :original_count, :total_pages, :per_page
 
-    def grid=(grid)
-      @grid = grid
-      @options = grid.options if grid.respond_to? :options
+    def options=(opts)
+      @options = opts
     end
 
-    def self.[](collection, grid)
+    def self.[](collection, opts)
       if collection.is_a?(self)
-        collection.grid = grid
+        collection.options = opts
         collection
       else
-        Collection.new(collection, grid)
+        Collection.new(collection, opts)
       end
     end
 
