@@ -22,7 +22,7 @@ module MagicGrid
     delegate :quoted_table_name, :map, :count, to: :collection
 
     attr_accessor :searchable_columns
-    attr_reader :current_page, :original_count, :total_pages, :per_page, :grid
+    attr_reader :current_page, :original_count, :total_pages, :per_page
 
     def grid=(grid)
       @grid = grid

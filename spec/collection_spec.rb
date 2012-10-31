@@ -9,13 +9,11 @@ describe MagicGrid::Collection do
       let(:magic_collection) { MagicGrid::Collection.new(actual_collection, :original_grid) }
       subject { MagicGrid::Collection[magic_collection, :new_grid] }
       its(:collection) { should eq(actual_collection) }
-      its(:grid) { should eq(:new_grid) }
     end
     context "when given a basic collection" do
       let(:actual_collection) { [1,2,3,4] }
       subject { MagicGrid::Collection[actual_collection, :original_grid] }
       its(:collection) { should eq(actual_collection) }
-      its(:grid) { should eq(:original_grid) }
     end
   end
 
@@ -23,7 +21,6 @@ describe MagicGrid::Collection do
     let(:collection) { [1,2,3,4] }
     subject { MagicGrid::Collection.new(collection, nil) }
     its(:collection) { should eq(collection) }
-    its(:grid) { should be_nil }
   end
 
   context "when based on something sortable" do
