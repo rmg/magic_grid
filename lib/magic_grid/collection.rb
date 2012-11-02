@@ -38,7 +38,7 @@ module MagicGrid
       @options = DEFAULTS.update(opts.slice(*(DEFAULTS.keys)))
     end
 
-    def self.[](collection, opts = {})
+    def self.create_or_reuse(collection, opts = {})
       if collection.is_a?(self)
         collection.options = opts
         collection

@@ -8,12 +8,12 @@ describe MagicGrid::Collection do
     context "when given a MagicGrid::Collection" do
       let(:actual_collection) { [1,2,3,4] }
       let(:magic_collection) { MagicGrid::Collection.new(actual_collection) }
-      subject { MagicGrid::Collection[magic_collection] }
+      subject { MagicGrid::Collection.create_or_reuse(magic_collection) }
       its(:collection) { should eq(actual_collection) }
     end
     context "when given a basic collection" do
       let(:actual_collection) { [1,2,3,4] }
-      subject { MagicGrid::Collection[actual_collection, :original_grid] }
+      subject { MagicGrid::Collection.create_or_reuse(actual_collection, :original_grid) }
       its(:collection) { should eq(actual_collection) }
     end
   end
