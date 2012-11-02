@@ -10,7 +10,6 @@ module MagicGrid
 
     def magic_grid(collection = nil, cols = nil, opts = {}, &block)
       grid = normalize_magic(collection, cols, opts)
-      base_params = grid.base_params
       grid_data = {
         searcher: grid.searcher,
         current: controller.request.fullpath,
@@ -18,7 +17,7 @@ module MagicGrid
         listeners: (grid.options[:listeners] unless grid.options[:listeners].empty?),
         remote: grid.options[:remote],
         default_ajax_handler: grid.options[:default_ajax_handler],
-        params: base_params,
+        params: grid.base_params,
       }
       grid_data_without_nils = grid_data.select {|_,v| v }
       table_classes = ['magic_grid'] << grid.options[:class]
@@ -27,19 +26,19 @@ module MagicGrid
                   id: grid.magic_id,
                   data: grid_data_without_nils
                   ) do
-        table = content_tag('thead', data: {params: base_params}) do
-          magic_grid_head grid, base_params
+        table = content_tag('thead', data: {params: grid.base_params}) do
+          magic_grid_head grid
         end
         table << content_tag('tbody', class: "ui-widget-content") do
           magic_rows(grid, &block)
         end
         table << content_tag('tfoot') do
-          magic_grid_foot(grid, base_params)
+          magic_grid_foot grid
         end
       end
     end
 
-    def magic_grid_head(grid, base_params)
+    def magic_grid_head(grid)
       thead = ''.html_safe
       has_spinner = false
       spinner = tag('span',
@@ -60,7 +59,7 @@ module MagicGrid
         end
       end
       if grid.options[:per_page] and grid.options[:top_pager]
-        thead << magic_pager(grid, base_params) do
+        thead << magic_pager(grid) do
           unless has_spinner
             has_spinner = true
             spinner
@@ -81,10 +80,10 @@ module MagicGrid
       thead << magic_column_headers(grid)
     end
 
-    def magic_grid_foot(grid, base_params)
+    def magic_grid_foot(grid)
       tfoot = ''.html_safe
       if grid.options[:per_page] and grid.options[:bottom_pager]
-        tfoot << magic_pager(grid, base_params)
+        tfoot << magic_pager(grid)
       end
       if tfoot.empty? and not grid.options[:empty_footer]
         tfoot = content_tag 'tr' do
@@ -235,13 +234,13 @@ module MagicGrid
       end
     end
 
-    def magic_pager(grid, base_params, &block)
+    def magic_pager(grid, &block)
       content_tag('tr') do
         content_tag('td', class: 'full-width ui-widget-header magic-pager',
                     colspan: grid.columns.count) do
           pager = magic_paginate(grid.magic_collection,
                                 param_name: grid.param_key(:page),
-                                params: base_params
+                                params: grid.base_params
                                )
           pager << capture(&block) if block_given?
           pager
