@@ -54,7 +54,7 @@ describe MagicGrid::Collection do
   end
 
   describe "#perform_search" do
-    context "when the collection is searchabe" do
+    context "when the collection is searchable" do
       let(:collection) {
         fake_active_record_collection('some_table', [:name, :description])
       }
@@ -76,7 +76,7 @@ describe MagicGrid::Collection do
       end
     end
 
-    context "when the collection is not searchabe" do
+    context "when the collection is not searchable" do
       let(:collection) {
         fake_active_record_collection('some_table', [:name, :description])
       }
