@@ -32,7 +32,7 @@ module MagicGrid
     delegate :quoted_table_name, :map, :count, to: :collection
 
     attr_accessor :searchable_columns
-    attr_reader :current_page, :original_count, :total_pages, :per_page
+    attr_reader :current_page, :original_count, :total_pages, :per_page, :searches
 
     def options=(opts)
       @options = DEFAULTS.update(opts.slice(*(DEFAULTS.keys)))
@@ -101,8 +101,8 @@ module MagicGrid
     end
 
     def searchable?
-      filterable? and not searchable_columns.empty? or
-        @collection.respond_to? @options[:search_method]
+      (filterable? and not searchable_columns.empty?) or
+        (@options[:search_method] and @collection.respond_to? @options[:search_method])
     end
 
     def apply_search(q)

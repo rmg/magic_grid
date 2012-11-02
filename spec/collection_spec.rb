@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'magic_grid/collection'
+require 'magic_grid/column'
 
 describe MagicGrid::Collection do
 
@@ -49,6 +50,48 @@ describe MagicGrid::Collection do
       collection = MagicGrid::Collection.new(array, nil)
       collection.add_post_filter_callback(callback)
       collection.collection.should == [2]
+    end
+  end
+
+  describe "#perform_search" do
+    context "when the collection is searchabe" do
+      let(:collection) {
+        fake_active_record_collection('some_table', [:name, :description])
+      }
+      subject {
+        MagicGrid::Collection.new(collection).tap do |c|
+          c.searchable_columns = [MagicGrid::FilterOnlyColumn.new(:name, c)]
+        end
+      }
+      it { subject.should be_filterable }
+      it { subject.should be_searchable }
+      it "should apply a search query when given one" do
+        subject.apply_search("foobar")
+        subject.searches.should_not be_empty
+      end
+      it "should not barf when given a blank search query" do
+        subject.apply_search(nil)
+        subject.apply_search("")
+        subject.searches.should be_empty
+      end
+    end
+
+    context "when the collection is not searchabe" do
+      let(:collection) {
+        fake_active_record_collection('some_table', [:name, :description])
+      }
+      subject { MagicGrid::Collection.new(collection) }
+      it { subject.should be_filterable }
+      it { subject.should_not be_searchable }
+      it "should not apply a search query when given one" do
+        subject.apply_search("foobar")
+        subject.searches.should be_empty
+      end
+      it "should not barf when given a blank search query" do
+        subject.apply_search(nil)
+        subject.apply_search("")
+        subject.searches.should be_empty
+      end
     end
   end
 
