@@ -158,6 +158,11 @@ describe MagicGrid::Collection do
       #   Module.const_set(:Kaminari, @kaminari) if @kaminari
       # end
 
+      #
+      #  For now, Travis-CI takes care of this, since we have gem profiles defined
+      #  to test all 3 supported pagination scenarios
+      #
+
       it "should attempt to use Enumerable methods to perform pagination" do
         array = Array.new(100) { 1 }
         collection = MagicGrid::Collection.new(array, nil)
