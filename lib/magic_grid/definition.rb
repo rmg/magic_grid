@@ -45,16 +45,21 @@ module MagicGrid
       )
     end
 
-    def initialize(cols_or_opts, collection = nil, controller = nil, opts = {})
+    def self.normalize_columns_options(cols_or_opts, opts)
       if cols_or_opts.is_a? Hash
-        @options = self.class.runtime_defaults.merge(cols_or_opts.reject {|k| k == :cols})
-        @columns = cols_or_opts.fetch(:cols, [])
+        options = runtime_defaults.merge(cols_or_opts.reject {|k| k == :cols})
+        columns = cols_or_opts.fetch(:cols, [])
       elsif cols_or_opts.is_a? Array
-        @options = self.class.runtime_defaults.merge opts
-        @columns = cols_or_opts
+        options = runtime_defaults.merge opts
+        columns = cols_or_opts
       else
         raise "I have no idea what that is, but it's not a columns list or options hash"
       end
+      [options, columns]
+    end
+
+    def initialize(cols_or_opts, collection = nil, controller = nil, opts = {})
+      @options, @columns = *self.class.normalize_columns_options(cols_or_opts, opts)
       @default_order = @options[:default_order]
       @params = controller && controller.params || {}
 
