@@ -18,6 +18,7 @@ module MagicGrid
             nil
           when false
             search_disabled = true
+            nil
           else
             raise "Searchable must be identifiable: #{searchable}"
           end
