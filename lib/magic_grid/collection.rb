@@ -174,11 +174,11 @@ module MagicGrid
 
     def per_page=(n)
       @original_count = self.count @collection
-      @per_page = n ? n : @original_count
-      if @per_page == 0 and @original_count == 0
-        @total_pages = @per_page = 1
-      else
+      @per_page = n
+      if @per_page
         @total_pages = @original_count / @per_page
+      else
+        @total_pages = 1
       end
     end
 
