@@ -81,6 +81,7 @@ module FakeCollections
       c.stub(connection: fake_connection)
       c.stub(quoted_table_name: table_name)
       c.stub(table_name: table_name)
+      c.stub(to_sql: "SELECT * FROM MONKEYS")
       c.stub(:table) {
               double.tap do |t|
                 t.stub(:column_names) { columns }
