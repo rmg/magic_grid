@@ -1,38 +1,6 @@
 require 'spec_helper'
 require 'magic_grid/helpers'
 
-def make_controller
-  request = double.tap { |r|
-    r.stub(:fullpath, "/foo?page=bar")
-  }
-  double.tap { |v|
-    v.stub(:render)
-    v.stub(:params) { {} }
-    v.stub(:request) { request }
-  }
-end
-
-def fake_connection
-  double(:connection).tap do |c|
-    c.stub(:quote_column_name) { |col| col.to_s }
-  end
-end
-
-def fake_active_record_collection(table_name = 'some_table',
-                                  columns = [:name, :description])
-  (1..1000).to_a.tap do |c|
-    c.stub(connection: fake_connection)
-    c.stub(quoted_table_name: table_name)
-    c.stub(table_name: table_name)
-    c.stub(:table) {
-            double.tap do |t|
-              t.stub(:column_names) { columns }
-            end
-          }
-    c.stub(:where) { c }
-  end
-end
-
 describe MagicGrid::Helpers do
 
   # Let's use the helpers the way they're meant to be used!

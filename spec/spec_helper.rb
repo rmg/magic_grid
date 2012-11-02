@@ -41,6 +41,17 @@ module ActionFaker
   def url_for(*args)
     "fake_url(#{args.inspect})"
   end
+
+  def make_controller
+    request = double.tap { |r|
+      r.stub(:fullpath, "/foo?page=bar")
+    }
+    double.tap { |v|
+      v.stub(:render)
+      v.stub(:params) { {} }
+      v.stub(:request) { request }
+    }
+  end
 end
 
 class TextSelector
@@ -57,6 +68,28 @@ RSpec::Matchers.define :match_select do |*expected|
   end
 end
 
+module FakeCollections
+  def fake_connection
+    double(:connection).tap do |c|
+      c.stub(:quote_column_name) { |col| col.to_s }
+    end
+  end
+
+  def fake_active_record_collection(table_name = 'some_table',
+                                    columns = [:name, :description])
+    (1..1000).to_a.tap do |c|
+      c.stub(connection: fake_connection)
+      c.stub(quoted_table_name: table_name)
+      c.stub(table_name: table_name)
+      c.stub(:table) {
+              double.tap do |t|
+                t.stub(:column_names) { columns }
+              end
+            }
+      c.stub(:where) { c }
+    end
+  end
+end
 
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|
@@ -68,6 +101,7 @@ RSpec.configure do |config|
   config.include WillPaginate::ActionView if Module.const_defined? :WillPaginate
   config.include Kaminari::ActionViewExtension if Module.const_defined? :Kaminari
   config.include ActionFaker
+  config.include FakeCollections
 
   config.before do
     MagicGrid.logger = NullObject.new

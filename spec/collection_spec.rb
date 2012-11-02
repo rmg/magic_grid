@@ -53,7 +53,8 @@ describe MagicGrid::Collection do
   end
 
   #TODO these tests will only really work properly once we have the ability
-  #     to undefine constants
+  #     to undefine constants, which looks like it should be coming in a future
+  #     version of RSpec (as in post 2.11.1)
 
   describe "#perform_pagination" do
 
