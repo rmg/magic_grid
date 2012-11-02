@@ -37,17 +37,7 @@ module MagicGrid
           magic_rows(grid, &block)
         end
         table << content_tag('tfoot') do
-          tfoot = ''.html_safe
-          if grid.options[:per_page] and grid.options[:bottom_pager]
-            tfoot << magic_pager(grid, base_params)
-          end
-          if tfoot.empty? and not grid.options[:empty_footer]
-            tfoot = content_tag 'tr' do
-              content_tag('td', nil, class: 'full-width ui-widget-header',
-                          colspan: grid.columns.count)
-            end
-          end
-          tfoot
+          magic_grid_foot(grid, base_params)
         end
       end
     end
@@ -92,6 +82,20 @@ module MagicGrid
         end
       end
       thead << magic_column_headers(grid)
+    end
+
+    def magic_grid_foot(grid, base_params)
+      tfoot = ''.html_safe
+      if grid.options[:per_page] and grid.options[:bottom_pager]
+        tfoot << magic_pager(grid, base_params)
+      end
+      if tfoot.empty? and not grid.options[:empty_footer]
+        tfoot = content_tag 'tr' do
+          content_tag('td', nil, class: 'full-width ui-widget-header',
+                      colspan: grid.columns.count)
+        end
+      end
+      tfoot
     end
 
     def magic_column_headers(cols, collection = nil, opts = {})
