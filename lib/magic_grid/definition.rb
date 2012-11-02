@@ -65,9 +65,9 @@ module MagicGrid
 
       @collection = Collection.create_or_reuse collection, @options
 
-      @columns = MagicGrid::Column.columns_for_collection(@collection,
-                                                          @columns,
-                                                          @options[:searchable])
+      @columns = Column.columns_for_collection(@collection,
+                                               @columns,
+                                               @options[:searchable])
 
       @current_sort_col = param(:col, @options[:default_col]).to_i
       unless (0...@columns.count).cover? @current_sort_col
