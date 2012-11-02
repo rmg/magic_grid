@@ -1,9 +1,5 @@
 require 'magic_grid/definition'
 
-def MagicGrid::compact_hash(hash)
-  hash.select {|_,v| v }
-end
-
 module MagicGrid
   module Helpers
     def normalize_magic(collection, columns = [], options = {})
@@ -15,7 +11,7 @@ module MagicGrid
     def magic_grid(collection = nil, cols = nil, opts = {}, &block)
       grid = normalize_magic(collection, cols, opts)
       base_params = grid.base_params
-      data = {
+      grid_data = {
         searcher: grid.searcher,
         current: controller.request.fullpath,
         live_search: grid.options[:live_search],
@@ -24,11 +20,12 @@ module MagicGrid
         default_ajax_handler: grid.options[:default_ajax_handler],
         params: base_params,
       }
-      classes = ['magic_grid'] << grid.options[:class]
+      grid_data_without_nils = grid_data.select {|_,v| v }
+      table_classes = ['magic_grid'] << grid.options[:class]
       content_tag('table',
-                  class: classes.join(' '),
+                  class: table_classes.join(' '),
                   id: grid.magic_id,
-                  data: MagicGrid.compact_hash(data)
+                  data: grid_data_without_nils
                   ) do
         table = content_tag('thead', data: {params: base_params}) do
           magic_grid_head grid, base_params
@@ -229,14 +226,12 @@ module MagicGrid
       if respond_to? :will_paginate
         # WillPaginate
         will_paginate collection.collection, opts
-        #alias_method :magic_paginate, :will_paginate
       elsif respond_to? :paginate
         #Kaminari, or something else..
         paginate collection.collection, opts
-        #alias_method :magic_paginate, :paginate
       else
         ("<!-- page #{collection.current_page} of #{collection.total_pages} -->" +
-                '<!-- INSTALL WillPaginate or Kaminari for a pager! -->').html_safe
+         '<!-- INSTALL WillPaginate or Kaminari for a pager! -->').html_safe
       end
     end
 
