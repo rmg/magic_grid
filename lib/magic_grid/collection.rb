@@ -188,27 +188,29 @@ module MagicGrid
       self
     end
 
+    def default_paginate(collection, page, per_page)
+      collection = collection.to_enum
+      collection = collection.each_slice(@per_page)
+      collection = collection.drop(@current_page - 1)
+      collection = collection.first.to_a
+      class << collection
+        attr_accessor :current_page, :total_pages, :original_count
+      end
+      collection
+    end
+
     def perform_pagination(collection)
       return collection unless @per_page
 
       if collection.respond_to? :paginate
-        collection = collection.paginate(page: @current_page,
-                                         per_page: @per_page)
+        collection.paginate(page: @current_page, per_page: @per_page)
       elsif collection.respond_to? :page
-        collection = collection.page(@current_page).per(@per_page)
+        collection.page(@current_page).per(@per_page)
       elsif collection.is_a?(Array) and Module.const_defined?(:Kaminari)
-        collection = Kaminari.paginate_array(collection).page(@current_page).per(@per_page)
+         Kaminari.paginate_array(collection).page(@current_page).per(@per_page)
       else
-        collection = collection.to_enum
-        collection = collection.each_slice(@per_page)
-        collection = collection.drop(@current_page - 1)
-        collection = collection.first.to_a
-        class << collection
-          attr_accessor :current_page, :total_pages, :original_count
-        end
+         default_paginate(collection, @current_page, @per_page)
       end
-
-      collection
     end
 
     def apply_all_operations(collection)
