@@ -139,6 +139,20 @@ describe MagicGrid::Helpers do
       end
     end
 
+    context "searching and paging" do
+      let(:searchabe_collection) {
+        collection = [].tap do |c|
+          c.stub(:search) { collection }
+        end
+      }
+      it "should only render one spinner" do
+        grid = magic_grid(searchabe_collection, column_list, searchable: [:some_col])
+        grid.should match_select("td.searcher", 1)
+        grid.should match_select("td.magic-pager", 1)
+        grid.should match_select(".magic_grid_spinner", 1)
+      end
+    end
+
     context "searching" do
       let(:searchabe_collection) {
         collection = [].tap do |c|
@@ -405,5 +419,4 @@ describe MagicGrid::Helpers do
       order_class(2).should == 'sort-none'
     end
   end
-
 end
