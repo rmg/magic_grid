@@ -15,7 +15,7 @@ module MagicGrid
       collection_post_filter: true,
     }
 
-    def initialize(collection, opts)
+    def initialize(collection, opts = {})
       @collection = collection || []
       @options = opts
       @current_page = 1
@@ -35,10 +35,10 @@ module MagicGrid
     attr_reader :current_page, :original_count, :total_pages, :per_page
 
     def options=(opts)
-      @options = opts
+      @options = DEFAULTS.update(opts.slice(*(DEFAULTS.keys)))
     end
 
-    def self.[](collection, opts)
+    def self.[](collection, opts = {})
       if collection.is_a?(self)
         collection.options = opts
         collection

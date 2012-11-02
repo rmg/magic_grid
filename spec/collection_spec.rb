@@ -6,8 +6,8 @@ describe MagicGrid::Collection do
   context "via [] class method" do
     context "when given a MagicGrid::Collection" do
       let(:actual_collection) { [1,2,3,4] }
-      let(:magic_collection) { MagicGrid::Collection.new(actual_collection, :original_grid) }
-      subject { MagicGrid::Collection[magic_collection, :new_grid] }
+      let(:magic_collection) { MagicGrid::Collection.new(actual_collection) }
+      subject { MagicGrid::Collection[magic_collection] }
       its(:collection) { should eq(actual_collection) }
     end
     context "when given a basic collection" do
