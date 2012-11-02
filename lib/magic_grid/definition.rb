@@ -88,19 +88,7 @@ module MagicGrid
     end
 
     def magic_id
-      @options.fetch(:id, columns_hash + collection_hash)
-    end
-
-    def columns_hash
-      @columns.map(&:label).join.hash.abs.to_s(36)
-    end
-
-    def collection_hash
-      if @collection.respond_to? :to_sql
-        @collection.to_sql.hash.abs.to_s(36)
-      else
-        ""
-      end
+      @options[:id] || (Column.hash_string(@columns) + @collection.hash_string)
     end
 
     def searchable?

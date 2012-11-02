@@ -26,6 +26,10 @@ module MagicGrid
       end
     end
 
+    def self.hash_string(column_or_columns)
+      Array(column_or_columns).map(&:label).join.hash.abs.to_s(36)
+    end
+
     def label
       @col[:label]
     end

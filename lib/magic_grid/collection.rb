@@ -62,6 +62,14 @@ module MagicGrid
       end
     end
 
+    def hash_string
+      if @collection.respond_to? :to_sql
+        @collection.to_sql.hash.abs.to_s(36)
+      else
+        @options.hash.abs.to_s(36)
+      end
+    end
+
     def search_using_builtin(collection, q)
       collection.__send__(@options[:search_method], q)
     end
