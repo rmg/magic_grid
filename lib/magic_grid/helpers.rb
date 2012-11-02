@@ -70,7 +70,7 @@ module MagicGrid
               end
             end
           end
-          thead << magic_headers(grid)
+          thead << magic_column_headers(grid)
         end
         table << content_tag('tbody', class: "ui-widget-content") do
           magic_rows(grid, &block)
@@ -91,7 +91,7 @@ module MagicGrid
       end
     end
 
-    def magic_headers(cols, collection = nil, opts = {})
+    def magic_column_headers(cols, collection = nil, opts = {})
       grid = normalize_magic(collection, cols, opts)
       content_tag 'tr' do
         grid.columns.reduce(''.html_safe) do |acc, col|

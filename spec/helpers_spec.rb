@@ -346,18 +346,18 @@ describe MagicGrid::Helpers do
     end
   end
 
-  describe "#magic_headers" do
+  describe "#magic_column_headers" do
     it "should allow a string as a column definition" do
       title = "A String"
       cols = [title]
       grid = MagicGrid::Definition.new(cols)
-      magic_headers(grid).should include(title)
+      magic_column_headers(grid).should include(title)
     end
     it "should use :label if no :sql is given" do
       title = "A String"
       cols = [{label: title}]
       grid = MagicGrid::Definition.new(cols)
-      magic_headers(grid).should include(title)
+      magic_column_headers(grid).should include(title)
     end
     it "should make a sortable header if :sql is specified" do
       tracer = "A MAGIC BULL??"
@@ -367,7 +367,7 @@ describe MagicGrid::Helpers do
       # TODO: check parameters to sortable_header
       #self.should_receive(:sortable_header).with(grid, col, {}) { tracer }
       self.should_receive(:sortable_header) { tracer }
-      magic_headers(grid).should include(tracer)
+      magic_column_headers(grid).should include(tracer)
     end
   end
 
