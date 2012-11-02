@@ -30,47 +30,8 @@ module MagicGrid
                   id: grid.magic_id,
                   data: MagicGrid.compact_hash(data)
                   ) do
-        table = content_tag('thead', data: {params: base_params}
-                           ) do
-          thead = ''.html_safe
-          has_spinner = false
-          spinner = tag('span',
-                        id: (grid.magic_id.to_s + "_spinner"),
-                        class: "magic_grid_spinner"
-                       )
-          if grid.needs_searcher?
-            thead << content_tag('tr') do
-              content_tag('td', class: 'searcher full-width ui-widget-header',
-                          colspan: grid.columns.count) do
-                searcher = search_bar(grid)
-                unless has_spinner
-                  has_spinner = true
-                  searcher << spinner
-                end
-                searcher
-              end
-            end
-          end
-          if grid.options[:per_page] and grid.options[:top_pager]
-            thead << magic_pager(grid, base_params) do
-              unless has_spinner
-                has_spinner = true
-                spinner
-              end
-            end
-          end
-          if thead.empty? and not grid.options[:empty_header]
-            thead = content_tag 'tr' do
-              content_tag('td', class: 'full-width ui-widget-header',
-                          colspan: grid.columns.count) do
-                unless has_spinner
-                  has_spnner = true
-                  spinner
-                end
-              end
-            end
-          end
-          thead << magic_column_headers(grid)
+        table = content_tag('thead', data: {params: base_params}) do
+          magic_grid_head grid, base_params
         end
         table << content_tag('tbody', class: "ui-widget-content") do
           magic_rows(grid, &block)
@@ -89,6 +50,48 @@ module MagicGrid
           tfoot
         end
       end
+    end
+
+    def magic_grid_head(grid, base_params)
+      thead = ''.html_safe
+      has_spinner = false
+      spinner = tag('span',
+                    id: (grid.magic_id.to_s + "_spinner"),
+                    class: "magic_grid_spinner"
+                   )
+      if grid.needs_searcher?
+        thead << content_tag('tr') do
+          content_tag('td', class: 'searcher full-width ui-widget-header',
+                      colspan: grid.columns.count) do
+            searcher = search_bar(grid)
+            unless has_spinner
+              has_spinner = true
+              searcher << spinner
+            end
+            searcher
+          end
+        end
+      end
+      if grid.options[:per_page] and grid.options[:top_pager]
+        thead << magic_pager(grid, base_params) do
+          unless has_spinner
+            has_spinner = true
+            spinner
+          end
+        end
+      end
+      if thead.empty? and not grid.options[:empty_header]
+        thead = content_tag 'tr' do
+          content_tag('td', class: 'full-width ui-widget-header',
+                      colspan: grid.columns.count) do
+            unless has_spinner
+              has_spnner = true
+              spinner
+            end
+          end
+        end
+      end
+      thead << magic_column_headers(grid)
     end
 
     def magic_column_headers(cols, collection = nil, opts = {})
