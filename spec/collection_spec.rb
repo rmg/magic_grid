@@ -13,7 +13,7 @@ describe MagicGrid::Collection do
     end
     context "when given a basic collection" do
       let(:actual_collection) { [1,2,3,4] }
-      subject { MagicGrid::Collection.create_or_reuse(actual_collection, :original_grid) }
+      subject { MagicGrid::Collection.create_or_reuse(actual_collection) }
       its(:collection) { should eq(actual_collection) }
     end
   end
