@@ -17,7 +17,7 @@ module MagicGrid
 
     def initialize(collection, opts = {})
       @collection = collection || []
-      @options = opts
+      self.options = opts
       @current_page = 1
       @sorts = []
       @filter_callbacks = []
@@ -35,7 +35,7 @@ module MagicGrid
     attr_reader :current_page, :original_count, :total_pages, :per_page, :searches
 
     def options=(opts)
-      @options = DEFAULTS.update(opts.slice(*(DEFAULTS.keys)))
+      @options = DEFAULTS.merge(opts || {})
     end
 
     def self.create_or_reuse(collection, opts = {})
