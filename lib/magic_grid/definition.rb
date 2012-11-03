@@ -84,7 +84,7 @@ module MagicGrid
 
       @collection.per_page = @options[:per_page]
       @collection.apply_filter_callback @options[:listener_handler]
-      @collection.enable_post_filter @options[:collection_post_filter?]
+      @collection.enable_post_filter @options[:collection_post_filter]
       @collection.add_post_filter_callback @options[:post_filter]
     end
 

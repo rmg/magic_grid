@@ -195,9 +195,6 @@ describe MagicGrid::Definition do
 
   context "post_filtering with a collection post_filter" do
     data = [1,56,7,21,1]
-    filter = Proc.new do |c|
-      c.select { |i| i > 10 }
-    end
     let(:controller) {
       controller = double.tap do |c|
         c.stub(:params) { HashWithIndifferentAccess.new({f1: 1}) }
@@ -210,11 +207,16 @@ describe MagicGrid::Definition do
         end
       end
     }
-    subject { MagicGrid::Definition.new([{sql: "foo"}],
-                                        collection,
-                                        controller,
-                                        id: :grid, collection_post_filter?: true) }
-    its(:collection) { should == [56, 21] }
+    it "should use the collection's post_filter method" do
+      grid = MagicGrid::Definition.new([{sql: "foo"}],
+                                       collection,
+                                       controller,
+                                       id: :grid, collection_post_filter: true)
+
+      data.should_receive(:post_filter).with().and_return([1,2,3,4])
+      grid.collection.should == [1,2,3,4]
+      grid.collection.should_not be_empty
+    end
   end
 
 end
