@@ -217,6 +217,15 @@ describe MagicGrid::Definition do
       grid.collection.should == [1,2,3,4]
       grid.collection.should_not be_empty
     end
+    it "can be disabled via the collection_post_filter option" do
+      grid = MagicGrid::Definition.new([{sql: "foo"}],
+                                       collection,
+                                       controller,
+                                       id: :grid, collection_post_filter: false)
+
+      data.should_not_receive(:post_filter)
+      grid.collection.should == data
+    end
   end
 
 end
