@@ -60,7 +60,7 @@ module MagicGrid
         end
       end
       if grid.options[:per_page] and grid.options[:top_pager]
-        thead << magic_pager(grid, &spinner_generator)
+        thead << magic_pager_block(grid, &spinner_generator)
       end
       if thead.empty? and not grid.options[:empty_header]
         thead = content_tag 'tr' do
@@ -76,7 +76,7 @@ module MagicGrid
     def magic_grid_foot(grid)
       tfoot = ''.html_safe
       if grid.options[:per_page] and grid.options[:bottom_pager]
-        tfoot << magic_pager(grid)
+        tfoot << magic_pager_block(grid)
       end
       if tfoot.empty? and not grid.options[:empty_footer]
         tfoot = content_tag 'tr' do
@@ -87,14 +87,13 @@ module MagicGrid
       tfoot
     end
 
-    def magic_column_headers(cols, collection = nil, opts = {})
-      grid = normalize_magic(collection, cols, opts)
+    def magic_column_headers(grid)
       content_tag 'tr' do
         grid.columns.reduce(''.html_safe) do |acc, col|
           classes = ['ui-state-default'] << col.html_classes
           acc <<
           if col.sortable?
-            sortable_header(grid, col, opts)
+            sortable_header(grid, col)
           else
             content_tag 'th', col.label.html_safe, class: classes.join(' ')
           end
@@ -102,14 +101,13 @@ module MagicGrid
       end
     end
 
-    def magic_rows(cols, collection = nil, &block)
-      grid = normalize_magic(collection, cols)
+    def magic_rows(grid, &block)
       if_empty = grid.options[:if_empty]
       rows = grid.collection.map do |row|
         if block_given?
           "<!-- block: -->" << capture(row, &block)
         else
-          "<!-- magic row: -->" << magic_row(row, grid)
+          "<!-- magic row: -->" << magic_row(grid, row)
         end
       end
       if rows.empty? and if_empty
@@ -128,8 +126,7 @@ module MagicGrid
       end
     end
 
-    def magic_row(record, cols, collection = nil)
-      grid = normalize_magic(collection, cols)
+    def magic_row(grid, record)
       content_tag 'tr', class: cycle('odd', 'even') do
         grid.columns.reduce(''.html_safe) do |acc, c|
           acc << content_tag('td', class: c.html_classes) do
@@ -168,10 +165,10 @@ module MagicGrid
       end
     end
 
-    def sortable_header(grid, col, opts = {})
+    def sortable_header(grid, col)
       id = col.id
       label = col.label || id.titleize
-      default_sort_order = opts.fetch(:default_order, grid.order(grid.default_order))
+      default_sort_order = grid.order(grid.default_order)
       my_params = grid.base_params.merge({
         grid.param_key(:col) => id,
       })
@@ -215,7 +212,7 @@ module MagicGrid
       searcher
     end
 
-    def magic_paginate(collection, opts={})
+    def magic_pager(collection, opts={})
       if respond_to? :will_paginate
         # WillPaginate
         will_paginate collection.collection, opts
@@ -228,11 +225,11 @@ module MagicGrid
       end
     end
 
-    def magic_pager(grid, &block)
+    def magic_pager_block(grid, &block)
       content_tag('tr') do
         content_tag('td', class: 'full-width ui-widget-header magic-pager',
                     colspan: grid.columns.count) do
-          pager = magic_paginate(grid.magic_collection,
+          pager = magic_pager(grid.magic_collection,
                                 param_name: grid.param_key(:page),
                                 params: grid.base_params
                                )

@@ -328,7 +328,7 @@ describe MagicGrid::Helpers do
         end
         cols = [ {col: 'Col', to_s: callable} ]
         collection = MagicGrid::Definition.new(cols)
-        magic_row( record , collection ).should include(tracer)
+        magic_row( collection, record ).should include(tracer)
       end
 
       it "should use :col as a method if callable" do
@@ -337,7 +337,7 @@ describe MagicGrid::Helpers do
         end
         cols = [ {col: callable, label: "Column"} ]
         collection = MagicGrid::Definition.new(cols)
-        magic_row( record , collection ).should include(tracer)
+        magic_row( collection, record ).should include(tracer)
       end
     end
 
@@ -348,14 +348,14 @@ describe MagicGrid::Helpers do
         record.should_receive(:some_inconceivable_method_name) { tracer }
         cols = [ {col: :some_col, to_s: :some_inconceivable_method_name} ]
         collection = MagicGrid::Definition.new(cols)
-        magic_row( record , collection ).should include(tracer)
+        magic_row( collection, record ).should include(tracer)
       end
 
       it "should use :col as a method on record if it responds to it" do
         record.should_receive(:some_inconceivable_method_name) { tracer }
         cols = [ {col: :some_inconceivable_method_name} ]
         collection = MagicGrid::Definition.new(cols)
-        magic_row( record , collection ).should include(tracer)
+        magic_row( collection, record ).should include(tracer)
       end
     end
   end
