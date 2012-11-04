@@ -215,12 +215,12 @@ module MagicGrid
     end
 
     def magic_pager(collection, opts={})
-      if respond_to? :will_paginate
+      if @view.respond_to? :will_paginate
         # WillPaginate
-        will_paginate collection.collection, opts
-      elsif respond_to? :paginate
+        @view.will_paginate collection.collection, opts
+      elsif @view.respond_to? :paginate
         #Kaminari, or something else..
-        paginate collection.collection, opts
+        @view.paginate collection.collection, opts
       else
         ("<!-- page #{collection.current_page} of #{collection.total_pages} -->" +
          '<!-- INSTALL WillPaginate or Kaminari for a pager! -->').html_safe
