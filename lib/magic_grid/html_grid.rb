@@ -12,6 +12,7 @@ module MagicGrid
     def render(controller, view, &block)
       @controller ||= controller
       @view ||= view
+      @spinner_drawn = false
       grid_data = {
         searcher: @grid.searcher,
         current: controller.request.fullpath,
@@ -49,36 +50,34 @@ module MagicGrid
       end
     end
 
+    def spinner_generator
+      unless @spinner_drawn
+        @spinner_drawn = true
+        @view.tag('span',
+                  id: (@grid.magic_id.to_s + "_spinner"),
+                  class: "magic_grid_spinner")
+      end
+    end
+
     def magic_grid_head
       thead = ''.html_safe
-      has_spinner = false
-      spinner = @view.tag('span',
-                    id: (@grid.magic_id.to_s + "_spinner"),
-                    class: "magic_grid_spinner"
-                   )
-      spinner_generator = ->() {
-        unless has_spinner
-          has_spnner = true
-          spinner
-        end
-      }
       if @grid.needs_searcher?
         thead << @view.content_tag('tr') do
           @view.content_tag('td', class: 'searcher full-width ui-widget-header',
                       colspan: @grid.columns.count) do
-            search_bar(&spinner_generator)
+            search_bar(&self.method(:spinner_generator))
           end
         end
       end
       if @grid.options[:per_page] and @grid.options[:top_pager]
-        thead << magic_pager_block(&spinner_generator)
+        thead << magic_pager_block(&self.method(:spinner_generator))
       end
       if thead.empty? and not @grid.options[:empty_header]
         thead = @view.content_tag 'tr' do
           @view.content_tag('td',
                       class: 'full-width ui-widget-header',
                       colspan: @grid.columns.count,
-                      &spinner_generator)
+                      &self.method(:spinner_generator))
         end
       end
       thead << magic_column_headers
