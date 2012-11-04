@@ -92,8 +92,6 @@ module MagicGrid
                             class: 'full-width ui-widget-header',
                             colspan: @grid.columns.count)
         end
-      else
-        ''.html_safe
       end
     end
 
