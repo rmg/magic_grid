@@ -5,7 +5,6 @@ describe MagicGrid::Helpers do
 
   # Let's use the helpers the way they're meant to be used!
   include MagicGrid::Helpers
-
   let(:empty_collection) { [] }
 
   let(:column_list) { [:name, :description] }
@@ -316,107 +315,4 @@ describe MagicGrid::Helpers do
 
   end
 
-  describe "#magic_row" do
-    let(:tracer) { "OMG A MAGIC CELL!" }
-
-    context "with a callable column option" do
-      let(:record) { 1 }
-
-      it "should use :to_s as a method if callable" do
-        callable = double.tap do |c|
-          c.should_receive(:call).with( record ) { tracer }
-        end
-        cols = [ {col: 'Col', to_s: callable} ]
-        collection = MagicGrid::Definition.new(cols)
-        magic_row( collection, record ).should include(tracer)
-      end
-
-      it "should use :col as a method if callable" do
-        callable = double.tap do |c|
-          c.should_receive(:call).with( record ) { tracer }
-        end
-        cols = [ {col: callable, label: "Column"} ]
-        collection = MagicGrid::Definition.new(cols)
-        magic_row( collection, record ).should include(tracer)
-      end
-    end
-
-    context "with a symbol that is a method on the record" do
-      let(:record) { double(1) }
-
-      it "should use :to_s as a method on record if it responds to it" do
-        record.should_receive(:some_inconceivable_method_name) { tracer }
-        cols = [ {col: :some_col, to_s: :some_inconceivable_method_name} ]
-        collection = MagicGrid::Definition.new(cols)
-        magic_row( collection, record ).should include(tracer)
-      end
-
-      it "should use :col as a method on record if it responds to it" do
-        record.should_receive(:some_inconceivable_method_name) { tracer }
-        cols = [ {col: :some_inconceivable_method_name} ]
-        collection = MagicGrid::Definition.new(cols)
-        magic_row( collection, record ).should include(tracer)
-      end
-    end
-  end
-
-  describe "#magic_column_headers" do
-    it "should allow a string as a column definition" do
-      title = "A String"
-      cols = [title]
-      grid = MagicGrid::Definition.new(cols)
-      magic_column_headers(grid).should include(title)
-    end
-    it "should use :label if no :sql is given" do
-      title = "A String"
-      cols = [{label: title}]
-      grid = MagicGrid::Definition.new(cols)
-      magic_column_headers(grid).should include(title)
-    end
-    it "should make a sortable header if :sql is specified" do
-      tracer = "A MAGIC BULL??"
-      col = {sql: 'some_col'}
-      cols = [col]
-      grid = MagicGrid::Definition.new(cols)
-      # TODO: check parameters to sortable_header
-      #self.should_receive(:sortable_header).with(grid, col, {}) { tracer }
-      self.should_receive(:sortable_header) { tracer }
-      magic_column_headers(grid).should include(tracer)
-    end
-  end
-
-  describe "#search_bar" do
-    searchable_opts = { needs_searcher: true }
-    it "renders a search field" do
-      cols = [:some_col]
-      grid = MagicGrid::Definition.new(cols, nil, nil, searchable_opts)
-      search_bar(grid).should match_select("input[type=search]")
-    end
-    it "renders a search button if told to" do
-      tracer = "ZOMG! A BUTTON!"
-      cols = [:some_col]
-      opts = searchable_opts.merge(search_button: true,
-                                   searcher_button: tracer)
-      grid = MagicGrid::Definition.new(cols, nil, nil, opts)
-      search_bar(grid).should match_select("button", text: tracer)
-    end
-  end
-
-  describe "column sorting helpers" do
-    it "#reverse_order" do
-      reverse_order(0).should == 1
-      reverse_order(1).should == 0
-      reverse_order(2).should == 0
-    end
-    it "#order_icon" do
-      order_icon(0).should match_select('span.ui-icon-triangle-1-n')
-      order_icon(1).should match_select('span.ui-icon-triangle-1-s')
-      order_icon(2).should match_select('span.ui-icon-carat-2-n-s')
-    end
-    it "#order_class" do
-      order_class(0).should == 'sort-asc'
-      order_class(1).should == 'sort-desc'
-      order_class(2).should == 'sort-none'
-    end
-  end
 end
