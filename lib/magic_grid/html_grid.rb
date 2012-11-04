@@ -76,17 +76,17 @@ module MagicGrid
     end
 
     def magic_grid_foot
-      tfoot = ''.html_safe
       if @grid.options[:per_page] and @grid.options[:bottom_pager]
-        tfoot << magic_pager_block
-      end
-      if tfoot.empty? and not @grid.options[:empty_footer]
-        tfoot = @view.content_tag 'tr' do
-          @view.content_tag('td', nil, class: 'full-width ui-widget-header',
-                      colspan: @grid.columns.count)
+        magic_pager_block
+      elsif not @grid.options[:empty_footer]
+        @view.content_tag 'tr' do
+          @view.content_tag('td', nil,
+                            class: 'full-width ui-widget-header',
+                            colspan: @grid.columns.count)
         end
+      else
+        ''.html_safe
       end
-      tfoot
     end
 
     def magic_column_headers
