@@ -21,16 +21,31 @@ module MagicGrid
         default_ajax_handler: @grid.options[:default_ajax_handler],
         params: @grid.base_params,
       }
-      grid_data_without_nils = grid_data.select {|_,v| v }
-      table_classes = ['magic_grid'] << @grid.options[:class]
-      @view.content_tag('table',
-                        class: table_classes.join(' '),
-                        id: @grid.magic_id,
-                        data: grid_data_without_nils
-                        ) do
-        @view.content_tag('thead', data: {params: @grid.base_params}) { magic_grid_head } +
-          @view.content_tag('tbody', class: "ui-widget-content") { magic_rows &block } +
-          @view.content_tag('tfoot') { magic_grid_foot }
+      table_options = {
+        class: (['magic_grid'] << @grid.options[:class]).join(' '),
+        id: @grid.magic_id,
+        data: grid_data.select {|_,v| v }
+      }
+      @view.content_tag('table', table_options) do
+        thead + tbody(&block) + tfoot
+      end
+    end
+
+    def thead
+      @view.content_tag('thead', data: {params: @grid.base_params}) do
+        magic_grid_head
+      end
+    end
+
+    def tbody(&block)
+      @view.content_tag('tbody', class: "ui-widget-content") do
+        magic_rows &block
+      end
+    end
+
+    def tfoot
+      @view.content_tag('tfoot') do
+        magic_grid_foot
       end
     end
 
