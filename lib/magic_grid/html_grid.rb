@@ -60,21 +60,21 @@ module MagicGrid
     end
 
     def magic_grid_head
-      thead = ''.html_safe
-      pager = @grid.options[:per_page] && @grid.options[:top_pager]
-      thead << searcher_block_if(@grid.needs_searcher?,
-                                 &self.method(:spinner_generator))
-      thead << pager_block_if(pager, &self.method(:spinner_generator))
-      if thead.empty? and not @grid.options[:empty_header]
+      thead = [] << searcher_block_if(@grid.needs_searcher?,
+                                      &self.method(:spinner_generator))
+      thead << pager_block_if(@grid.options[:per_page] && @grid.options[:top_pager],
+                              &self.method(:spinner_generator))
+      if thead.empty? and not @grid.options[:collapse_emtpy_header]
         thead << filler_block(&self.method(:spinner_generator))
       end
       thead << magic_column_headers
+      thead.join.html_safe
     end
 
     def magic_grid_foot
       if @grid.options[:per_page] and @grid.options[:bottom_pager]
         magic_pager_block
-      elsif not @grid.options[:empty_footer]
+      elsif not @grid.options[:collapse_emtpy_footer]
         filler_block
       end
     end
