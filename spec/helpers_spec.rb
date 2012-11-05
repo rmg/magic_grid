@@ -5,32 +5,15 @@ describe MagicGrid::Helpers do
 
   # Let's use the helpers the way they're meant to be used!
   include MagicGrid::Helpers
+
   let(:empty_collection) { [] }
-
   let(:column_list) { [:name, :description] }
-
   let(:controller) { make_controller }
 
   # Kaminari uses view_renderer instead of controller
   let(:view_renderer) { controller }
 
-  describe "#normalize_magic" do
-
-    it "should turn an array into a MagicGrid::Definition" do
-      expect(normalize_magic([])).to be_a(MagicGrid::Definition)
-    end
-
-    it "should give back the MagicGrid::Definition given, if given as any argument" do
-      definition = normalize_magic([])
-      expect(normalize_magic( definition )).to be(definition)
-      expect(normalize_magic( nil, definition )).to be(definition)
-      expect(normalize_magic( nil, nil, definition )).to be(definition)
-    end
-  end
-
   describe "#magic_grid" do
-    pending "DOES WAY TOO MUCH!!"
-
     let(:emtpy_grid) { magic_grid empty_collection, column_list }
 
     it "should barf without any arguments" do
