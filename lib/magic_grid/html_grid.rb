@@ -13,7 +13,7 @@ module MagicGrid
       end
     end
 
-    def render(&block)
+    def render(&row_renderer)
       @spinner_drawn = false
       grid_data = {
         searcher: @grid.searcher,
@@ -30,7 +30,7 @@ module MagicGrid
         data: grid_data.select {|_,v| v }
       }
       @view.content_tag('table', table_options) do
-        thead + tbody(&block) + tfoot
+        thead + tbody(&row_renderer) + tfoot
       end
     end
 
