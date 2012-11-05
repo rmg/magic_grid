@@ -79,12 +79,12 @@ describe MagicGrid::HtmlGrid do
     end
   end
 
-  describe "#search_bar" do
+  describe "#searcher_input" do
     searchable_opts = { needs_searcher: true }
     it "renders a search field" do
       cols = [:some_col]
       grid = MagicGrid::HtmlGrid.new MagicGrid::Definition.new(cols, nil, nil, searchable_opts), self
-      grid.search_bar.should match_select("input[type=search]")
+      grid.searcher_input.should match_select("input[type=search]")
     end
     it "renders a search button if told to" do
       tracer = "ZOMG! A BUTTON!"
@@ -92,7 +92,7 @@ describe MagicGrid::HtmlGrid do
       opts = searchable_opts.merge(search_button: true,
                                    searcher_button: tracer)
       grid = MagicGrid::HtmlGrid.new MagicGrid::Definition.new(cols, nil, nil, opts), self
-      grid.search_bar.should match_select("button", text: tracer)
+      grid.searcher_input.should match_select("button", text: tracer)
     end
   end
 
