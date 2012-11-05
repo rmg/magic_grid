@@ -150,6 +150,10 @@ module MagicGrid
       end
     end
 
+    def unordered
+      -1
+    end
+
     def reverse_order(order)
       order.to_i == 0 ? 1 : 0
     end
@@ -181,22 +185,23 @@ module MagicGrid
       my_params = @grid.base_params.merge({
         @grid.param_key(:col) => id,
       })
-      my_params = HashWithIndifferentAccess.new(my_params)
-      order = nil
+      column_link_params = HashWithIndifferentAccess.new(my_params)
+      order = unordered
       classes = ['sorter ui-state-default'] << col.html_classes
-      current = id.to_s == @grid.current_sort_col.to_s
-      if current
+      if id.to_s == @grid.current_sort_col.to_s
         order = @grid.current_order
         classes << "sort-current" << order_class(order)
-        my_params[@grid.param_key(:order)] = reverse_order(order)
-        label << order_icon(order)
+        column_link_params[@grid.param_key(:order)] = reverse_order(order)
       else
-        my_params.delete @grid.param_key(:order) if my_params[@grid.param_key(:order)]
-        label << order_icon()
+        column_link_params.delete @grid.param_key(:order)
       end
-      my_params.delete(@grid.param_key(:order)) if my_params[@grid.param_key(:order)].to_i == default_sort_order.to_i
+      if column_link_params[@grid.param_key(:order)].to_i == default_sort_order.to_i
+        column_link_params.delete(@grid.param_key(:order))
+      end
       @view.content_tag 'th', class: classes.join(' ') do
-        @view.link_to label.html_safe, my_params, remote: @grid.options[:remote]
+        @view.link_to column_link_params, remote: @grid.options[:remote] do
+          label.html_safe << order_icon(order)
+        end
       end
     end
 
