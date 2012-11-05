@@ -3,19 +3,21 @@ require 'magic_grid/definition'
 module MagicGrid
   class HtmlGrid
 
-    def initialize(grid_definition, view = nil, controller = nil)
+    def initialize(grid_definition, view, controller = nil)
       @grid = grid_definition
       @view ||= view
-      @controller ||= controller
+      if controller
+        @current_url = controller.request.fullpath
+      else
+        @current_url = nil
+      end
     end
 
-    def render(controller, view, &block)
-      @controller ||= controller
-      @view ||= view
+    def render(&block)
       @spinner_drawn = false
       grid_data = {
         searcher: @grid.searcher,
-        current: controller.request.fullpath,
+        current: @current_url,
         live_search: @grid.options[:live_search],
         listeners: @grid.options[:listeners],
         remote: @grid.options[:remote],

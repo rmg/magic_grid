@@ -11,8 +11,8 @@ module MagicGrid
 
     def magic_grid(collection = nil, cols = nil, opts = {}, &block)
       grid_def = normalize_magic(collection, cols, opts)
-      html_grid = HtmlGrid.new grid_def
-      html_grid.render(controller, self, &block)
+      html_grid = HtmlGrid.new grid_def, self, controller
+      html_grid.render(&block)
     end
 
     ::ActionView::Base.send :include, self
