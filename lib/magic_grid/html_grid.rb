@@ -40,9 +40,9 @@ module MagicGrid
       end
     end
 
-    def tbody(&block)
+    def tbody(&row_renderer)
       @view.content_tag('tbody', class: "ui-widget-content") do
-        magic_rows &block
+        magic_rows &row_renderer
       end
     end
 
@@ -104,14 +104,8 @@ module MagicGrid
       end
     end
 
-    def magic_rows(&block)
-      rows = @grid.collection.map do |row|
-        if block_given?
-          "<!-- block: -->" << @view.capture(row, &block)
-        else
-          "<!-- magic row: -->" << magic_row(row)
-        end
-      end
+    def magic_rows(&row_renderer)
+      rows = @grid.collection.map { |row| grid_row(row, &row_renderer) }
       if rows.empty?
         rows << render_empty_collection(@grid.options[:if_empty])
       end
@@ -133,9 +127,13 @@ module MagicGrid
       end
     end
 
-    def magic_row(record)
-      @view.content_tag 'tr', class: @view.cycle('odd', 'even') do
-        @grid.columns.map { |c| grid_cell(c, record) }.join.html_safe
+    def grid_row(record, &row_renderer)
+      if row_renderer
+        @view.capture(record, &row_renderer)
+      else
+        @view.content_tag 'tr', class: @view.cycle('odd', 'even') do
+          @grid.columns.map { |c| grid_cell(c, record) }.join.html_safe
+        end
       end
     end
 

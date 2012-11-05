@@ -10,7 +10,7 @@ describe MagicGrid::HtmlGrid do
   # Kaminari uses view_renderer instead of controller
   let(:view_renderer) { controller }
 
-  describe "#magic_row" do
+  describe "#grid_row" do
     let(:tracer) { "OMG A MAGIC CELL!" }
 
     context "with a callable column option" do
@@ -22,7 +22,7 @@ describe MagicGrid::HtmlGrid do
         end
         cols = [ {col: 'Col', to_s: callable} ]
         grid = MagicGrid::HtmlGrid.new MagicGrid::Definition.new(cols), self
-        grid.magic_row( record ).should include(tracer)
+        grid.grid_row( record ).should include(tracer)
       end
 
       it "should use :col as a method if callable" do
@@ -31,7 +31,7 @@ describe MagicGrid::HtmlGrid do
         end
         cols = [ {col: callable, label: "Column"} ]
         grid = MagicGrid::HtmlGrid.new MagicGrid::Definition.new(cols), self
-        grid.magic_row( record ).should include(tracer)
+        grid.grid_row( record ).should include(tracer)
       end
     end
 
@@ -42,14 +42,14 @@ describe MagicGrid::HtmlGrid do
         record.should_receive(:some_inconceivable_method_name) { tracer }
         cols = [ {col: :some_col, to_s: :some_inconceivable_method_name} ]
         grid = MagicGrid::HtmlGrid.new MagicGrid::Definition.new(cols), self
-        grid.magic_row( record ).should include(tracer)
+        grid.grid_row( record ).should include(tracer)
       end
 
       it "should use :col as a method on record if it responds to it" do
         record.should_receive(:some_inconceivable_method_name) { tracer }
         cols = [ {col: :some_inconceivable_method_name} ]
         grid = MagicGrid::HtmlGrid.new MagicGrid::Definition.new(cols), self
-        grid.magic_row( record ).should include(tracer)
+        grid.grid_row( record ).should include(tracer)
       end
     end
   end
