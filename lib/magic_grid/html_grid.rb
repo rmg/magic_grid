@@ -129,15 +129,19 @@ module MagicGrid
 
     def magic_row(record)
       @view.content_tag 'tr', class: @view.cycle('odd', 'even') do
-        @grid.columns.reduce(''.html_safe) do |acc, c|
-          acc << @view.content_tag('td', class: c.html_classes) do
-            method = c.reader
-            if method.respond_to? :call
-              method.call(record)
-            elsif record.respond_to? method
-              record.send(method)
-            end.to_s
-          end
+        @grid.columns.map { |c| grid_cell(c, record) }.join.html_safe
+      end
+    end
+
+    def grid_cell(column, record)
+      @view.content_tag('td', class: column.html_classes) do
+        method = column.reader
+        if method.respond_to? :call
+          method.call(record).to_s
+        elsif record.respond_to? method
+          record.send(method).to_s
+        else
+          ""
         end
       end
     end
