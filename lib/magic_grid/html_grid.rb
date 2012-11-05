@@ -103,7 +103,6 @@ module MagicGrid
     end
 
     def magic_rows(&block)
-      if_empty = @grid.options[:if_empty]
       rows = @grid.collection.map do |row|
         if block_given?
           "<!-- block: -->" << @view.capture(row, &block)
@@ -111,19 +110,24 @@ module MagicGrid
           "<!-- magic row: -->" << magic_row(row)
         end
       end
-      if rows.empty? and if_empty
+      if rows.empty?
+        rows << render_empty_collection(@grid.options[:if_empty])
+      end
+      rows.join.html_safe
+    end
+
+    def render_empty_collection(fallback)
+      if fallback
         @view.content_tag 'tr' do
           @view.content_tag('td', colspan: @grid.columns.count,
-                      class: 'if-empty') do
-            if if_empty.respond_to? :call
-              if_empty.call(@grid).to_s
+                            class: 'if-empty') do
+            if fallback.respond_to? :call
+              fallback.call(@grid).to_s
             else
-              if_empty
+              fallback
             end
           end
         end
-      else
-        rows.join.html_safe
       end
     end
 
