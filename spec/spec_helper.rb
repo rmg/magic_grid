@@ -84,7 +84,7 @@ module FakeCollections
       c.stub(to_sql: "SELECT * FROM MONKEYS")
       c.stub(:table) {
               double.tap do |t|
-                t.stub(:column_names) { columns }
+                t.stub(:columns) { columns.map{|c| {name: c} } }
               end
             }
       c.stub(:where) { c }

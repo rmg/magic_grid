@@ -274,15 +274,7 @@ describe MagicGrid::Helpers do
     end
 
     context "sorting" do
-      let(:sortable_collection) {
-        collection = fake_active_record_collection.tap do |c|
-          c.stub(:table) {
-            double.tap do |t|
-              t.stub(:column_names) { column_list }
-            end
-          }
-        end
-      }
+      let(:sortable_collection) { fake_active_record_collection }
       it "should render sortable column headers when a collection is sortable" do
         grid = magic_grid(sortable_collection, column_list)
         grid.should match_select("thead>tr>th.sorter>a>span.ui-icon", column_list.count)

@@ -48,7 +48,7 @@ module MagicGrid
     end
 
     def column_names
-      @collection.table.column_names
+      @collection.table.columns.map{|c| c[:name]}
     rescue
       MagicGrid.logger.debug("Given collection doesn't respond to #table well: #{$!}")
       []
