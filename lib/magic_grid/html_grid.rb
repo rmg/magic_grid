@@ -264,7 +264,9 @@ module MagicGrid
                                 param_name: @grid.param_key(:page),
                                 params: @grid.base_params
                                )
-          pager << @view.capture(&spinner) if block_given?
+          if spinner
+            pager << @view.capture(&spinner)
+          end
           pager
         end
       end
