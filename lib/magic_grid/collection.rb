@@ -13,6 +13,7 @@ module MagicGrid
       default_order: :asc,
       post_filter: false,
       collection_post_filter: true,
+      count: nil,
     }
 
     def initialize(collection, opts = {})
@@ -36,6 +37,10 @@ module MagicGrid
 
     def options=(opts)
       @options = DEFAULTS.merge(opts || {})
+    end
+
+    def count_options
+      @options[:count]
     end
 
     def self.create_or_reuse(collection, opts = {})
@@ -167,7 +172,7 @@ module MagicGrid
     def count(collection = nil)
       count_or_hash = collection || @collection
       while count_or_hash.respond_to? :count
-        count_or_hash = count_or_hash.count
+        count_or_hash = count_or_hash.send :count, *(Array([count_options]).compact)
       end
       count_or_hash
     end
@@ -203,7 +208,7 @@ module MagicGrid
       return collection unless @per_page
 
       if collection.respond_to? :paginate
-        collection.paginate(page: @current_page, per_page: @per_page)
+        collection.paginate(page: @current_page, per_page: @per_page, total_entries: count(collection))
       elsif collection.respond_to? :page
         collection.page(@current_page).per(@per_page)
       elsif collection.is_a?(Array) and Module.const_defined?(:Kaminari)
