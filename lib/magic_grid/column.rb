@@ -5,25 +5,29 @@ module MagicGrid
       columns.map.each_with_index { |c, i|
         MagicGrid::Column.new(collection, c, i)
       }.tap do |cols|
-        search_disabled = false
-        collection.searchable_columns = Array(searchables).map { |searchable|
-          case searchable
-          when Symbol
-            cols.find {|col| col.name == searchable} || FilterOnlyColumn.new(searchable, collection)
-          when Integer
-            cols[searchable]
-          when String
-            FilterOnlyColumn.new(searchable)
-          when true
-            nil
-          when false
-            search_disabled = true
-            nil
-          else
-            raise "Searchable must be identifiable: #{searchable}"
-          end
-        }.compact
-        collection.searchable_columns = [] if search_disabled
+        if searchables == false
+          searchables = []
+        else
+          searchables = Array(searchables).map { |s|
+            searchable_column(s, cols, collection)
+          }
+        end
+        collection.searchable_columns = searchables.compact
+      end
+    end
+
+    def self.searchable_column(searchable, columns, collection)
+      case searchable
+      when Symbol
+        columns.find {|col| col.name == searchable} || FilterOnlyColumn.new(searchable, collection)
+      when Integer
+        columns[searchable]
+      when String
+        FilterOnlyColumn.new(searchable)
+      when true
+        nil
+      else
+        raise "Searchable must be identifiable: #{searchable}"
       end
     end
 
