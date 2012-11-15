@@ -222,11 +222,14 @@ module MagicGrid
       @sorts.each do |ordering|
         collection = collection.order(ordering)
       end
-      @filter_callbacks.each do |callback|
-        collection = callback.call(collection)
-      end
-      @filters.each do |hsh|
-        collection = collection.where(hsh)
+      if @filter_callbacks.empty?
+        @filters.each do |hsh|
+          collection = collection.where(hsh)
+        end
+      else
+        @filter_callbacks.each do |callback|
+          collection = callback.call(collection)
+        end
       end
       @searches.each do |query|
         collection = perform_search(collection, query)
