@@ -151,24 +151,57 @@ describe MagicGrid::Definition do
     end
   end
 
-  context "filtering with a callback" do
+  context "filtering" do
     data = [1,56,7,21,1]
     filter = Proc.new do |c|
       c.select { |i| i > 10 }
     end
     let(:controller) {
       controller = double.tap do |c|
-        c.stub(:params) { HashWithIndifferentAccess.new({f1: 1}) }
+        c.stub(:params) { HashWithIndifferentAccess.new({column_name: 1}) }
       end
     }
-    let(:collection) {
-      data
-    }
-    subject { MagicGrid::Definition.new([{sql: "foo"}],
+    let(:collection) { data }
+
+    it "should use a listener_hanlder callback when given one" do
+      options = {
+        id: :grid,
+        listener_handler: filter
+      }
+      grid = MagicGrid::Definition.new([{sql: "foo"}],
                                         collection,
                                         controller,
-                                        id: :grid, listener_handler: filter) }
-    its(:collection) { should == [56, 21] }
+                                        options)
+      grid.collection.should == [56, 21]
+    end
+
+    it "should use listeners as where filters when given and set" do
+      options = {
+        id: :grid,
+        listeners: { input_id: :column_name }
+      }
+      collection.should_receive(:where).with("column_name" => 1).and_return([1,2,3])
+      grid = MagicGrid::Definition.new([{sql: "foo"}],
+                                        collection,
+                                        controller,
+                                        options)
+      grid.collection.should == [1,2,3]
+    end
+
+    it "should ignore listener params when a listener_hanlder callback is given" do
+      options = {
+        id: :grid,
+        listener_handler: filter,
+        listeners: { input_id: :column_name }
+      }
+      collection.should_not_receive(:where)
+      grid = MagicGrid::Definition.new([{sql: "foo"}],
+                                        collection,
+                                        controller,
+                                        options)
+      grid.collection.should == [56, 21]
+    end
+
   end
 
   pending "test listening on a dumb collection"
