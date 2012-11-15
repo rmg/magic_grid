@@ -62,12 +62,16 @@ module MagicGrid
     end
 
     def magic_grid_head
-      thead = [] << searcher_block_if(@grid.needs_searcher?,
-                                      &self.method(:spinner_generator))
-      thead << pager_block_if(@grid.options[:per_page] && @grid.options[:top_pager],
-                              &self.method(:spinner_generator))
+      spinner = self.method(:spinner_generator)
+      thead = []
+      if @grid.needs_searcher?
+        thead << searcher_block(&spinner)
+      end
+      if @grid.options[:per_page] and @grid.options[:top_pager]
+        thead << magic_pager_block(&spinner)
+      end
       if thead.empty? and not @grid.options[:collapse_emtpy_header]
-        thead << filler_block(&self.method(:spinner_generator))
+        thead << filler_block(&spinner)
       end
       thead << magic_column_headers
       thead.join.html_safe
@@ -205,13 +209,11 @@ module MagicGrid
       end
     end
 
-    def searcher_block_if(conditional = true, &spinner)
-      if conditional
-        @view.content_tag('tr') do
-          @view.content_tag('td', class: 'searcher full-width ui-widget-header',
-                      colspan: @grid.columns.count) do
-            searcher_input(&spinner)
-          end
+    def searcher_block(&spinner)
+      @view.content_tag('tr') do
+        @view.content_tag('td', class: 'searcher full-width ui-widget-header',
+                    colspan: @grid.columns.count) do
+          searcher_input(&spinner)
         end
       end
     end
@@ -247,12 +249,6 @@ module MagicGrid
       else
         ("<!-- page #{collection.current_page} of #{collection.total_pages} -->" +
          '<!-- INSTALL WillPaginate or Kaminari for a pager! -->').html_safe
-      end
-    end
-
-    def pager_block_if(conditional = true, &spinner)
-      if conditional
-        magic_pager_block(&spinner)
       end
     end
 
