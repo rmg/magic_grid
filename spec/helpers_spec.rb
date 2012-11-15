@@ -25,6 +25,10 @@ describe MagicGrid::Helpers do
       expect( emtpy_grid ).to match(/<\/table>/)
     end
 
+    it "should always render one, and only one, spinner" do
+      emtpy_grid.should match_select(".magic_grid_spinner", 1)
+    end
+
     context "when given an empty collection" do
       subject { magic_grid empty_collection, column_list }
       it "should indicate there is no data" do
