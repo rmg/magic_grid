@@ -207,8 +207,15 @@ module MagicGrid
     def perform_pagination(collection)
       return collection unless @per_page
 
+      total_entries = count(collection)
+      @current_page = bound_current_page(@current_page,
+                                         @per_page,
+                                         total_entries)
+
       if collection.respond_to? :paginate
-        collection.paginate(page: @current_page, per_page: @per_page, total_entries: count(collection))
+        collection.paginate(page: @current_page,
+                            per_page: @per_page,
+                            total_entries: total_entries)
       elsif collection.respond_to? :page
         collection.page(@current_page).per(@per_page)
       elsif collection.is_a?(Array) and Module.const_defined?(:Kaminari)
@@ -249,5 +256,16 @@ module MagicGrid
       @reduced_collection ||= apply_all_operations(@collection)
     end
 
+    private
+
+    def bound_current_page(page, per_page, total_entries)
+      pages = total_entries / per_page
+      pages = 1 if pages == 0
+      if page > pages
+        pages
+      else
+        page
+      end
+    end
   end
 end
