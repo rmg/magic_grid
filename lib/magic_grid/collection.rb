@@ -34,6 +34,7 @@ module MagicGrid
 
     attr_accessor :searchable_columns
     attr_reader :current_page, :original_count, :total_pages, :per_page, :searches
+    cattr_accessor :kaminari_class
 
     def options=(opts)
       @options = DEFAULTS.merge(opts || {})
@@ -218,8 +219,8 @@ module MagicGrid
                             :total_entries => total_entries)
       elsif collection.respond_to? :page
         collection.page(@current_page).per(@per_page)
-      elsif collection.is_a?(Array) and Module.const_defined?(:Kaminari)
-         Kaminari.paginate_array(collection).page(@current_page).per(@per_page)
+      elsif collection.is_a?(Array) and @@kaminari_class
+         @@kaminari_class.paginate_array(collection).page(@current_page).per(@per_page)
       else
          default_paginate(collection, @current_page, @per_page)
       end
@@ -268,4 +269,8 @@ module MagicGrid
       end
     end
   end
+  if Module.const_defined?(:Kaminari)
+    Collection.kaminari_class = Kaminari
+  end
+
 end
