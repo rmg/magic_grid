@@ -32,6 +32,6 @@ RSpec::Core::RakeTask.new(:spec) do |t|
 end
 
 desc "Run TestUnit and RSpec tests"
-task tests: [:spec, :test]
+task :tests => [:spec, :test]
 
-task default: :tests
+task :default => :tests
