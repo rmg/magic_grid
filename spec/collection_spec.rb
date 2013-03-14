@@ -153,7 +153,7 @@ describe MagicGrid::Collection do
     context "when no pagination is provided" do
       # TODO replace this when rspec-mocks add 'hide_const'
       # before :each do
-      #   if Module.const_defined?(:Kaminari)
+      #   if defined?(Kaminari)
       #     @kaminari = Module.const_get(:Kaminari)
       #     Object.send(:remove_const, :Kaminari)
       #   end

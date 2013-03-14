@@ -28,6 +28,11 @@ module MagicGrid
       @post_filter_callbacks = []
       @paginations = []
       @searchable_columns = []
+      if defined? Kaminari
+        @@kaminari_class = Kaminari
+      else
+        @@kaminari_class =  nil
+      end
     end
 
     delegate :quoted_table_name, :map, :count, :to => :collection
@@ -269,8 +274,4 @@ module MagicGrid
       end
     end
   end
-  if Module.const_defined?(:Kaminari)
-    Collection.kaminari_class = Kaminari
-  end
-
 end

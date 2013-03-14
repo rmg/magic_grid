@@ -1,4 +1,4 @@
-if Module.const_defined? :WillPaginate
+if defined? WillPaginate
   require 'will_paginate/array'
 end
 
