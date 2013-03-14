@@ -114,4 +114,31 @@ describe MagicGrid::HtmlGrid do
       subject.order_class(2).should == 'sort-none'
     end
   end
+
+  describe "#magic_pager" do
+    let(:definition) { MagicGrid::Definition.new(column_list) }
+    let(:collection) { definition.magic_collection }
+    it "should use will_paginate if available" do
+      view = double.tap { |v|
+        v.should_receive(:will_paginate).
+          with(collection.collection, {}).
+          and_return("WillPaginate was used!")
+      }
+      grid = MagicGrid::HtmlGrid.new(definition, view)
+      grid.magic_pager(collection).should == "WillPaginate was used!"
+    end
+    it "should use paginate if available and will_paginate is not" do
+      view = double.tap { |v|
+        v.should_receive(:paginate).
+          with(collection.collection, {}).
+          and_return("#paginate was used!")
+      }
+      grid = MagicGrid::HtmlGrid.new(definition, view)
+      grid.magic_pager(collection).should == "#paginate was used!"
+    end
+    it "should leave a comment for the dev if paginate and will_paginate are both missing" do
+      grid = MagicGrid::HtmlGrid.new(definition, double)
+      grid.magic_pager(collection).should =~ /INSTALL WillPaginate or Kaminari/
+    end
+  end
 end
