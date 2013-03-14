@@ -138,11 +138,11 @@ describe MagicGrid::Collection do
             kaminari = double.tap do |k|
               k.should_receive(:paginate_array).with(array) { kaminaried_array }
             end
-            old_kaminari = MagicGrid::Collection.kaminari_class
-            MagicGrid::Collection.kaminari_class = kaminari
             collection = MagicGrid::Collection.new(array, nil)
             collection.per_page = 1
             collection.apply_pagination 1
+            old_kaminari = MagicGrid::Collection.kaminari_class
+            MagicGrid::Collection.kaminari_class = kaminari
             collection.perform_pagination(array).should == kaminaried_array
             MagicGrid::Collection.kaminari_class = old_kaminari
           end
