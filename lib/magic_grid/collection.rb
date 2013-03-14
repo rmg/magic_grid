@@ -187,7 +187,7 @@ module MagicGrid
       @original_count = self.count @collection
       @per_page = n
       if @per_page
-        @total_pages = @original_count / @per_page
+        @total_pages = calculate_total_pages(@per_page, @original_count)
       else
         @total_pages = 1
       end
@@ -262,16 +262,26 @@ module MagicGrid
       @reduced_collection ||= apply_all_operations(@collection)
     end
 
-    private
+    def calculate_total_pages(per_page, total_entries)
+      pages = total_entries / per_page
+      pages += 1 if total_entries % per_page > 0
+      if pages < 1
+        1
+      else
+        pages
+      end
+    end
 
     def bound_current_page(page, per_page, total_entries)
-      pages = total_entries / per_page
-      pages = 1 if pages == 0
-      if page > pages
+      pages = calculate_total_pages(per_page, total_entries)
+      if page < 1
+        1
+      elsif page > pages
         pages
       else
         page
       end
     end
+
   end
 end

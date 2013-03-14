@@ -95,6 +95,35 @@ describe MagicGrid::Collection do
     end
   end
 
+  describe "pagination" do
+    context "#calculate_total_pages" do
+      let(:array) { Array.new(10) { 1 }  }
+      subject { MagicGrid::Collection.new(array, nil) }
+      it "should round correctly" do
+        subject.calculate_total_pages(2, 10).should == 5
+        subject.calculate_total_pages(3, 10).should == 4
+        subject.calculate_total_pages(4, 10).should == 3
+      end
+    end
+
+    context "#bound_current_page" do
+      let(:array) { Array.new(10) { 1 }  }
+      subject { MagicGrid::Collection.new(array, nil) }
+
+      it "should round page 0 correctly" do
+        subject.bound_current_page(0, 2, 10).should == 1
+        subject.bound_current_page(0, 3, 10).should == 1
+        subject.bound_current_page(0, 4, 10).should == 1
+      end
+
+      it "should round page > pages correctly" do
+        subject.bound_current_page(10, 2, 10).should == 5
+        subject.bound_current_page(10, 3, 10).should == 4
+        subject.bound_current_page(10, 4, 10).should == 3
+      end
+    end
+  end
+
   describe "#perform_pagination" do
 
     context "page counts" do
