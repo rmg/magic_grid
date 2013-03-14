@@ -20,7 +20,7 @@ describe MagicGrid::HtmlGrid do
         callable = double.tap do |c|
           c.should_receive(:call).with( record ) { tracer }
         end
-        cols = [ {col: 'Col', to_s: callable} ]
+        cols = [ {:col => 'Col', :to_s => callable} ]
         grid = MagicGrid::HtmlGrid.new MagicGrid::Definition.new(cols), self
         grid.grid_row( record ).should include(tracer)
       end
@@ -29,7 +29,7 @@ describe MagicGrid::HtmlGrid do
         callable = double.tap do |c|
           c.should_receive(:call).with( record ) { tracer }
         end
-        cols = [ {col: callable, label: "Column"} ]
+        cols = [ {:col => callable, :label => "Column"} ]
         grid = MagicGrid::HtmlGrid.new MagicGrid::Definition.new(cols), self
         grid.grid_row( record ).should include(tracer)
       end
@@ -40,14 +40,14 @@ describe MagicGrid::HtmlGrid do
 
       it "should use :to_s as a method on record if it responds to it" do
         record.should_receive(:some_inconceivable_method_name) { tracer }
-        cols = [ {col: :some_col, to_s: :some_inconceivable_method_name} ]
+        cols = [ {:col => :some_col, :to_s => :some_inconceivable_method_name} ]
         grid = MagicGrid::HtmlGrid.new MagicGrid::Definition.new(cols), self
         grid.grid_row( record ).should include(tracer)
       end
 
       it "should use :col as a method on record if it responds to it" do
         record.should_receive(:some_inconceivable_method_name) { tracer }
-        cols = [ {col: :some_inconceivable_method_name} ]
+        cols = [ {:col => :some_inconceivable_method_name} ]
         grid = MagicGrid::HtmlGrid.new MagicGrid::Definition.new(cols), self
         grid.grid_row( record ).should include(tracer)
       end
@@ -63,13 +63,13 @@ describe MagicGrid::HtmlGrid do
     end
     it "should use :label if no :sql is given" do
       title = "A String"
-      cols = [{label: title}]
+      cols = [{:label => title}]
       grid = MagicGrid::HtmlGrid.new MagicGrid::Definition.new(cols), self
       grid.magic_column_headers.should include(title)
     end
     it "should make a sortable header if :sql is specified" do
       tracer = "A MAGIC BULL??"
-      col = {sql: 'some_col'}
+      col = {:sql => 'some_col'}
       cols = [col]
       grid = MagicGrid::HtmlGrid.new MagicGrid::Definition.new(cols), self
       # TODO: check parameters to sortable_header
@@ -80,7 +80,7 @@ describe MagicGrid::HtmlGrid do
   end
 
   describe "#searcher_input" do
-    searchable_opts = { needs_searcher: true }
+    searchable_opts = { :needs_searcher => true }
     it "renders a search field" do
       cols = [:some_col]
       grid = MagicGrid::HtmlGrid.new MagicGrid::Definition.new(cols, nil, nil, searchable_opts), self
@@ -89,10 +89,10 @@ describe MagicGrid::HtmlGrid do
     it "renders a search button if told to" do
       tracer = "ZOMG! A BUTTON!"
       cols = [:some_col]
-      opts = searchable_opts.merge(search_button: true,
-                                   searcher_button: tracer)
+      opts = searchable_opts.merge(:search_button => true,
+                                   :searcher_button => tracer)
       grid = MagicGrid::HtmlGrid.new MagicGrid::Definition.new(cols, nil, nil, opts), self
-      grid.searcher_input.should match_select("button", text: tracer)
+      grid.searcher_input.should match_select("button", :text => tracer)
     end
   end
 

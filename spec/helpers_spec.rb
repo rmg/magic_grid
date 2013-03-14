@@ -44,7 +44,7 @@ describe MagicGrid::Helpers do
             if_emtpy_string
           }
         end
-        grid = magic_grid empty_collection, column_list, if_empty: callback
+        grid = magic_grid empty_collection, column_list, :if_empty => callback
         grid.should include(if_emtpy_string)
       end
     end
@@ -54,8 +54,8 @@ describe MagicGrid::Helpers do
       it "should not indicate there is no data" do
         should_not match(/if-empty/)
       end
-      it { should  match_select("td", text: "1") }
-      it { should  match_select("td", text: "2") }
+      it { should  match_select("td", :text => "1") }
+      it { should  match_select("td", :text => "2") }
     end
 
     context "when given a block" do
@@ -114,12 +114,12 @@ describe MagicGrid::Helpers do
         grid.should match_select("tfoot>tr>td.magic-pager", 1)
       end
       it "should render a top and bottom pager when told" do
-        grid = magic_grid( large_collection, [:to_s], top_pager: true )
+        grid = magic_grid( large_collection, [:to_s], :top_pager => true )
         grid.should match_select("thead>tr>td.magic-pager", 1)
         grid.should match_select("tfoot>tr>td.magic-pager", 1)
       end
       it "should render only a top pager when told" do
-        grid = magic_grid( large_collection, [:to_s], top_pager: true, bottom_pager: false )
+        grid = magic_grid( large_collection, [:to_s], :top_pager => true, :bottom_pager => false )
         grid.should match_select("thead>tr>td.magic-pager", 1)
         grid.should match_select("tfoot>tr>td.magic-pager", 0)
       end
@@ -132,7 +132,7 @@ describe MagicGrid::Helpers do
         end
       }
       it "should only render one spinner" do
-        grid = magic_grid(searchabe_collection, column_list, searchable: [:some_col])
+        grid = magic_grid(searchabe_collection, column_list, :searchable => [:some_col])
         grid.should match_select("td.searcher", 1)
         grid.should match_select("td.magic-pager", 1)
         grid.should match_select(".magic_grid_spinner", 1)
@@ -146,7 +146,7 @@ describe MagicGrid::Helpers do
         end
       }
       it "should render a search bar when asked" do
-        grid = magic_grid(searchabe_collection, column_list, searchable: [:some_col])
+        grid = magic_grid(searchabe_collection, column_list, :searchable => [:some_col])
         grid.should match_select('input[type=search]')
       end
 
@@ -154,13 +154,13 @@ describe MagicGrid::Helpers do
         let(:search_param) { 'foobar' }
         let(:controller) {
           make_controller.tap { |c|
-            c.stub(:params) { {grid_id_q: search_param} }
+            c.stub(:params) { {:grid_id_q => search_param} }
           }
         }
         it "should search a searchable collection when there are search params" do
           collection = (1..1000).to_a
           collection.should_receive(:search).with(search_param) { collection }
-          grid = magic_grid(collection, column_list, id: "grid_id", searchable: [:some_col])
+          grid = magic_grid(collection, column_list, :id => "grid_id", :searchable => [:some_col])
           grid.should match_select('input[type=search]')
         end
 
@@ -172,9 +172,9 @@ describe MagicGrid::Helpers do
 
             collection = fake_active_record_collection(table_name)
             collection.should_receive(:where).
-                       with("#{search_sql} LIKE :search", {search: "%#{search_param}%"})
+                       with("#{search_sql} LIKE :search", {:search => "%#{search_param}%"})
 
-            grid = magic_grid(collection, column_list, id: "grid_id", searchable: [search_col])
+            grid = magic_grid(collection, column_list, :id => "grid_id", :searchable => [search_col])
           end
 
           it "should use custom sql from column for call to where when given" do
@@ -184,14 +184,14 @@ describe MagicGrid::Helpers do
 
             collection = fake_active_record_collection(table_name)
             collection.should_receive(:where).
-                       with("#{search_sql} LIKE :search", {search: "%#{search_param}%"})
+                       with("#{search_sql} LIKE :search", {:search => "%#{search_param}%"})
 
             magic_grid(collection,
                        [ :name,
                          :description,
-                         {col: search_col, sql: search_sql}
+                         {:col => search_col, :sql => search_sql}
                          ],
-                       id: "grid_id", searchable: [search_col])
+                       :id => "grid_id", :searchable => [search_col])
           end
 
           it "should use column number to look up search column" do
@@ -201,14 +201,14 @@ describe MagicGrid::Helpers do
 
             collection = fake_active_record_collection(table_name)
             collection.should_receive(:where).
-                       with("#{search_sql} LIKE :search", {search: "%#{search_param}%"})
+                       with("#{search_sql} LIKE :search", {:search => "%#{search_param}%"})
 
             magic_grid(collection,
                        [ :name,
                          :description,
-                         {col: search_col, sql: search_sql}
+                         {:col => search_col, :sql => search_sql}
                          ],
-                       id: "grid_id", searchable: [2])
+                       :id => "grid_id", :searchable => [2])
           end
 
           it "should use custom sql for call to where when given" do
@@ -219,14 +219,14 @@ describe MagicGrid::Helpers do
 
             collection = fake_active_record_collection(table_name)
             collection.should_receive(:where).
-                       with("#{search_sql} LIKE :search", {search: "%#{search_param}%"})
+                       with("#{search_sql} LIKE :search", {:search => "%#{search_param}%"})
 
             magic_grid(collection,
                        [ :name,
                          :description,
-                         {col: search_col, sql: search_sql}
+                         {:col => search_col, :sql => search_sql}
                          ],
-                       id: "grid_id", searchable: [custom_search_col])
+                       :id => "grid_id", :searchable => [custom_search_col])
           end
 
           it "should fail when given bad searchable columns" do
@@ -236,7 +236,7 @@ describe MagicGrid::Helpers do
             expect {
               magic_grid(collection,
                          [ :name, :description],
-                         id: "grid_id", searchable: [nil])
+                         :id => "grid_id", :searchable => [nil])
             }.to raise_error
           end
 
@@ -253,7 +253,7 @@ describe MagicGrid::Helpers do
             end
 
             expect {
-              magic_grid(collection, column_list, id: "grid_id", searchable: [search_col])
+              magic_grid(collection, column_list, :id => "grid_id", :searchable => [search_col])
             }.to_not raise_error
           end
         end

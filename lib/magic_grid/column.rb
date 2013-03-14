@@ -68,9 +68,9 @@ module MagicGrid
       @collection = collection
       @col = case c
               when Symbol
-                {col: c}
+                {:col => c}
               when String
-                {label: c}
+                {:label => c}
               else
                 c
               end

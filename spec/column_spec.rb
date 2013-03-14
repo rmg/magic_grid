@@ -45,7 +45,7 @@ describe MagicGrid::Column do
         data = [1,2,3].tap do |c|
           c.stub(:search) { c }
         end
-        MagicGrid::Collection.new(data, search_method: :search)
+        MagicGrid::Collection.new(data, :search_method => :search)
       }
       # I actually consider this a bug, since it is totally inconsistent, but
       # it's how things are currently implemented.

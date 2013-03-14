@@ -77,14 +77,15 @@ module FakeCollections
 
   def fake_active_record_collection(table_name = 'some_table',
                                     columns = [:name, :description])
+    columns = columns.map{|c| {:name => c} }
     (1..1000).to_a.tap do |c|
-      c.stub(connection: fake_connection)
-      c.stub(quoted_table_name: table_name)
-      c.stub(table_name: table_name)
-      c.stub(to_sql: "SELECT * FROM MONKEYS")
+      c.stub(:connection => fake_connection)
+      c.stub(:quoted_table_name => table_name)
+      c.stub(:table_name => table_name)
+      c.stub(:to_sql => "SELECT * FROM MONKEYS")
       c.stub(:table) {
               double.tap do |t|
-                t.stub(:columns) { columns.map{|c| {name: c} } }
+                t.stub(:columns => columns)
               end
             }
       c.stub(:where) { c }

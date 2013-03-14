@@ -5,15 +5,15 @@ module MagicGrid
   class Collection
 
     DEFAULTS = {
-      per_page: 30,
-      searchable: [],
-      search_method: :search,
-      listener_handler: nil,
-      default_col: 0,
-      default_order: :asc,
-      post_filter: false,
-      collection_post_filter: true,
-      count: nil,
+      :per_page => 30,
+      :searchable => [],
+      :search_method => :search,
+      :listener_handler => nil,
+      :default_col => 0,
+      :default_order => :asc,
+      :post_filter => false,
+      :collection_post_filter => true,
+      :count => nil,
     }
 
     def initialize(collection, opts = {})
@@ -30,7 +30,7 @@ module MagicGrid
       @searchable_columns = []
     end
 
-    delegate :quoted_table_name, :map, :count, to: :collection
+    delegate :quoted_table_name, :map, :count, :to => :collection
 
     attr_accessor :searchable_columns
     attr_reader :current_page, :original_count, :total_pages, :per_page, :searches
@@ -85,7 +85,7 @@ module MagicGrid
         begin
           search_cols = searchable_columns.map {|c| c.custom_sql || c.name }
           clauses = search_cols.map {|c| c << " LIKE :search" }.join(" OR ")
-          result = collection.where(clauses, {search: "%#{q}%"})
+          result = collection.where(clauses, {:search => "%#{q}%"})
         rescue
           MagicGrid.logger.debug "Given collection doesn't respond to :where well"
         end
@@ -213,9 +213,9 @@ module MagicGrid
                                          total_entries)
 
       if collection.respond_to? :paginate
-        collection.paginate(page: @current_page,
-                            per_page: @per_page,
-                            total_entries: total_entries)
+        collection.paginate(:page => @current_page,
+                            :per_page => @per_page,
+                            :total_entries => total_entries)
       elsif collection.respond_to? :page
         collection.page(@current_page).per(@per_page)
       elsif collection.is_a?(Array) and Module.const_defined?(:Kaminari)

@@ -24,7 +24,7 @@ describe MagicGrid::Definition do
   end
 
   let (:empty_collection) { [] }
-  let (:large_collection) { 200.times.map { |i| {id: i, name: "Name", description: "Describe me!"} } }
+  let (:large_collection) { 200.times.map { |i| {:id => i, :name => "Name", :description => "Describe me!"} } }
   let (:column_list) { [:name, :description] }
   let (:column_hash) { {} }
 
@@ -52,13 +52,13 @@ describe MagicGrid::Definition do
       }
     it "doesn't barf when listeners are given for a dumb collection" do
       expect {
-        MagicGrid::Definition.new([:a], [1], controller, listeners: {a: :a})
+        MagicGrid::Definition.new([:a], [1], controller, :listeners => {:a => :a})
       }.not_to raise_error
     end
 
     it "doesn't barf when search columns are given for a dumb collection" do
       expect {
-        MagicGrid::Definition.new([:a], [1], controller, searchable: [:a])
+        MagicGrid::Definition.new([:a], [1], controller, :searchable => [:a])
       }.not_to raise_error
     end
   end
@@ -71,7 +71,7 @@ describe MagicGrid::Definition do
     it_behaves_like "a basic grid"
 
     context "when pagination is disabled" do
-      subject { MagicGrid::Definition.new(column_list, empty_collection, nil, per_page: false) }
+      subject { MagicGrid::Definition.new(column_list, empty_collection, nil, :per_page => false) }
       its(:current_page) { should == 1 }
       its(:collection) { should be_empty }
     end
@@ -80,7 +80,7 @@ describe MagicGrid::Definition do
   context "when given a large collection and default options" do
     let(:controller) {
       controller = double()
-      controller.stub(:params) { {page: 2} }
+      controller.stub(:params) { {:page => 2} }
       controller
     }
     subject { MagicGrid::Definition.new(column_list, large_collection, controller) }
@@ -101,10 +101,10 @@ describe MagicGrid::Definition do
   context "when given a large collection and some options" do
     let(:controller) {
       controller = double()
-      controller.stub(:params) { HashWithIndifferentAccess.new({grid_page: 2}) }
+      controller.stub(:params) { HashWithIndifferentAccess.new({:grid_page => 2}) }
       controller
     }
-    subject { MagicGrid::Definition.new(column_list, large_collection, controller, id: :grid, per_page: 17) }
+    subject { MagicGrid::Definition.new(column_list, large_collection, controller, :id => :grid, :per_page => 17) }
     its(:collection) { should_not == empty_collection }
     it "should give a collection with a page worth of items" do
       subject.magic_collection.per_page.should < large_collection.count
@@ -124,13 +124,13 @@ describe MagicGrid::Definition do
     data = [1,56,7,21,1]
     let(:controller) {
       controller = double()
-      controller.stub(:params) { HashWithIndifferentAccess.new({grid_order: 1}) }
+      controller.stub(:params) { HashWithIndifferentAccess.new({:grid_order => 1}) }
       controller
     }
     let(:collection) { data }
     it "should sort collection using #order" do
       collection.should_receive(:order).with("foo DESC") { data.sort.reverse }
-      grid = MagicGrid::Definition.new([{sql: "foo"}], collection, controller, id: :grid)
+      grid = MagicGrid::Definition.new([{:sql => "foo"}], collection, controller, :id => :grid)
 
       grid.collection.should == data.sort.reverse
     end
@@ -139,14 +139,14 @@ describe MagicGrid::Definition do
 
   context "filtering with #where" do
     it "should use listeners with #where when asked to" do
-      filter_param = HashWithIndifferentAccess.new({f1: 1})
-      controller = double(params: filter_param)
+      filter_param = HashWithIndifferentAccess.new({:f1 => 1})
+      controller = double(:params => filter_param)
       collection = [1,56,7,21,1]
       collection.should_receive(:where).with(filter_param).and_return([1, 7, 1])
-      grid = MagicGrid::Definition.new([{sql: "foo"}],
+      grid = MagicGrid::Definition.new([{:sql => "foo"}],
                                           collection,
                                           controller,
-                                          id: :grid, listeners: {f1: :f1})
+                                          :id => :grid, :listeners => {:f1 => :f1})
       grid.collection.should == [1, 7, 1]
     end
   end
@@ -158,17 +158,17 @@ describe MagicGrid::Definition do
     end
     let(:controller) {
       controller = double.tap do |c|
-        c.stub(:params) { HashWithIndifferentAccess.new({column_name: 1}) }
+        c.stub(:params) { HashWithIndifferentAccess.new({:column_name => 1}) }
       end
     }
     let(:collection) { data }
 
     it "should use a listener_hanlder callback when given one" do
       options = {
-        id: :grid,
-        listener_handler: filter
+        :id => :grid,
+        :listener_handler => filter
       }
-      grid = MagicGrid::Definition.new([{sql: "foo"}],
+      grid = MagicGrid::Definition.new([{:sql => "foo"}],
                                         collection,
                                         controller,
                                         options)
@@ -177,11 +177,11 @@ describe MagicGrid::Definition do
 
     it "should use listeners as where filters when given and set" do
       options = {
-        id: :grid,
-        listeners: { input_id: :column_name }
+        :id => :grid,
+        :listeners => { :input_id => :column_name }
       }
       collection.should_receive(:where).with("column_name" => 1).and_return([1,2,3])
-      grid = MagicGrid::Definition.new([{sql: "foo"}],
+      grid = MagicGrid::Definition.new([{:sql => "foo"}],
                                         collection,
                                         controller,
                                         options)
@@ -190,12 +190,12 @@ describe MagicGrid::Definition do
 
     it "should ignore listener params when a listener_hanlder callback is given" do
       options = {
-        id: :grid,
-        listener_handler: filter,
-        listeners: { input_id: :column_name }
+        :id => :grid,
+        :listener_handler => filter,
+        :listeners => { :input_id => :column_name }
       }
       collection.should_not_receive(:where)
-      grid = MagicGrid::Definition.new([{sql: "foo"}],
+      grid = MagicGrid::Definition.new([{:sql => "foo"}],
                                         collection,
                                         controller,
                                         options)
@@ -213,16 +213,16 @@ describe MagicGrid::Definition do
     end
     let(:controller) {
       controller = double.tap do |c|
-        c.stub(:params) { HashWithIndifferentAccess.new({f1: 1}) }
+        c.stub(:params) { HashWithIndifferentAccess.new({:f1 => 1}) }
       end
     }
     let(:collection) {
       data
     }
-    subject { MagicGrid::Definition.new([{sql: "foo"}],
+    subject { MagicGrid::Definition.new([{:sql => "foo"}],
                                         collection,
                                         controller,
-                                        id: :grid, post_filter: filter) }
+                                        :id => :grid, :post_filter => filter) }
     its(:collection) { should == [56, 21] }
   end
 
@@ -230,7 +230,7 @@ describe MagicGrid::Definition do
     data = [1,56,7,21,1]
     let(:controller) {
       controller = double.tap do |c|
-        c.stub(:params) { HashWithIndifferentAccess.new({f1: 1}) }
+        c.stub(:params) { HashWithIndifferentAccess.new({:f1 => 1}) }
       end
     }
     let(:collection) {
@@ -241,20 +241,20 @@ describe MagicGrid::Definition do
       end
     }
     it "should use the collection's post_filter method" do
-      grid = MagicGrid::Definition.new([{sql: "foo"}],
+      grid = MagicGrid::Definition.new([{:sql => "foo"}],
                                        collection,
                                        controller,
-                                       id: :grid, collection_post_filter: true)
+                                       :id => :grid, :collection_post_filter => true)
 
       data.should_receive(:post_filter).with().and_return([1,2,3,4])
       grid.collection.should == [1,2,3,4]
       grid.collection.should_not be_empty
     end
     it "can be disabled via the collection_post_filter option" do
-      grid = MagicGrid::Definition.new([{sql: "foo"}],
+      grid = MagicGrid::Definition.new([{:sql => "foo"}],
                                        collection,
                                        controller,
-                                       id: :grid, collection_post_filter: false)
+                                       :id => :grid, :collection_post_filter => false)
 
       data.should_not_receive(:post_filter)
       grid.collection.should == data
