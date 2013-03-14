@@ -2,7 +2,7 @@ module MagicGrid
   class Column
 
     def self.columns_for_collection(collection, columns, searchables)
-      columns.map.each_with_index { |c, i|
+      columns.each_with_index.map { |c, i|
         MagicGrid::Column.new(collection, c, i)
       }.tap do |cols|
         if searchables == false
