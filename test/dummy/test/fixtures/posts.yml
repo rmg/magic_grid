@@ -16,7 +16,7 @@ two:
 <% story = 'It was a dark and stormy night and the Captain said, "Tell me a story, son". So I began. ' * 100 %>
 <% 500.times do |i| %>
 post_<%= i %>:
-  title: <%= title.split.rotate(i).join " " %>
+  title: <%= "#{title}, part #{i}" %>
   body: <%= story %>
   published: <%= i.even? %>
   user: user_<%= i % 100 %>
