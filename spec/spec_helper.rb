@@ -19,16 +19,20 @@ begin
   require 'will_paginate/array'
   require 'will_paginate/view_helpers/action_view'
   puts "Testing with WillPaginate"
+  $will_paginate = true
 rescue LoadError
   puts "skipping WillPaginate"
+  $will_paginate = false
 end
 
 begin
   require 'kaminari'
   require 'kaminari/models/array_extension'
   puts "Testing with Kaminari"
+  $kaminari = true
 rescue LoadError
   puts "skipping Kaminari"
+  $kaminari = false
 end
 
 class NullObject
@@ -100,8 +104,8 @@ RSpec.configure do |config|
   config.filter_run :focus
 
   config.include ActionView::Helpers
-  config.include WillPaginate::ActionView if Module.const_defined? :WillPaginate
-  config.include Kaminari::ActionViewExtension if Module.const_defined? :Kaminari
+  config.include WillPaginate::ActionView if $will_paginate
+  config.include Kaminari::ActionViewExtension if $kaminari
   config.include ActionFaker
   config.include FakeCollections
 

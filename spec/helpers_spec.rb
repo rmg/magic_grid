@@ -100,9 +100,9 @@ describe MagicGrid::Helpers do
 
       it "should render an actual pager" do
         grid = magic_grid(large_collection, [:to_s])
-        if Module.const_defined? :WillPaginate
+        if $will_paginate
           grid.should match_select("tfoot>tr>td.magic-pager>div.pagination", 1)
-        elsif Module.const_defined? :Kaminari
+        elsif $kaminari
           grid.should match_select("tfoot>tr>td.magic-pager>nav.pagination", 1)
         else
           grid.should match_select("tfoot>tr>td.magic-pager", /INSTALL/)

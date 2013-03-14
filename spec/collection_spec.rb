@@ -113,7 +113,7 @@ describe MagicGrid::Collection do
       end
     end
 
-    unless Module.const_defined? :WillPaginate
+    unless $will_paginate
       context "when #page (possibly from Kaminari) is available" do
         it "should call paginate helper when it is detected" do
           array = [1].tap do |a|
@@ -127,23 +127,25 @@ describe MagicGrid::Collection do
         end
       end
 
-      context "when given an Array and Kaminari is available" do
-        it "should call paginate helper when it is detected" do
-          array = Array.new(10) { 1 }
-          kaminaried_array = [1].tap do |ka|
-            ka.should_receive(:per).with(1) { ka }
-            ka.should_receive(:page).with(1) { ka }
+      unless $kaminari
+        context "when given an Array and Kaminari is available" do
+          it "should call paginate helper when it is detected" do
+            array = Array.new(10) { 1 }
+            kaminaried_array = [1].tap do |ka|
+              ka.should_receive(:per).with(1) { ka }
+              ka.should_receive(:page).with(1) { ka }
+            end
+            kaminari = double.tap do |k|
+              k.should_receive(:paginate_array).with(array) { kaminaried_array }
+            end
+            old_kaminari = MagicGrid::Collection.kaminari_class
+            MagicGrid::Collection.kaminari_class = kaminari
+            collection = MagicGrid::Collection.new(array, nil)
+            collection.per_page = 1
+            collection.apply_pagination 1
+            collection.perform_pagination(array).should == kaminaried_array
+            MagicGrid::Collection.kaminari_class = old_kaminari
           end
-          kaminari = double.tap do |k|
-            k.should_receive(:paginate_array).with(array) { kaminaried_array }
-          end
-          old_kaminari = MagicGrid::Collection.kaminari_class
-          MagicGrid::Collection.kaminari_class = kaminari
-          collection = MagicGrid::Collection.new(array, nil)
-          collection.per_page = 1
-          collection.apply_pagination 1
-          collection.perform_pagination(array).should == kaminaried_array
-          MagicGrid::Collection.kaminari_class = old_kaminari
         end
       end
     end
