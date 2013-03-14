@@ -95,11 +95,54 @@ describe MagicGrid::Collection do
     end
   end
 
+  describe "#perform_pagination" do
+
+    context "page counts" do
+      let(:array) { Array.new(100) { 1 }  }
+      subject { MagicGrid::Collection.new(array, nil) }
+
+      it "should correctly calculate uneven page splits" do
+        subject.per_page = 33
+        subject.total_pages.should == 4
+      end
+
+      it "should correctly calculate even page splits" do
+        subject.per_page = 20
+        subject.total_pages.should == 5
+      end
+    end
+
+    context "page bounds checks" do
+      let(:array) { (1..10).to_a }
+      subject { MagicGrid::Collection.new(array, nil) }
+
+      it "should round down to the last page if a later page is requested" do
+        subject.per_page = 3
+        subject.total_pages.should == 4
+        subject.apply_pagination(5).perform_pagination(array)
+        subject.current_page.should == 4
+      end
+
+      context "providing the correct data" do
+        before(:each) { subject.per_page = 3 }
+        it "handles pages beyond lower bound" do
+          subject.apply_pagination(0).perform_pagination(array).should == [1,2,3]
+        end
+        it "handles pages in bounds" do
+          subject.apply_pagination(1).perform_pagination(array).should == [1,2,3]
+          subject.apply_pagination(2).perform_pagination(array).should == [4,5,6]
+          subject.apply_pagination(3).perform_pagination(array).should == [7,8,9]
+          subject.apply_pagination(4).perform_pagination(array).should == [10]
+        end
+        it "handles pages above bounds" do
+          subject.apply_pagination(5).perform_pagination(array).should == [10]
+        end
+      end
+    end
+
   #TODO these tests will only really work properly once we have the ability
   #     to undefine constants, which looks like it should be coming in a future
   #     version of RSpec (as in post 2.11.1)
-
-  describe "#perform_pagination" do
 
     context "when #paginate (aka WillPaginate) is available" do
       it "should call paginate helper when it is detected" do
