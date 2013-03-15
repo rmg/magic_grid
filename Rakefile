@@ -34,4 +34,4 @@ end
 desc "Run TestUnit and RSpec tests"
 task :tests => [:spec, :test]
 
-task :default => :tests
+task :default => :spec
