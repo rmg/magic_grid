@@ -27,6 +27,5 @@ Gem::Specification.new do |s|
   s.add_dependency "jquery-rails" , ">= 1.0.17"
 
   s.add_development_dependency "rake", ">= 0.9.2"
-  s.add_development_dependency "tarantula", "~> 0.4.0"
   s.add_development_dependency "rspec", "~> 2.13.0"
 end

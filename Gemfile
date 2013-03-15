@@ -20,6 +20,7 @@ unless ENV['TRAVIS']
   gem 'yard'
   gem 'redcarpet'
   gem 'simplecov', :require => false
+  gem "tarantula", "~> 0.4.0"
 end
 
 # jquery-rails is used by the dummy application
