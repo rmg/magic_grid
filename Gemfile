@@ -7,11 +7,11 @@ gemspec
 
 #s.add_development_dependency "sqlite3"
 platforms :ruby do
-  gem 'sqlite3'
+#  gem 'sqlite3'
 end
 platforms :jruby do
   gem 'jruby-openssl'
-  gem 'activerecord-jdbcsqlite3-adapter'
+#  gem 'activerecord-jdbcsqlite3-adapter'
 end
 
 #  s.add_development_dependency "yard"
