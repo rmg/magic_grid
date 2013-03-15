@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.files = Dir["lib/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
   s.test_files = Dir["{spec,test}/**/*"] - Dir["test/dummy/tmp/**/*", "test/dummy/db/*.sqlite3", "test/dummy/log/*.log"]
 
-  s.add_dependency "rails", ">= 3.1"
+  s.add_dependency "railties", ">= 3.1"
   s.add_dependency "jquery-rails" , ">= 1.0.17"
 
   s.add_development_dependency "rake", ">= 0.9.2"

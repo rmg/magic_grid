@@ -21,10 +21,10 @@ unless ENV['TRAVIS']
   gem 'redcarpet'
   gem 'simplecov', :require => false
   gem "tarantula", "~> 0.4.0"
-end
 
-# jquery-rails is used by the dummy application
-gem "jquery-rails"
+  # jquery-rails is used by the dummy application
+  gem "jquery-rails"
+end
 
 #gem "will_paginate", "~> 3.0.0"
 #gem "kaminari", "> 0.13"
