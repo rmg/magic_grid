@@ -141,4 +141,17 @@ describe MagicGrid::HtmlGrid do
       grid.magic_pager(collection).should =~ /INSTALL WillPaginate or Kaminari/
     end
   end
+
+  describe '#sortable_header' do
+    let(:definition) { MagicGrid::Definition.new(column_list) }
+    let(:grid) { MagicGrid::HtmlGrid.new(definition, self) }
+    it "should create an appropriate <th> for the first (default sort) column" do
+      output = grid.sortable_header(definition.columns.first)
+      output.should match_select('th.sort-current>a>span.ui-icon-triangle-1-n')
+    end
+    it "should create an appropriate <th> for a currently unsorted column" do
+      output = grid.sortable_header(definition.columns.second)
+      output.should match_select('th>a>span.ui-icon-carat-2-n-s')
+    end
+  end
 end
