@@ -75,7 +75,7 @@ module MagicGrid
         @current_sort_col = @options[:default_col]
       end
       @current_order = Order.from_param(param(:order, @default_order))
-      @collection.apply_sort(@columns[@current_sort_col], order_sql(@current_order))
+      @collection.apply_sort(@columns[@current_sort_col], @current_order.to_sql)
 
       filter_keys = @options[:listeners].values
       filters = @params.slice(*filter_keys).reject {|k,v| v.to_s.empty? }
@@ -127,10 +127,6 @@ module MagicGrid
 
     def current_page
       [param(:page, 1).to_i, 1].max
-    end
-
-    def order_sql(something)
-      Order.from_param(something).reverse.to_sql
     end
   end
 end
