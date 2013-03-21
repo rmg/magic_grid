@@ -1,6 +1,7 @@
 require 'magic_grid/logger'
 require 'magic_grid/collection'
 require 'magic_grid/column'
+require 'magic_grid/order'
 require 'active_support/core_ext'
 
 module MagicGrid
@@ -129,18 +130,11 @@ module MagicGrid
     end
 
     def order(something)
-      case something
-      when 1, "1", :desc, :DESC, "desc", "DESC"
-        1
-      #when 0, "0", :asc, :ASC, "asc", "ASC"
-      #  0
-      else
-        0
-      end
+      Order.from_param(something)
     end
 
     def order_sql(something)
-      ["ASC", "DESC"][order(something)]
+      Order.from_param(something).reverse.to_sql
     end
   end
 end

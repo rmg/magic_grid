@@ -1,4 +1,5 @@
 require 'magic_grid/definition'
+require 'magic_grid/order'
 
 module MagicGrid
   class HtmlGrid
@@ -154,45 +155,21 @@ module MagicGrid
       end
     end
 
-    def unordered
-      -1
-    end
-
-    def reverse_order(order)
-      order.to_i == 0 ? 1 : 0
-    end
-
-    def order_icon(order = -1)
-      @view.content_tag 'span', '', :class => "ui-icon #{order_icon_class(order)}"
-    end
-
-    def order_icon_class(order = -1)
-      case order.to_i
-      when 0 then 'ui-icon-triangle-1-n'
-      when 1 then 'ui-icon-triangle-1-s'
-      else 'ui-icon-carat-2-n-s'
-      end
-    end
-
-    def order_class(order = -1)
-      case order.to_i
-      when 0 then 'sort-asc'
-      when 1 then 'sort-desc'
-      else 'sort-none'
-      end
+    def order_icon(order = Order::Unordered)
+      @view.content_tag 'span', '', :class => "ui-icon #{order.icon_class}"
     end
 
     def column_link_params(col)
       id = col.id
       my_params = @grid.base_params.merge(@grid.param_key(:col) => id)
-      default_sort_order = @grid.order(@grid.default_order)
+      default_sort_order = Order.from_param(@grid.default_order)
       params = HashWithIndifferentAccess.new(my_params)
       if id.to_s == @grid.current_sort_col.to_s
-        params[@grid.param_key(:order)] = reverse_order(@grid.current_order)
+        params[@grid.param_key(:order)] = @grid.current_order.reverse.to_param
       else
         params.delete @grid.param_key(:order)
       end
-      if params[@grid.param_key(:order)].to_i == default_sort_order.to_i
+      if Order.from_param(params[@grid.param_key(:order)]) == default_sort_order
         params.delete(@grid.param_key(:order))
       end
       params
@@ -205,9 +182,9 @@ module MagicGrid
       params = column_link_params(col)
       if id.to_s == @grid.current_sort_col.to_s
         order = @grid.current_order
-        classes << "sort-current" << order_class(order)
+        classes << "sort-current" << order.css_class
       else
-        order = unordered
+        order = Order::Unordered
       end
       @view.content_tag 'th', :class => classes.join(' ') do
         @view.link_to params, :remote => @grid.options[:remote] do

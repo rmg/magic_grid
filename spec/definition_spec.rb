@@ -11,14 +11,14 @@ describe MagicGrid::Definition do
     descendings = [1, "1", :desc, :DESC, "desc", "DESC"]
     descendings.each do |down|
       it "should normalize #{down} to 1" do
-        expect(subject.order(down)).to eq(1)
+        expect(subject.order(down)).to eq(MagicGrid::Order::Descending)
       end
     end
 
     ascendings = [0, "0", :asc, :ASC, "asc", "ASC"]
     ascendings.each do |up|
       it "should normalize #{up} to 0" do
-        expect(subject.order(up)).to eq(0)
+        expect(subject.order(up)).to eq(MagicGrid::Order::Ascending)
       end
     end
   end

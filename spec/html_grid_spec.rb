@@ -98,20 +98,11 @@ describe MagicGrid::HtmlGrid do
 
   describe "column sorting helpers" do
     subject { MagicGrid::HtmlGrid.new nil, self }
-    it "#reverse_order" do
-      subject.reverse_order(0).should == 1
-      subject.reverse_order(1).should == 0
-      subject.reverse_order(2).should == 0
-    end
     it "#order_icon" do
-      subject.order_icon(0).should match_select('span.ui-icon-triangle-1-n')
-      subject.order_icon(1).should match_select('span.ui-icon-triangle-1-s')
-      subject.order_icon(2).should match_select('span.ui-icon-carat-2-n-s')
-    end
-    it "#order_class" do
-      subject.order_class(0).should == 'sort-asc'
-      subject.order_class(1).should == 'sort-desc'
-      subject.order_class(2).should == 'sort-none'
+      order = double.tap do |fake|
+        fake.should_receive(:icon_class).and_return("CSS-IS-AWESOME")
+      end
+      subject.order_icon(order).should match_select('span.CSS-IS-AWESOME')
     end
   end
 
