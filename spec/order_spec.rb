@@ -14,8 +14,8 @@ describe MagicGrid::Order do
   end
   describe '#icon_class' do
     it { MagicGrid::Order::Unordered.icon_class.should == 'ui-icon-carat-2-n-s' }
-    it { MagicGrid::Order::Ascending.icon_class.should == 'ui-icon-triangle-1-n' }
-    it { MagicGrid::Order::Descending.icon_class.should == 'ui-icon-triangle-1-s' }
+    it { MagicGrid::Order::Ascending.icon_class.should == 'ui-icon-triangle-1-s' }
+    it { MagicGrid::Order::Descending.icon_class.should == 'ui-icon-triangle-1-n' }
   end
   describe '#to_sql' do
     it { MagicGrid::Order::Unordered.to_sql.should == 'ASC' }

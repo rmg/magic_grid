@@ -134,7 +134,7 @@ describe MagicGrid::HtmlGrid do
   end
 
   describe '#sortable_header' do
-    let(:definition) { MagicGrid::Definition.new(column_list) }
+    let(:definition) { MagicGrid::Definition.new(column_list, nil, nil, :default_order => :desc ) }
     let(:grid) { MagicGrid::HtmlGrid.new(definition, self) }
     it "should create an appropriate <th> for the first (default sort) column" do
       output = grid.sortable_header(definition.columns.first)

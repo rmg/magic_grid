@@ -74,7 +74,7 @@ module MagicGrid
       unless (0...@columns.count).cover? @current_sort_col
         @current_sort_col = @options[:default_col]
       end
-      @current_order = Order.from_param(param(:order, @default_order))
+      @current_order = Order.from_param(param(:order, @default_order.to_param))
       @collection.apply_sort(@columns[@current_sort_col], @current_order.to_sql)
 
       filter_keys = @options[:listeners].values

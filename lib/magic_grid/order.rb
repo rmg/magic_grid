@@ -10,16 +10,22 @@ module MagicGrid
       def self.to_sql
         'ASC'
       end
+      def self.to_param
+        -1
+      end
     end
     class Ascending < Unordered
       def self.css_class
         'sort-asc'
       end
       def self.icon_class
-        'ui-icon-triangle-1-n'
+        'ui-icon-triangle-1-s'
       end
       def self.to_sql
         'ASC'
+      end
+      def self.to_param
+        0
       end
     end
     class Descending < Unordered
@@ -27,10 +33,13 @@ module MagicGrid
         'sort-desc'
       end
       def self.icon_class
-        'ui-icon-triangle-1-s'
+        'ui-icon-triangle-1-n'
       end
       def self.to_sql
         'DESC'
+      end
+      def self.to_param
+        1
       end
     end
     def Ascending.reverse
