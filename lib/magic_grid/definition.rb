@@ -30,6 +30,7 @@ module MagicGrid
       :collapse_empty_header => false,
       :collapse_empty_footer => false,
       :default_ajax_handler => true,
+      :default_order => :asc,
       :search_button => false,
       :searcher_size => nil,
     }

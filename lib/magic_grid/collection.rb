@@ -10,7 +10,6 @@ module MagicGrid
       :search_method => :search,
       :listener_handler => nil,
       :default_col => 0,
-      :default_order => :asc,
       :post_filter => false,
       :collection_post_filter => true,
       :count => nil,
