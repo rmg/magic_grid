@@ -61,7 +61,7 @@ module MagicGrid
 
     def initialize(cols_or_opts, collection = nil, controller = nil, opts = {})
       @options, @columns = *self.class.normalize_columns_options(cols_or_opts, opts)
-      @default_order = @options[:default_order]
+      @default_order = Order.from_param(@options[:default_order])
       @params = controller && controller.params || {}
 
       @collection = Collection.create_or_reuse collection, @options
@@ -74,7 +74,7 @@ module MagicGrid
       unless (0...@columns.count).cover? @current_sort_col
         @current_sort_col = @options[:default_col]
       end
-      @current_order = order(param(:order, @default_order))
+      @current_order = Order.from_param(param(:order, @default_order))
       @collection.apply_sort(@columns[@current_sort_col], order_sql(@current_order))
 
       filter_keys = @options[:listeners].values
@@ -127,10 +127,6 @@ module MagicGrid
 
     def current_page
       [param(:page, 1).to_i, 1].max
-    end
-
-    def order(something)
-      Order.from_param(something)
     end
 
     def order_sql(something)
