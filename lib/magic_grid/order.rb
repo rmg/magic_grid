@@ -1,6 +1,6 @@
 module MagicGrid
   module Order
-    class Unordered < BasicObject
+    class Unordered
       def self.css_class
         'sort-none'
       end
