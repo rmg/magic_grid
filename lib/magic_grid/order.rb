@@ -11,7 +11,7 @@ module MagicGrid
         'ASC'
       end
       def self.to_param
-        -1
+        0
       end
     end
     class Ascending < Unordered
@@ -20,12 +20,6 @@ module MagicGrid
       end
       def self.icon_class
         'ui-icon-triangle-1-s'
-      end
-      def self.to_sql
-        'ASC'
-      end
-      def self.to_param
-        0
       end
     end
     class Descending < Unordered
