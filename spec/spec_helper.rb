@@ -43,7 +43,7 @@ end
 module ActionFaker
   attr_accessor :output_buffer
   def url_for(*args)
-    "fake_url(#{args.inspect})"
+    "fake_url(#{args.inspect})".html_safe
   end
 
   def make_controller
