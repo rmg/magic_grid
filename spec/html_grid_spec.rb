@@ -138,7 +138,7 @@ describe MagicGrid::HtmlGrid do
     let(:grid) { MagicGrid::HtmlGrid.new(definition, self) }
     it "should create an appropriate <th> for the first (default sort) column" do
       output = grid.sortable_header(definition.columns.first)
-      output.should match_select('th.sort-current>a>span.ui-icon-triangle-1-n')
+      output.should match_select('th.sort-current>a>span.ui-icon-triangle-1-s')
     end
     it "should create an appropriate <th> for a currently unsorted column" do
       output = grid.sortable_header(definition.columns.second)

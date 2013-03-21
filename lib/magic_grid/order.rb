@@ -19,7 +19,7 @@ module MagicGrid
         'sort-asc'
       end
       def self.icon_class
-        'ui-icon-triangle-1-s'
+        'ui-icon-triangle-1-n'
       end
     end
     class Descending < Unordered
@@ -27,7 +27,7 @@ module MagicGrid
         'sort-desc'
       end
       def self.icon_class
-        'ui-icon-triangle-1-n'
+        'ui-icon-triangle-1-s'
       end
       def self.to_sql
         'DESC'
