@@ -17,7 +17,7 @@ module MagicGrid
 
     def initialize(collection, opts = {})
       @collection = collection || []
-      self.options = opts
+      @options = opts
       @current_page = 1
       @sorts = []
       @filter_callbacks = []
@@ -34,14 +34,15 @@ module MagicGrid
 
     attr_accessor :searchable_columns
     attr_reader :current_page, :original_count, :total_pages, :per_page, :searches
+    attr_writer :options
     cattr_accessor :kaminari_class
 
-    def options=(opts)
-      @options = DEFAULTS.merge(opts || {})
+    def options
+      DEFAULTS.merge(@options || {})
     end
 
     def count_options
-      @options[:count]
+      options[:count]
     end
 
     def self.create_or_reuse(collection, opts = {})
@@ -72,12 +73,12 @@ module MagicGrid
       if @collection.respond_to? :to_sql
         @collection.to_sql.hash.abs.to_s(36)
       else
-        @options.hash.abs.to_s(36)
+        options.hash.abs.to_s(36)
       end
     end
 
     def search_using_builtin(collection, q)
-      collection.__send__(@options[:search_method], q)
+      collection.__send__(options[:search_method], q)
     end
 
     def search_using_where(collection, q)
@@ -108,7 +109,7 @@ module MagicGrid
 
     def searchable?
       (filterable? and not searchable_columns.empty?) or
-        (@options[:search_method] and @collection.respond_to? @options[:search_method])
+        (options[:search_method] and @collection.respond_to? options[:search_method])
     end
 
     def apply_search(q)
@@ -126,7 +127,7 @@ module MagicGrid
     def perform_search(collection, q)
       search_using_builtin(collection, q)
     rescue
-      MagicGrid.logger.debug "Given collection doesn't respond to #{@options[:search_method]} well"
+      MagicGrid.logger.debug "Given collection doesn't respond to #{options[:search_method]} well"
       search_using_where(collection, q)
     end
 
