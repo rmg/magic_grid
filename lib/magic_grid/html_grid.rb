@@ -3,8 +3,8 @@ require 'magic_grid/order'
 
 module MagicGrid
   class HtmlGrid
-    attr_reader :view
-    private :view
+    attr_reader :view, :grid
+    private :view, :grid
 
     def initialize(grid_definition, view, controller = nil)
       @grid = grid_definition
@@ -19,17 +19,17 @@ module MagicGrid
     def render(&row_renderer)
       @spinner_drawn = false
       grid_data = {
-        :searcher => @grid.searcher,
+        :searcher => grid.searcher,
         :current => @current_url,
-        :live_search => @grid.options[:live_search],
-        :listeners => @grid.options[:listeners],
-        :remote => @grid.options[:remote],
-        :default_ajax_handler => @grid.options[:default_ajax_handler],
-        :params => @grid.base_params,
+        :live_search => grid.options[:live_search],
+        :listeners => grid.options[:listeners],
+        :remote => grid.options[:remote],
+        :default_ajax_handler => grid.options[:default_ajax_handler],
+        :params => grid.base_params,
       }
       table_options = {
-        :class => (['magic_grid'] << @grid.options[:class]).join(' '),
-        :id => @grid.magic_id,
+        :class => (['magic_grid'] << grid.options[:class]).join(' '),
+        :id => grid.magic_id,
         :data => grid_data.select {|_,v| v }
       }
       view.content_tag('table', table_options) do
@@ -38,7 +38,7 @@ module MagicGrid
     end
 
     def thead
-      view.content_tag('thead', :data => {:params => @grid.base_params}) do
+      view.content_tag('thead', :data => {:params => grid.base_params}) do
         magic_grid_head
       end
     end
@@ -59,7 +59,7 @@ module MagicGrid
       unless @spinner_drawn
         @spinner_drawn = true
         view.tag('span',
-                  :id => (@grid.magic_id.to_s + "_spinner"),
+                  :id => (grid.magic_id.to_s + "_spinner"),
                   :class => "magic_grid_spinner")
       end
     end
@@ -67,13 +67,13 @@ module MagicGrid
     def magic_grid_head
       spinner = self.method(:spinner_generator)
       thead = []
-      if @grid.needs_searcher?
+      if grid.needs_searcher?
         thead << searcher_block(&spinner)
       end
-      if @grid.options[:per_page] and @grid.options[:top_pager]
+      if grid.options[:per_page] and grid.options[:top_pager]
         thead << magic_pager_block(&spinner)
       end
-      if thead.empty? and not @grid.options[:collapse_emtpy_header]
+      if thead.empty? and not grid.options[:collapse_emtpy_header]
         thead << filler_block(&spinner)
       end
       thead << magic_column_headers
@@ -81,9 +81,9 @@ module MagicGrid
     end
 
     def magic_grid_foot
-      if @grid.options[:per_page] and @grid.options[:bottom_pager]
+      if grid.options[:per_page] and grid.options[:bottom_pager]
         magic_pager_block
-      elsif not @grid.options[:collapse_emtpy_footer]
+      elsif not grid.options[:collapse_emtpy_footer]
         filler_block
       end
     end
@@ -92,14 +92,14 @@ module MagicGrid
       view.content_tag 'tr' do
         view.content_tag('td', content,
                           :class => 'full-width ui-widget-header',
-                          :colspan => @grid.columns.count,
+                          :colspan => grid.columns.count,
                           &block)
       end
     end
 
     def magic_column_headers
       view.content_tag 'tr' do
-        @grid.columns.reduce(''.html_safe) do |acc, col|
+        grid.columns.reduce(''.html_safe) do |acc, col|
           classes = ['ui-state-default'] << col.html_classes
           acc <<
           if col.sortable?
@@ -112,9 +112,9 @@ module MagicGrid
     end
 
     def magic_rows(&row_renderer)
-      rows = @grid.collection.map { |row| grid_row(row, &row_renderer) }
+      rows = grid.collection.map { |row| grid_row(row, &row_renderer) }
       if rows.empty?
-        rows << render_empty_collection(@grid.options[:if_empty])
+        rows << render_empty_collection(grid.options[:if_empty])
       end
       rows.join.html_safe
     end
@@ -122,10 +122,10 @@ module MagicGrid
     def render_empty_collection(fallback)
       if fallback
         view.content_tag 'tr' do
-          view.content_tag('td', :colspan => @grid.columns.count,
+          view.content_tag('td', :colspan => grid.columns.count,
                             :class => 'if-empty') do
             if fallback.respond_to? :call
-              fallback.call(@grid).to_s
+              fallback.call(grid).to_s
             else
               fallback
             end
@@ -139,7 +139,7 @@ module MagicGrid
         view.capture(record, &row_renderer)
       else
         view.content_tag 'tr', :class => view.cycle('odd', 'even') do
-          @grid.columns.map { |c| grid_cell(c, record) }.join.html_safe
+          grid.columns.map { |c| grid_cell(c, record) }.join.html_safe
         end
       end
     end
@@ -163,16 +163,16 @@ module MagicGrid
 
     def column_link_params(col)
       id = col.id
-      my_params = @grid.base_params.merge(@grid.param_key(:col) => id)
-      default_sort_order = Order.from_param(@grid.default_order)
+      my_params = grid.base_params.merge(grid.param_key(:col) => id)
+      default_sort_order = Order.from_param(grid.default_order)
       params = HashWithIndifferentAccess.new(my_params)
-      if id.to_s == @grid.current_sort_col.to_s
-        params[@grid.param_key(:order)] = @grid.current_order.reverse.to_param
+      if id.to_s == grid.current_sort_col.to_s
+        params[grid.param_key(:order)] = grid.current_order.reverse.to_param
       else
-        params.delete @grid.param_key(:order)
+        params.delete grid.param_key(:order)
       end
-      if Order.from_param(params[@grid.param_key(:order)]) == default_sort_order
-        params.delete(@grid.param_key(:order))
+      if Order.from_param(params[grid.param_key(:order)]) == default_sort_order
+        params.delete(grid.param_key(:order))
       end
       params
     end
@@ -182,14 +182,14 @@ module MagicGrid
       label = col.label || id.titleize
       classes = ['sorter ui-state-default'] << col.html_classes
       params = column_link_params(col)
-      if id.to_s == @grid.current_sort_col.to_s
-        order = @grid.current_order
+      if id.to_s == grid.current_sort_col.to_s
+        order = grid.current_order
         classes << "sort-current" << order.css_class
       else
         order = Order::Unordered
       end
       view.content_tag 'th', :class => classes.join(' ') do
-        view.link_to params, :remote => @grid.options[:remote] do
+        view.link_to params, :remote => grid.options[:remote] do
           label.html_safe << order_icon(order)
         end
       end
@@ -198,7 +198,7 @@ module MagicGrid
     def searcher_block(&spinner)
       view.content_tag('tr') do
         view.content_tag('td', :class => 'searcher full-width ui-widget-header',
-                    :colspan => @grid.columns.count) do
+                    :colspan => grid.columns.count) do
           searcher_input(&spinner)
         end
       end
@@ -206,19 +206,19 @@ module MagicGrid
 
     def searcher_input(&spinner)
       searcher_data = {
-        :min_length => @grid.options[:min_search_length],
-        :current => @grid.current_search || "",
+        :min_length => grid.options[:min_search_length],
+        :current => grid.current_search || "",
       }
-      searcher = view.label_tag(@grid.searcher.to_sym,
-                           @grid.options[:searcher_label])
-      searcher << view.search_field_tag(@grid.searcher.to_sym,
-        @grid.param(:q),
-        :placeholder => @grid.options[:searcher_tooltip],
-        :size => @grid.options[:searcher_size],
+      searcher = view.label_tag(grid.searcher.to_sym,
+                           grid.options[:searcher_label])
+      searcher << view.search_field_tag(grid.searcher.to_sym,
+        grid.param(:q),
+        :placeholder => grid.options[:searcher_tooltip],
+        :size => grid.options[:searcher_size],
         :data => searcher_data,
         :form => "a form that doesn't exist")
-      if @grid.options[:search_button]
-        searcher << view.button_tag(@grid.options[:searcher_button],
+      if grid.options[:search_button]
+        searcher << view.button_tag(grid.options[:searcher_button],
           :class => 'magic-grid-search-button')
       end
       searcher << yield if block_given?
@@ -241,10 +241,10 @@ module MagicGrid
     def magic_pager_block(&spinner)
       view.content_tag('tr') do
         view.content_tag('td', :class => 'full-width ui-widget-header magic-pager',
-                    :colspan => @grid.columns.count) do
-          pager = magic_pager(@grid.magic_collection,
-                                :param_name => @grid.param_key(:page),
-                                :params => @grid.base_params
+                    :colspan => grid.columns.count) do
+          pager = magic_pager(grid.magic_collection,
+                                :param_name => grid.param_key(:page),
+                                :params => grid.base_params
                                )
           if spinner
             pager << view.capture(&spinner)
