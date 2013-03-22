@@ -18,7 +18,7 @@ module MagicGrid
     end
 
     def render(&row_renderer)
-      row_renderer ||= method(:grid_row)
+      @row_renderer = row_renderer || method(:grid_row)
       table_options = {
         :class => "magic_grid #{grid.options[:class]}",
         :id    => grid.magic_id,
@@ -32,26 +32,14 @@ module MagicGrid
           :params               => grid.base_params,
         }.reject {|_,v| v.nil? }
       }
-      view.content_tag('table', table_options) do
-        thead + tbody(&row_renderer) + tfoot
-      end
+      table(table_options)
     end
 
-    def thead
-      view.content_tag('thead', :data => {:params => grid.base_params}) do
-        magic_grid_head
-      end
-    end
-
-    def tbody(&row_renderer)
-      view.content_tag('tbody', :class => "ui-widget-content") do
-        magic_rows &row_renderer
-      end
-    end
-
-    def tfoot
-      view.content_tag('tfoot') do
-        magic_grid_foot
+    def table(options)
+      view.content_tag('table', options) do
+        view.content_tag('thead', :data => {:params => grid.base_params}, &method(:magic_grid_head)) +
+        view.content_tag('tbody', :class => "ui-widget-content", &method(:magic_rows)) +
+        view.content_tag('tfoot', &method(:magic_grid_foot))
       end
     end
 
@@ -110,8 +98,8 @@ module MagicGrid
       end
     end
 
-    def magic_rows(&row_renderer)
-      rows = grid.collection.map(&row_renderer)
+    def magic_rows
+      rows = grid.collection.map(&@row_renderer)
       if rows.empty?
         rows << render_empty_collection(grid.options[:if_empty])
       end
