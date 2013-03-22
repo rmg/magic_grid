@@ -6,8 +6,7 @@ require 'active_support/core_ext'
 
 module MagicGrid
   class Definition
-    attr_reader :columns, :options, :params,
-      :current_sort_col, :current_order, :default_order
+    attr_reader :columns, :options, :params
 
     def magic_collection
       @collection
@@ -61,21 +60,15 @@ module MagicGrid
 
     def initialize(cols_or_opts, collection = nil, controller = nil, opts = {})
       @options, @columns = *self.class.normalize_columns_options(cols_or_opts, opts)
-      @default_order = Order.from_param(@options[:default_order])
       @params = controller && controller.params || {}
 
-      @collection = Collection.create_or_reuse collection, @options
+      @collection = Collection.create_or_reuse collection, options
 
-      @columns = Column.columns_for_collection(@collection,
-                                               @columns,
-                                               @options[:searchable])
+      @columns = Column.columns_for_collection(magic_collection,
+                                               columns,
+                                               options[:searchable])
 
-      @current_sort_col = param(:col, @options[:default_col]).to_i
-      unless (0...@columns.count).cover? @current_sort_col
-        @current_sort_col = @options[:default_col]
-      end
-      @current_order = Order.from_param(param(:order, @default_order.to_param))
-      @collection.apply_sort(@columns[@current_sort_col], @current_order.to_sql)
+      @collection.apply_sort(@columns[current_sort_col], current_order.to_sql)
 
       filter_keys = @options[:listeners].values
       filters = @params.slice(*filter_keys).reject {|k,v| v.to_s.empty? }
@@ -87,6 +80,28 @@ module MagicGrid
       @collection.apply_filter_callback @options[:listener_handler]
       @collection.enable_post_filter @options[:collection_post_filter]
       @collection.add_post_filter_callback @options[:post_filter]
+    end
+
+    def current_sort_col
+      @current_sort_col ||= determine_sort_col
+    end
+
+    def determine_sort_col
+      given = param(:col)
+      if (0...columns.count).cover? given
+        given
+      else
+        options[:default_col].to_i
+      end
+    end
+    private :determine_sort_col
+
+    def default_order
+      @default_order ||= Order.from_param(options[:default_order])
+    end
+
+    def current_order
+      @current_order ||= Order.from_param(param(:order, default_order.to_param))
     end
 
     def current_search
