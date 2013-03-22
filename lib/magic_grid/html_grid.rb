@@ -20,18 +20,18 @@ module MagicGrid
       row_renderer ||= method(:grid_row)
       @spinner_drawn = false
       grid_data = {
-        :searcher => grid.searcher,
-        :current => @current_url,
-        :live_search => grid.options[:live_search],
-        :listeners => grid.options[:listeners],
-        :remote => grid.options[:remote],
+        :searcher             => grid.searcher,
+        :current              => @current_url,
+        :live_search          => grid.options[:live_search],
+        :listeners            => grid.options[:listeners],
+        :remote               => grid.options[:remote],
         :default_ajax_handler => grid.options[:default_ajax_handler],
-        :params => grid.base_params,
+        :params               => grid.base_params,
       }
       table_options = {
-        :class => (['magic_grid'] << grid.options[:class]).join(' '),
-        :id => grid.magic_id,
-        :data => grid_data.select {|_,v| v }
+        :class => "magic_grid #{grid.options[:class]}",
+        :id    => grid.magic_id,
+        :data  => grid_data.reject {|_,v| v.nil? }
       }
       view.content_tag('table', table_options) do
         thead + tbody(&row_renderer) + tfoot
