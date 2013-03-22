@@ -55,7 +55,7 @@ module MagicGrid
       end
     end
 
-    def spinner_generator
+    def render_spinner
       unless @spinner_drawn
         @spinner_drawn = true
         view.tag('span',
@@ -65,16 +65,15 @@ module MagicGrid
     end
 
     def magic_grid_head
-      spinner = self.method(:spinner_generator)
       thead = []
       if grid.needs_searcher?
-        thead << searcher_block(&spinner)
+        thead << searcher_block
       end
       if grid.options[:per_page] and grid.options[:top_pager]
-        thead << magic_pager_block(&spinner)
+        thead << magic_pager_block(true)
       end
       if thead.empty? and not grid.options[:collapse_emtpy_header]
-        thead << filler_block(&spinner)
+        thead << filler_block(&method(:render_spinner))
       end
       thead << magic_column_headers
       thead.join.html_safe
@@ -88,9 +87,9 @@ module MagicGrid
       end
     end
 
-    def filler_block(content = nil, &block)
+    def filler_block(&block)
       view.content_tag 'tr' do
-        view.content_tag('td', content,
+        view.content_tag('td', nil,
                           :class => 'full-width ui-widget-header',
                           :colspan => grid.columns.count,
                           &block)
@@ -195,16 +194,16 @@ module MagicGrid
       end
     end
 
-    def searcher_block(&spinner)
+    def searcher_block
       view.content_tag('tr') do
         view.content_tag('td', :class => 'searcher full-width ui-widget-header',
                     :colspan => grid.columns.count) do
-          searcher_input(&spinner)
+          searcher_input
         end
       end
     end
 
-    def searcher_input(&spinner)
+    def searcher_input
       searcher_data = {
         :min_length => grid.options[:min_search_length],
         :current => grid.current_search || "",
@@ -221,8 +220,7 @@ module MagicGrid
         searcher << view.button_tag(grid.options[:searcher_button],
           :class => 'magic-grid-search-button')
       end
-      searcher << yield if block_given?
-      searcher
+      searcher << render_spinner
     end
 
     def magic_pager(collection, opts={})
@@ -238,7 +236,7 @@ module MagicGrid
       end
     end
 
-    def magic_pager_block(&spinner)
+    def magic_pager_block(spinner = false)
       view.content_tag('tr') do
         view.content_tag('td', :class => 'full-width ui-widget-header magic-pager',
                     :colspan => grid.columns.count) do
@@ -247,7 +245,7 @@ module MagicGrid
                                 :params => grid.base_params
                                )
           if spinner
-            pager << view.capture(&spinner)
+            pager << render_spinner
           end
           pager
         end
