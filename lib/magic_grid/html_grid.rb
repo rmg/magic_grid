@@ -149,7 +149,7 @@ module MagicGrid
       my_params = grid.base_params.merge(grid.param_key(:col) => id)
       default_sort_order = Order.from_param(grid.default_order)
       params = HashWithIndifferentAccess.new(my_params)
-      if id.to_s == grid.current_sort_col.to_s and Order.from_param(params[grid.param_key(:order)]) != default_sort_order
+      if id.to_s == grid.current_sort_col.to_s
         params[grid.param_key(:order)] = grid.current_order.reverse.to_param
       else
         params.delete(grid.param_key(:order))
