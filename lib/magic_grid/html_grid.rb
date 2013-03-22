@@ -17,6 +17,7 @@ module MagicGrid
     end
 
     def render(&row_renderer)
+      row_renderer ||= method(:grid_row)
       @spinner_drawn = false
       grid_data = {
         :searcher => grid.searcher,
@@ -111,7 +112,7 @@ module MagicGrid
     end
 
     def magic_rows(&row_renderer)
-      rows = grid.collection.map { |row| grid_row(row, &row_renderer) }
+      rows = grid.collection.map(&row_renderer)
       if rows.empty?
         rows << render_empty_collection(grid.options[:if_empty])
       end
@@ -133,13 +134,9 @@ module MagicGrid
       end
     end
 
-    def grid_row(record, &row_renderer)
-      if row_renderer
-        view.capture(record, &row_renderer)
-      else
-        view.content_tag 'tr', :class => view.cycle('odd', 'even') do
-          grid.columns.map { |c| grid_cell(c, record) }.join.html_safe
-        end
+    def grid_row(record)
+      view.content_tag 'tr', :class => view.cycle('odd', 'even') do
+        grid.columns.map { |c| grid_cell(c, record) }.join.html_safe
       end
     end
 
