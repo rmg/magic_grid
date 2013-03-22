@@ -17,31 +17,31 @@ module MagicGrid
     end
 
     DEFAULTS = {
-      :class => [],
-      :top_pager => false,
-      :bottom_pager => true,
-      :remote => false,
-      :min_search_length => 3,
-      :id => false,
-      :searcher => false,
-      :needs_searcher => false,
-      :live_search => false,
-      :listeners => {},
+      :class                 => [],
+      :top_pager             => false,
+      :bottom_pager          => true,
+      :remote                => false,
+      :min_search_length     => 3,
+      :id                    => false,
+      :searcher              => false,
+      :needs_searcher        => false,
+      :live_search           => false,
+      :listeners             => {},
       :collapse_empty_header => false,
       :collapse_empty_footer => false,
-      :default_ajax_handler => true,
-      :default_order => :asc,
-      :search_button => false,
-      :searcher_size => nil,
+      :default_ajax_handler  => true,
+      :default_order         => :asc,
+      :search_button         => false,
+      :searcher_size         => nil,
     }
 
     def self.runtime_defaults
       # run these lazily to catch any late I18n path changes
       DEFAULTS.merge(Collection::DEFAULTS).merge(
-        :if_empty =>         I18n.t("magic_grid.no_results").capitalize, # "No results found."
-        :searcher_label =>   I18n.t("magic_grid.search.label").capitalize + ': ', # "Search: "
+        :if_empty         => I18n.t("magic_grid.no_results").capitalize, # "No results found."
+        :searcher_label   => I18n.t("magic_grid.search.label").capitalize + ': ', # "Search: "
         :searcher_tooltip => I18n.t("magic_grid.search.tooltip"), # "type.. + <return>"
-        :searcher_button =>  I18n.t("magic_grid.search.button").capitalize # "Search"
+        :searcher_button  => I18n.t("magic_grid.search.button").capitalize # "Search"
       )
     end
 
