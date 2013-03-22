@@ -70,8 +70,6 @@ module MagicGrid
 
       @collection.apply_sort(@columns[current_sort_col], current_order.to_sql)
 
-      filter_keys = @options[:listeners].values
-      filters = @params.slice(*filter_keys).reject {|k,v| v.to_s.empty? }
       @collection.apply_filter filters
       @collection.apply_pagination(current_page)
       @collection.apply_search current_search
@@ -82,19 +80,23 @@ module MagicGrid
       @collection.add_post_filter_callback @options[:post_filter]
     end
 
-    def current_sort_col
-      @current_sort_col ||= determine_sort_col
-    end
-
-    def determine_sort_col
-      given = param(:col)
-      if (0...columns.count).cover? given
-        given
-      else
-        options[:default_col].to_i
+    def filters
+      @filters ||= begin
+        filter_keys = options[:listeners].values
+        params.slice(*filter_keys).reject {|k,v| v.to_s.empty? }
       end
     end
-    private :determine_sort_col
+
+    def current_sort_col
+      @current_sort_col ||= begin
+        given = param(:col)
+        if (0...columns.count).cover? given
+          given
+        else
+          options[:default_col].to_i
+        end
+      end
+    end
 
     def default_order
       @default_order ||= Order.from_param(options[:default_order])
