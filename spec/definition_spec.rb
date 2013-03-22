@@ -110,7 +110,7 @@ describe MagicGrid::Definition do
     data = [1,56,7,21,1]
     let(:controller) {
       controller = double()
-      controller.stub(:params) { HashWithIndifferentAccess.new({:grid_order => 1}) }
+      controller.stub(:params) { HashWithIndifferentAccess.new({:grid_order => 1, :grid_col => 0}) }
       controller
     }
     let(:collection) { data }
