@@ -8,6 +8,7 @@ module MagicGrid
 
     def initialize(grid_definition, view, controller = nil)
       @grid = grid_definition
+      @spinner_drawn = false
       @view ||= view
       if controller
         @current_url = controller.request.fullpath
@@ -18,20 +19,18 @@ module MagicGrid
 
     def render(&row_renderer)
       row_renderer ||= method(:grid_row)
-      @spinner_drawn = false
-      grid_data = {
-        :searcher             => grid.searcher,
-        :current              => @current_url,
-        :live_search          => grid.options[:live_search],
-        :listeners            => grid.options[:listeners],
-        :remote               => grid.options[:remote],
-        :default_ajax_handler => grid.options[:default_ajax_handler],
-        :params               => grid.base_params,
-      }
       table_options = {
         :class => "magic_grid #{grid.options[:class]}",
         :id    => grid.magic_id,
-        :data  => grid_data.reject {|_,v| v.nil? }
+        :data  => {
+          :searcher             => grid.searcher,
+          :current              => @current_url,
+          :live_search          => grid.options[:live_search],
+          :listeners            => grid.options[:listeners],
+          :remote               => grid.options[:remote],
+          :default_ajax_handler => grid.options[:default_ajax_handler],
+          :params               => grid.base_params,
+        }.reject {|_,v| v.nil? }
       }
       view.content_tag('table', table_options) do
         thead + tbody(&row_renderer) + tfoot
