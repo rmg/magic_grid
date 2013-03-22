@@ -187,19 +187,19 @@ module MagicGrid
     def searcher_input
       searcher_data = {
         :min_length => grid.options[:min_search_length],
-        :current => grid.current_search || "",
+        :current    => grid.current_search || "",
       }
       searcher = view.label_tag(grid.searcher.to_sym,
-                           grid.options[:searcher_label])
+                                grid.options[:searcher_label])
       searcher << view.search_field_tag(grid.searcher.to_sym,
-        grid.param(:q),
-        :placeholder => grid.options[:searcher_tooltip],
-        :size => grid.options[:searcher_size],
-        :data => searcher_data,
-        :form => "a form that doesn't exist")
+                                        grid.param(:q),
+                                        :placeholder => grid.options[:searcher_tooltip],
+                                        :size => grid.options[:searcher_size],
+                                        :data => searcher_data,
+                                        :form => "a form that doesn't exist")
       if grid.options[:search_button]
         searcher << view.button_tag(grid.options[:searcher_button],
-          :class => 'magic-grid-search-button')
+                                    :class => 'magic-grid-search-button')
       end
       searcher << render_spinner
     end
