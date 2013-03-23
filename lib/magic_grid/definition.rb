@@ -68,16 +68,16 @@ module MagicGrid
                                                columns,
                                                options[:searchable])
 
-      @collection.apply_sort(@columns[current_sort_col], current_order.to_sql)
+      magic_collection.apply_sort(columns[current_sort_col], current_order.to_sql)
 
-      @collection.apply_filter filters
-      @collection.apply_pagination(current_page)
-      @collection.apply_search current_search
+      magic_collection.apply_filter filters
+      magic_collection.apply_pagination(current_page)
+      magic_collection.apply_search current_search
 
-      @collection.per_page = @options[:per_page]
-      @collection.apply_filter_callback @options[:listener_handler]
-      @collection.enable_post_filter @options[:collection_post_filter]
-      @collection.add_post_filter_callback @options[:post_filter]
+      magic_collection.per_page = options[:per_page]
+      magic_collection.apply_filter_callback options[:listener_handler]
+      magic_collection.enable_post_filter options[:collection_post_filter]
+      magic_collection.add_post_filter_callback options[:post_filter]
     end
 
     def filters
@@ -111,22 +111,22 @@ module MagicGrid
     end
 
     def magic_id
-      @options[:id] || (Column.hash_string(@columns) + @collection.hash_string)
+      options[:id] || (Column.hash_string(columns) + magic_collection.hash_string)
     end
 
     def searchable?
-      @collection.searchable?
+      magic_collection.searchable?
     end
 
     def needs_searcher?
-      @options[:needs_searcher] or (searchable? and not @options[:searcher])
+      options[:needs_searcher] or (searchable? and not options[:searcher])
     end
 
     def searcher
       if needs_searcher?
         param_key(:searcher)
       else
-        @options[:searcher]
+        options[:searcher]
       end
     end
 
@@ -135,11 +135,11 @@ module MagicGrid
     end
 
     def param(key, default=nil)
-      @params.fetch(param_key(key), default)
+      params.fetch(param_key(key), default)
     end
 
     def base_params
-      @params.merge :magic_grid_id => magic_id
+      params.merge :magic_grid_id => magic_id
     end
 
     def current_page
