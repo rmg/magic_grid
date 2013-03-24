@@ -68,7 +68,10 @@ module MagicGrid
       @columns = Column.columns_for_collection(magic_collection,
                                                columns,
                                                options[:searchable])
+      apply_collection_params
+    end
 
+    def apply_collection_params
       magic_collection.apply_sort(columns[current_sort_col], current_order.to_sql)
 
       magic_collection.apply_filter filters
