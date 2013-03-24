@@ -46,10 +46,11 @@ module MagicGrid
     end
 
     def self.normalize_columns_options(cols_or_opts, opts)
-      if cols_or_opts.is_a? Hash
+      case cols_or_opts
+      when Hash
         options = runtime_defaults.merge(cols_or_opts.reject {|k| k == :cols})
         columns = cols_or_opts.fetch(:cols, [])
-      elsif cols_or_opts.is_a? Array
+      when Array
         options = runtime_defaults.merge opts
         columns = cols_or_opts
       else
