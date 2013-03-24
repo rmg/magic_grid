@@ -111,7 +111,7 @@ module MagicGrid
     end
 
     def current_search
-      param(:q)
+      param(:q, "")
     end
 
     def magic_id

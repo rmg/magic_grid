@@ -10,11 +10,7 @@ module MagicGrid
       @grid = grid_definition
       @spinner_drawn = false
       @view ||= view
-      if controller
-        @current_url = controller.request.fullpath
-      else
-        @current_url = nil
-      end
+      @current_url = controller && controller.request.fullpath
     end
 
     def render(&row_renderer)
@@ -178,7 +174,7 @@ module MagicGrid
     def searcher_block
       view.content_tag('tr') do
         view.content_tag('td', :class => 'searcher full-width ui-widget-header',
-                    :colspan => grid.columns.count) do
+                         :colspan => grid.columns.count) do
           searcher_input
         end
       end
@@ -187,16 +183,16 @@ module MagicGrid
     def searcher_input
       searcher_data = {
         :min_length => grid.options[:min_search_length],
-        :current    => grid.current_search || "",
+        :current    => grid.current_search,
       }
       searcher = view.label_tag(grid.searcher.to_sym,
                                 grid.options[:searcher_label])
       searcher << view.search_field_tag(grid.searcher.to_sym,
                                         grid.param(:q),
                                         :placeholder => grid.options[:searcher_tooltip],
-                                        :size => grid.options[:searcher_size],
-                                        :data => searcher_data,
-                                        :form => "a form that doesn't exist")
+                                        :size        => grid.options[:searcher_size],
+                                        :data        => searcher_data,
+                                        :form        => "a form that doesn't exist")
       if grid.options[:search_button]
         searcher << view.button_tag(grid.options[:searcher_button],
                                     :class => 'magic-grid-search-button')
@@ -220,11 +216,10 @@ module MagicGrid
     def magic_pager_block(spinner = false)
       view.content_tag('tr') do
         view.content_tag('td', :class => 'full-width ui-widget-header magic-pager',
-                    :colspan => grid.columns.count) do
+                         :colspan => grid.columns.count) do
           pager = magic_pager(grid.magic_collection,
-                                :param_name => grid.param_key(:page),
-                                :params => grid.base_params
-                               )
+                              :param_name => grid.param_key(:page),
+                              :params => grid.base_params)
           if spinner
             pager << render_spinner
           end
