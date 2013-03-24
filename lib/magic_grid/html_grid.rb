@@ -97,9 +97,10 @@ module MagicGrid
     def magic_rows
       rows = grid.collection.map(&@row_renderer)
       if rows.empty?
-        rows << render_empty_collection(grid.options[:if_empty])
+        render_empty_collection(grid.options[:if_empty]).html_safe
+      else
+        rows.join.html_safe
       end
-      rows.join.html_safe
     end
 
     def render_empty_collection(fallback)
@@ -143,7 +144,6 @@ module MagicGrid
     def column_link_params(col)
       id = col.id
       my_params = grid.base_params.merge(grid.param_key(:col) => id)
-      default_sort_order = Order.from_param(grid.default_order)
       params = HashWithIndifferentAccess.new(my_params)
       if id.to_s == grid.current_sort_col.to_s
         params[grid.param_key(:order)] = grid.current_order.reverse.to_param
