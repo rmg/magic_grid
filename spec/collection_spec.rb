@@ -148,23 +148,30 @@ describe MagicGrid::Collection do
       it "should round down to the last page if a later page is requested" do
         subject.per_page = 3
         subject.total_pages.should == 4
-        subject.apply_pagination(5).perform_pagination(array)
+        subject.apply_pagination(5)
+        subject.perform_pagination(array)
         subject.current_page.should == 4
       end
 
       context "providing the correct data" do
         before(:each) { subject.per_page = 3 }
         it "handles pages beyond lower bound" do
-          subject.apply_pagination(0).perform_pagination(array).should == [1,2,3]
+          subject.apply_pagination(0)
+          subject.perform_pagination(array).should == [1,2,3]
         end
         it "handles pages in bounds" do
-          subject.apply_pagination(1).perform_pagination(array).should == [1,2,3]
-          subject.apply_pagination(2).perform_pagination(array).should == [4,5,6]
-          subject.apply_pagination(3).perform_pagination(array).should == [7,8,9]
-          subject.apply_pagination(4).perform_pagination(array).should == [10]
+          subject.apply_pagination(1)
+          subject.perform_pagination(array).should == [1,2,3]
+          subject.apply_pagination(2)
+          subject.perform_pagination(array).should == [4,5,6]
+          subject.apply_pagination(3)
+          subject.perform_pagination(array).should == [7,8,9]
+          subject.apply_pagination(4)
+          subject.perform_pagination(array).should == [10]
         end
         it "handles pages above bounds" do
-          subject.apply_pagination(5).perform_pagination(array).should == [10]
+          subject.apply_pagination(5)
+          subject.perform_pagination(array).should == [10]
         end
       end
     end

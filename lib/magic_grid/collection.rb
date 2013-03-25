@@ -104,7 +104,6 @@ module MagicGrid
         @reduced_collection = nil
         @sorts << "#{col.custom_sql} #{dir}"
       end
-      self
     end
 
     def searchable?
@@ -121,7 +120,6 @@ module MagicGrid
           MagicGrid.logger.warn "#{self.class.name}: Ignoring searchable fields on collection"
         end
       end
-      self
     end
 
     def perform_search(collection, q)
@@ -140,7 +138,6 @@ module MagicGrid
         @reduced_collection = nil
         @filters << filters
       end
-      self
     end
 
     def apply_filter_callback(callback)
@@ -148,7 +145,6 @@ module MagicGrid
         @reduced_collection = nil
         @filter_callbacks << callback
       end
-      self
     end
 
     def add_post_filter_callback(callback)
@@ -156,7 +152,6 @@ module MagicGrid
         @reduced_collection = nil
         @post_filter_callbacks << callback
       end
-      self
     end
 
     def has_post_filter?
@@ -192,7 +187,6 @@ module MagicGrid
     def apply_pagination(current_page)
       @current_page = current_page
       @reduced_collection = nil
-      self
     end
 
     def default_paginate(collection, page, per_page)
