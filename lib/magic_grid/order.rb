@@ -17,11 +17,7 @@ module MagicGrid
         false
       end
     end
-    class Unsortable < Unordered
-      def self.icon_class
-        ''
-      end
-    end
+    class Unsortable < Unordered; end
     class Ascending < Unordered
       def self.css_class
         'sort-asc'

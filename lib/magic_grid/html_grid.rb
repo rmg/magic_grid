@@ -33,9 +33,14 @@ module MagicGrid
 
     def table(options)
       view.content_tag('table', options) do
-        view.content_tag('thead', :data => {:params => grid.base_params}, &method(:magic_grid_head)) +
-        view.content_tag('tbody', :class => "ui-widget-content", &method(:magic_rows)) +
-        view.content_tag('tfoot', &method(:magic_grid_foot))
+        view.content_tag('thead',
+                         :data => {:params => grid.base_params},
+                         &method(:magic_grid_head)) <<
+        view.content_tag('tbody',
+                         :class => "ui-widget-content",
+                         &method(:magic_rows)) <<
+        view.content_tag('tfoot',
+                         &method(:magic_grid_foot))
       end
     end
 
