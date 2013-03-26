@@ -16,6 +16,9 @@ module MagicGrid
       def self.sorted?
         false
       end
+      def self.reverse
+        Descending
+      end
     end
     class Unsortable < Unordered; end
     class Ascending < Unordered
@@ -27,6 +30,9 @@ module MagicGrid
       end
       def self.sorted?
         true
+      end
+      def self.reverse
+        Descending
       end
     end
     class Descending < Unordered
@@ -45,15 +51,9 @@ module MagicGrid
       def self.sorted?
         true
       end
-    end
-    def Ascending.reverse
-      Descending
-    end
-    def Descending.reverse
-      Ascending
-    end
-    def Unordered.reverse
-      Descending
+      def self.reverse
+        Ascending
+      end
     end
     def self.from_param(something)
       case something
