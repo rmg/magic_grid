@@ -68,6 +68,18 @@ module MagicGrid
       @columns = Column.columns_for_collection(magic_collection,
                                                columns,
                                                options[:searchable])
+      columns.each do |col|
+        if col.sortable?
+          if col.id == current_sort_col
+            col.order = current_order
+          else
+            col.order = Order::Unordered
+          end
+        else
+          col.order = Order::Unsortable
+        end
+      end
+
       apply_collection_params
     end
 
@@ -93,8 +105,8 @@ module MagicGrid
 
     def current_sort_col
       @current_sort_col ||= begin
-        given = param(:col)
-        if (0...columns.count).cover? given
+        given = param(:col, -1)
+        if given >= 0 and given <= columns.count
           given
         else
           options[:default_col].to_i

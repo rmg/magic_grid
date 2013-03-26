@@ -1,5 +1,8 @@
+require 'magic_grid/order'
+
 module MagicGrid
   class Column
+    attr_accessor :order
 
     def self.columns_for_collection(collection, columns, searchables)
       columns.each_with_index.map { |c, i|
@@ -56,7 +59,8 @@ module MagicGrid
     end
 
     def html_classes
-      Array(@col[:class]).join ' '
+      @html_classes ||= (Array(@col[:class]) << order.css_class)
+      @html_classes.join(' ')
     end
 
     def reader
@@ -86,6 +90,7 @@ module MagicGrid
   class FilterOnlyColumn < Column
     attr_reader :name, :custom_sql
     def initialize(name, collection = nil)
+      @order = Order::Unordered
       @name = name
       if collection
         @custom_sql = collection.quote_column_name(name)

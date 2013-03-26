@@ -13,6 +13,14 @@ module MagicGrid
       def self.to_param
         0
       end
+      def self.sorted?
+        false
+      end
+    end
+    class Unsortable < Unordered
+      def self.icon_class
+        ''
+      end
     end
     class Ascending < Unordered
       def self.css_class
@@ -20,6 +28,9 @@ module MagicGrid
       end
       def self.icon_class
         'ui-icon-triangle-1-n'
+      end
+      def self.sorted?
+        true
       end
     end
     class Descending < Unordered
@@ -34,6 +45,9 @@ module MagicGrid
       end
       def self.to_param
         1
+      end
+      def self.sorted?
+        true
       end
     end
     def Ascending.reverse

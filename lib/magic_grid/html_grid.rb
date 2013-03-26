@@ -156,17 +156,12 @@ module MagicGrid
     def sortable_header(col)
       id = col.id
       label = col.label || id.titleize
-      classes = ['sorter ui-state-default'] << col.html_classes
       params = column_link_params(col)
-      if id.to_s == grid.current_sort_col.to_s
-        order = grid.current_order
-        classes << "sort-current" << order.css_class
-      else
-        order = Order::Unordered
-      end
+      classes = %w{sorter ui-state-default} << col.html_classes
+      classes << 'sort-current' if col.order.sorted?
       view.content_tag 'th', :class => classes.join(' ') do
         view.link_to params, :remote => grid.options[:remote] do
-          label.html_safe << order_icon(order)
+          label.html_safe << order_icon(col.order)
         end
       end
     end
