@@ -23,11 +23,18 @@ In your `Gemfile`:
 
     gem 'magic_grid'
 
+In your controller:
+
+    @posts = Post.where(:published => true)
+
 In your view:
 
     <%= magic_grid(@posts, [:title, :author]) %>
 
-Or a more realistic example:
+What you'll get is an table with 2 sortable columns. You'll also get pagination if
+you have eitehr Keminari or WillPaginate loaded.
+
+You can also do your own row rendering by passing a block:
 
 ```rhtml
 <%= magic_grid(@posts, [:title, :author, "Actions"]) do |post| %>
@@ -42,6 +49,19 @@ Or a more realistic example:
   </tr>
 <% end %>
 ```
+
+Advanced Options
+----------------
+
+There are a bunch of extra options that can be passed to the `magic_grid` helper:
+
+### :searchable
+An array of columns to try to generate a search query for. Providing this
+list tells magic_grid to render a search box in the header of the html table
+it generates.
+
+### :per_page
+Sets the number of rows per page in the paginator.
 
 Development
 -----------
