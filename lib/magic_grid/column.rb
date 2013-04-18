@@ -70,7 +70,7 @@ module MagicGrid
     private
     def initialize(collection, c, i)
       @collection = collection
-      @col = case c
+      @col =  case c
               when Symbol
                 {:col => c}
               when String

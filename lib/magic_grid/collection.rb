@@ -33,7 +33,8 @@ module MagicGrid
     delegate :quoted_table_name, :map, :count, :to => :collection
 
     attr_accessor :searchable_columns
-    attr_reader :current_page, :original_count, :total_pages, :per_page, :searches
+    attr_reader :current_page, :original_count, :total_pages, :per_page,
+                :searches
     attr_writer :options
     cattr_accessor :kaminari_class
 
@@ -108,7 +109,8 @@ module MagicGrid
 
     def searchable?
       (filterable? and not searchable_columns.empty?) or
-        (options[:search_method] and @collection.respond_to? options[:search_method])
+        (options[:search_method] and
+         @collection.respond_to? options[:search_method])
     end
 
     def apply_search(q)
@@ -215,7 +217,8 @@ module MagicGrid
       elsif collection.respond_to? :page
         collection.page(@current_page).per(@per_page)
       elsif collection.is_a?(Array) and @@kaminari_class
-         @@kaminari_class.paginate_array(collection).page(@current_page).per(@per_page)
+         @@kaminari_class.paginate_array(collection).
+                          page(@current_page).per(@per_page)
       else
          default_paginate(collection, @current_page, @per_page)
       end

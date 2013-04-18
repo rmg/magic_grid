@@ -127,7 +127,7 @@ describe MagicGrid::Collection do
   describe "#perform_pagination" do
 
     context "page counts" do
-      let(:array) { Array.new(100) { 1 }  }
+      let(:array) { Array.new(100) { 1 } }
       subject { MagicGrid::Collection.new(array, nil) }
 
       it "should correctly calculate uneven page splits" do
@@ -183,7 +183,8 @@ describe MagicGrid::Collection do
     context "when #paginate (aka WillPaginate) is available" do
       it "should call paginate helper when it is detected" do
         array = [1].tap do |a|
-          a.should_receive(:paginate).with(:page => 1, :per_page => 1, :total_entries => 1) { a }
+          a.should_receive(:paginate).with(:page => 1, :per_page => 1,
+                                           :total_entries => 1) { a }
         end
         collection = MagicGrid::Collection.new(array, nil)
         collection.per_page = 1
