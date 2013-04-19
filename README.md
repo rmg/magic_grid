@@ -58,7 +58,7 @@ There are a bunch of extra options that can be passed to the `magic_grid` helper
 ### :searchable
 An array of columns to try to generate a search query for. Providing this
 list tells magic_grid to render a search box in the header of the html table
-it generates.
+it generates. Make sure to include `magic_grid.js` in your view or application wide via your application.js or search won't work.
 
 ### :per_page
 Sets the number of rows per page in the paginator.
