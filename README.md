@@ -5,8 +5,9 @@ MagicGrid
 [![Build Status](https://travis-ci.org/rmg/magic_grid.png?branch=master)](https://travis-ci.org/rmg/magic_grid)
 [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/rmg/magic_grid)
 
-
 Easy collection display grid with column sorting and pagination.
+
+[MagicGrid Live Demo](http://magic-grid.herokuapp.com/) (it's not very pretty. [Help?](https://github.com/rmg/magic_grid-demo))
 
 Displays a collection (ActiveRelation or Array) wrapped in an html table with server
 side column sorting, filtering hooks, and search bar. Large collections can be
