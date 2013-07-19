@@ -197,8 +197,8 @@ describe MagicGrid::Collection do
       context "when #page (possibly from Kaminari) is available" do
         it "should call paginate helper when it is detected" do
           array = [1].tap do |a|
-            a.should_receive(:per).with(1) { array }
-            a.should_receive(:page).with(1) { array }
+            a.should_receive(:per).with(1).and_return(a)
+            a.should_receive(:page).with(1).and_return(a)
           end
           collection = MagicGrid::Collection.new(array, nil)
           collection.per_page = 1
@@ -212,11 +212,11 @@ describe MagicGrid::Collection do
           it "should call paginate helper when it is detected" do
             array = Array.new(10) { 1 }
             kaminaried_array = [1].tap do |ka|
-              ka.should_receive(:per).with(1) { ka }
-              ka.should_receive(:page).with(1) { ka }
+              ka.should_receive(:per).with(1).and_return(ka)
+              ka.should_receive(:page).with(1).and_return(ka)
             end
             kaminari = double.tap do |k|
-              k.should_receive(:paginate_array).with(array) { kaminaried_array }
+              k.should_receive(:paginate_array).with(array).and_return(kaminaried_array)
             end
             collection = MagicGrid::Collection.new(array, nil)
             collection.per_page = 1
