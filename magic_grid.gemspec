@@ -8,6 +8,7 @@ Gem::Specification.new do |s|
   s.name        = "magic_grid"
   s.version     = MagicGrid::VERSION
   s.authors     = ["Ryan Graham"]
+  s.license     = 'MIT'
   s.email       = ["r.m.graham@gmail.com"]
   s.homepage    = "https://github.com/rmg/magic_grid"
   s.summary     = "Easy collection display grid with column sorting and pagination"
