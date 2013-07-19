@@ -55,6 +55,9 @@ module MagicGrid
 
     def magic_grid_head
       thead = []
+      if grid.has_title?
+        thead << render_title(grid.title)
+      end
       if grid.needs_searcher?
         thead << searcher_block
       end
@@ -66,6 +69,14 @@ module MagicGrid
       end
       thead << magic_column_headers
       thead.join.html_safe
+    end
+
+    def render_title(title)
+      view.content_tag 'tr' do
+        view.content_tag('th', title,
+                          :class => 'full-width ui-widget-header',
+                          :colspan => grid.columns.count)
+      end
     end
 
     def magic_grid_foot

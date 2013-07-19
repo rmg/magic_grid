@@ -33,6 +33,7 @@ module MagicGrid
       :default_order         => :asc,
       :search_button         => false,
       :searcher_size         => nil,
+      :title                 => nil,
     }
 
     def self.runtime_defaults
@@ -144,6 +145,14 @@ module MagicGrid
       else
         options[:searcher]
       end
+    end
+
+    def has_title?
+      options[:title] || false
+    end
+
+    def title
+      options[:title]
     end
 
     def param_key(key)
