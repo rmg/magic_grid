@@ -2,6 +2,7 @@ MagicGrid
 =========
 &copy; 2011-2013 Ryan Graham, Dennis Taylor
 
+[![Gem Version](https://badge.fury.io/rb/magic_grid.png)](http://badge.fury.io/rb/magic_grid)
 [![Build Status](https://travis-ci.org/rmg/magic_grid.png?branch=master)](https://travis-ci.org/rmg/magic_grid)
 [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/rmg/magic_grid)
 
