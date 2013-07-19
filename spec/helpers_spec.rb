@@ -67,6 +67,11 @@ describe MagicGrid::Helpers do
       it { should =~ /HOKY_POKY_ALAMO: 1/ }
     end
 
+    context "when a grid title is specified" do
+      subject { magic_grid([1,2], [:to_s], :title => "Awesome Sauces") }
+      it { should match_select("thead > tr > th", :text => "Awesome Sauces") }
+    end
+
     context "when given an array of Symbols as column list" do
       subject {
         magic_grid( [1,2], [:col1, :col2]) do |row|
