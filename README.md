@@ -65,6 +65,12 @@ it generates. Make sure to include `magic_grid.js` in your view or application w
 ### :per_page
 Sets the number of rows per page in the paginator.
 
+### :title
+Sets a text string to include in the top of the grid's `thead` to display as a title for the grid.
+
+### and more...
+There's a.. *ahem* slight lack of documentation at the moment. Pull requests welcome?
+
 Development
 -----------
 
