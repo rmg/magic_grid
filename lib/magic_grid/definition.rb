@@ -106,7 +106,7 @@ module MagicGrid
 
     def current_sort_col
       @current_sort_col ||= begin
-        given = param(:col, -1)
+        given = param(:col, -1).to_i
         if given >= 0 and given <= columns.count
           given
         else
